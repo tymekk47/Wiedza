@@ -4,6 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Astra • Pigułki Wiedzy – Biała Gwiazda</title>
+
+    <!-- Mobile & PWA Web App Meta Tags -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Astra">
+    <meta name="theme-color" content="#0b0f19">
+
+    <!-- Favicon, Apple Touch Icon & Web App Manifest -->
+    <link rel="icon" id="dynamicFavicon" type="image/png" href="">
+    <link rel="apple-touch-icon" id="dynamicAppleIcon" sizes="512x512" href="">
+    <link rel="manifest" id="dynamicManifest" href="">
+
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -592,6 +605,7 @@
 
         // Initialize App on DOM Loaded
         document.addEventListener('DOMContentLoaded', () => {
+            generateAppIcons();
             loadLocalStorage();
             pills = getStoredPills();
             initTheme();
@@ -600,6 +614,141 @@
             updateStats();
             lucide.createIcons();
         });
+
+        // Dynamic Home Screen & Favicon Icon Canvas Generator (512x512 White Star)
+        function generateAppIcons() {
+            try {
+                const canvas = document.createElement('canvas');
+                canvas.width = 512;
+                canvas.height = 512;
+                const ctx = canvas.getContext('2d');
+
+                // 1. Cosmic Deep Gradient Background
+                const bgGrad = ctx.createRadialGradient(256, 256, 20, 256, 256, 360);
+                bgGrad.addColorStop(0, '#1e1b4b');   // Deep indigo
+                bgGrad.addColorStop(0.5, '#0f172a'); // Slate black
+                bgGrad.addColorStop(1, '#0b0f19');   // Deep cosmic dark
+                ctx.fillStyle = bgGrad;
+                ctx.fillRect(0, 0, 512, 512);
+
+                // 2. Cosmic Nebulae
+                const neb1 = ctx.createRadialGradient(180, 180, 0, 180, 180, 220);
+                neb1.addColorStop(0, 'rgba(56, 189, 248, 0.35)');
+                neb1.addColorStop(1, 'rgba(56, 189, 248, 0)');
+                ctx.fillStyle = neb1;
+                ctx.fillRect(0, 0, 512, 512);
+
+                const neb2 = ctx.createRadialGradient(340, 340, 0, 340, 340, 240);
+                neb2.addColorStop(0, 'rgba(168, 85, 247, 0.3)');
+                neb2.addColorStop(1, 'rgba(168, 85, 247, 0)');
+                ctx.fillStyle = neb2;
+                ctx.fillRect(0, 0, 512, 512);
+
+                // 3. Background Stars / Sparkles
+                const stars = [
+                    {x: 70, y: 80, r: 2.5, a: 0.8}, {x: 430, y: 90, r: 3, a: 0.9},
+                    {x: 100, y: 400, r: 2.5, a: 0.7}, {x: 420, y: 420, r: 2, a: 0.85},
+                    {x: 256, y: 50, r: 3.5, a: 1}, {x: 450, y: 250, r: 1.5, a: 0.6},
+                    {x: 60, y: 260, r: 2, a: 0.75}, {x: 380, y: 150, r: 2.5, a: 0.8}
+                ];
+                stars.forEach(s => {
+                    ctx.beginPath();
+                    ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(255, 255, 255, ${s.a})`;
+                    ctx.shadowColor = '#ffffff';
+                    ctx.shadowBlur = 8;
+                    ctx.fill();
+                });
+                ctx.shadowBlur = 0;
+
+                // 4. Central Star Outer Aura
+                const starGlow = ctx.createRadialGradient(256, 256, 10, 256, 256, 180);
+                starGlow.addColorStop(0, 'rgba(255, 255, 255, 0.95)');
+                starGlow.addColorStop(0.3, 'rgba(186, 230, 253, 0.6)');
+                starGlow.addColorStop(0.7, 'rgba(125, 211, 252, 0.2)');
+                starGlow.addColorStop(1, 'rgba(255, 255, 255, 0)');
+                ctx.fillStyle = starGlow;
+                ctx.beginPath();
+                ctx.arc(256, 256, 180, 0, Math.PI * 2);
+                ctx.fill();
+
+                // 5. Faceted 8-Pointed White Star
+                const cx = 256, cy = 256;
+                function drawPoly(pts, color) {
+                    ctx.beginPath();
+                    ctx.moveTo(pts[0][0], pts[0][1]);
+                    for (let i = 1; i < pts.length; i++) {
+                        ctx.lineTo(pts[i][0], pts[i][1]);
+                    }
+                    ctx.closePath();
+                    ctx.fillStyle = color;
+                    ctx.fill();
+                }
+
+                // Main vertical & horizontal rays
+                drawPoly([[cx, 55], [cx, cy], [cx + 35, cy - 45]], '#f0f9ff');
+                drawPoly([[cx, 55], [cx, cy], [cx - 35, cy - 45]], '#ffffff');
+
+                drawPoly([[cx, 457], [cx, cy], [cx + 35, cy + 45]], '#bae6fd');
+                drawPoly([[cx, 457], [cx, cy], [cx - 35, cy + 45]], '#e0f2fe');
+
+                drawPoly([[457, cy], [cx, cy], [cx + 45, cy - 35]], '#e0f2fe');
+                drawPoly([[457, cy], [cx, cy], [cx + 45, cy + 35]], '#7dd3fc');
+
+                drawPoly([[55, cy], [cx, cy], [cx - 45, cy - 35]], '#ffffff');
+                drawPoly([[55, cy], [cx, cy], [cx - 45, cy + 35]], '#bae6fd');
+
+                // Diagonal rays
+                drawPoly([[375, 137], [cx, cy], [cx + 35, cy - 10]], '#f0f9ff');
+                drawPoly([[375, 137], [cx, cy], [cx + 10, cy - 35]], '#ffffff');
+
+                drawPoly([[375, 375], [cx, cy], [cx + 35, cy + 10]], '#7dd3fc');
+                drawPoly([[375, 375], [cx, cy], [cx + 10, cy + 35]], '#bae6fd');
+
+                drawPoly([[137, 375], [cx, cy], [cx - 35, cy + 10]], '#bae6fd');
+                drawPoly([[137, 375], [cx, cy], [cx - 10, cy + 35]], '#e0f2fe');
+
+                drawPoly([[137, 137], [cx, cy], [cx - 35, cy - 10]], '#ffffff');
+                drawPoly([[137, 137], [cx, cy], [cx - 10, cy - 35]], '#f0f9ff');
+
+                // Inner core diamond highlight
+                drawPoly([[cx, cy - 38], [cx + 38, cy], [cx, cy + 38], [cx - 38, cy]], '#ffffff');
+
+                const iconDataUrl = canvas.toDataURL('image/png');
+
+                // Apply image URL to Apple Touch Icon & Favicon
+                const appleIconTag = document.getElementById('dynamicAppleIcon');
+                if (appleIconTag) appleIconTag.href = iconDataUrl;
+
+                const faviconTag = document.getElementById('dynamicFavicon');
+                if (faviconTag) faviconTag.href = iconDataUrl;
+
+                // Web App Manifest
+                const manifestObj = {
+                    name: "Astra - Pigułki Wiedzy",
+                    short_name: "Astra",
+                    description: "Biała Gwiazda • Daily Wisdom",
+                    start_url: "./",
+                    display: "standalone",
+                    background_color: "#0b0f19",
+                    theme_color: "#0b0f19",
+                    icons: [
+                        {
+                            src: iconDataUrl,
+                            sizes: "512x512",
+                            type: "image/png",
+                            purpose: "any maskable"
+                        }
+                    ]
+                };
+
+                const manifestDataUri = 'data:application/manifest+json;charset=utf-8,' + encodeURIComponent(JSON.stringify(manifestObj));
+                const manifestTag = document.getElementById('dynamicManifest');
+                if (manifestTag) manifestTag.href = manifestDataUri;
+            } catch (err) {
+                console.error("Failed to generate dynamic app icons", err);
+            }
+        }
 
         // Local Storage Helpers
         function loadLocalStorage() {
