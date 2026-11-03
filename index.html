@@ -17,24 +17,121 @@
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
   <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          colors: {
-            star: {
-              50: '#f0f4ff',
-              100: '#e0e9ff',
-              400: '#818cf8',
-              500: '#6366f1',
-              600: '#4f46e5',
-              900: '#0b0f19',
-              950: '#05070c',
-            }
-          }
+        let countdownInterval = null;
+
+    function getNext8AM() {
+      const now = new Date();
+      const target = new Date(now);
+      target.setHours(8, 0, 0, 0);
+      if (now >= target) {
+        target.setDate(target.getDate() + 1);
+      }
+      return target;
+    }
+
+    function startCountdown() {
+      if (countdownInterval) clearInterval(countdownInterval);
+
+      function updateTimer() {
+        const now = new Date();
+        const target = getNext8AM();
+        const diff = target - now;
+
+        if (diff <= 0) {
+          setupDailyPill();
+          return;
+        }
+
+        const hours = Math.floor(diff / (1000 * 60 * 60)).toString().padStart(2, '0');
+        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2, '0');
+        const seconds = Math.floor((diff % (1000 * 60)) / 1000).toString().padStart(2, '0');
+
+        const timerEl = document.getElementById('countdownTimer');
+        if (timerEl) {
+          timerEl.innerText = `${hours}h ${minutes}m ${seconds}s`;
         }
       }
+
+      updateTimer();
+      countdownInterval = setInterval(updateTimer, 1000);
     }
+
+    function setupDailyPill() {
+      const todayStr = new Date().toISOString().split('T')[0];
+      const banner = document.getElementById('dailyBanner');
+      const dateFormatted = new Date().toLocaleDateString('pl-PL', { weekday: 'long', day: 'numeric', month: 'long' });
+
+      // Szukamy pigułki z dzisiejszą datą lub pierwszej nieprzeczytanej
+      let dailyPill = pills.find(p => p.date === todayStr);
+      if (!dailyPill) dailyPill = pills.find(p => !completedIds.includes(p.id));
+      if (!dailyPill) dailyPill = pills[0];
+
+      if (!dailyPill) return;
+
+      const isCompleted = completedIds.includes(dailyPill.id);
+
+      if (isCompleted) {
+        // --- STAN: PRZECZYTANE (Wyciszony baner + Odliczanie do 8:00) ---
+        banner.className = "relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-900 via-indigo-950 to-star-900 text-white p-6 shadow-xl border border-indigo-500/20";
+        banner.innerHTML = `
+          <div class="absolute -right-8 -bottom-8 w-40 h-40 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none"></div>
+
+          <div class="flex items-center justify-between mb-3">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/20 border border-emerald-400/30 text-emerald-300">
+              <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-400"></i> Dawka przyjęta
+            </span>
+            <span class="text-xs font-medium text-slate-400 capitalize">${dateFormatted}</span>
+          </div>
+
+          <h2 class="text-xl font-extrabold mb-1.5 leading-snug">Mózg doładowany na dziś! 🚀</h2>
+          <p class="text-xs text-slate-300 leading-relaxed mb-4">
+            Dzisiejsza wiedza została przyswojona. Daj neuronom czas na poukładanie informacji!
+          </p>
+
+          <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-3.5 flex items-center justify-between gap-3 mb-3">
+            <div class="flex items-center gap-3">
+              <div class="p-2 rounded-xl bg-indigo-500/20 border border-indigo-400/30 text-indigo-300">
+                <i data-lucide="clock" class="w-4 h-4"></i>
+              </div>
+              <div>
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Nowa pigułka za</p>
+                <p id="countdownTimer" class="text-sm font-black tracking-wider text-white font-mono">00h 00m 00s</p>
+              </div>
+            </div>
+            <span class="text-[10px] font-bold text-indigo-300 bg-indigo-500/20 px-2.5 py-1 rounded-lg border border-indigo-500/30">Jutro o 08:00</span>
+          </div>
+
+          <button onclick="openReader('${dailyPill.id}')" class="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-400 hover:text-white transition">
+            <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i> Przejrzyj dzisiejszą wiedzę ponownie
+          </button>
+        `;
+        startCountdown();
+      } else {
+        // --- STAN: DO PRZECZYTANIA (Aktywny baner) ---
+        if (countdownInterval) clearInterval(countdownInterval);
+        banner.className = "relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-600 via-indigo-700 to-star-900 text-white p-6 shadow-xl border border-indigo-400/30";
+        banner.innerHTML = `
+          <div class="absolute -right-8 -bottom-8 w-40 h-40 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
+
+          <div class="flex items-center justify-between mb-3">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-white/20 backdrop-blur-md border border-white/30 text-white">
+              <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> Dzisiejsza Pigułka
+            </span>
+            <span class="text-xs font-medium text-indigo-200 capitalize">${dateFormatted}</span>
+          </div>
+
+          <h2 class="text-xl font-extrabold mb-2 leading-snug">${dailyPill.title}</h2>
+          <p class="text-xs text-indigo-100/90 mb-4 line-clamp-2">${dailyPill.desc}</p>
+
+          <button onclick="openReader('${dailyPill.id}')" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-white text-indigo-950 font-bold text-sm shadow-lg hover:bg-indigo-50 active:scale-95 transition">
+            <i data-lucide="play" class="w-4 h-4 fill-indigo-950"></i> Otwórz dzisiejszą pigułkę
+          </button>
+        `;
+      }
+
+      lucide.createIcons();
+    }
+
   </script>
 
   <style>
