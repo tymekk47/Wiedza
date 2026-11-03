@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pl">
+<html lang="pl" class="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
@@ -57,7 +57,7 @@
       -webkit-backdrop-filter: blur(12px);
     }
 
-    /* Glow 효과 Biała Gwiazda */
+    /* Glow efekty */
     .star-glow {
       box-shadow: 0 0 25px rgba(255, 255, 255, 0.4), 0 0 50px rgba(99, 102, 241, 0.25);
     }
@@ -113,7 +113,7 @@
         </button>
 
         <button onclick="toggleDarkMode()" class="p-2 rounded-xl hover:bg-slate-200/60 dark:hover:bg-slate-800 transition text-slate-600 dark:text-slate-300">
-          <i data-lucide="moon" id="themeIcon" class="w-5 h-5"></i>
+          <i data-lucide="sun" id="themeIcon" class="w-5 h-5"></i>
         </button>
       </div>
 
@@ -165,13 +165,13 @@
     </div>
   </main>
 
-  <!-- MODAL CZYTNIKA SLAJDÓW (STORIES / PRESENTATION MODE) -->
+  <!-- MODAL CZYTNIKA SLAJDÓW -->
   <div id="readerModal" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-xl hidden flex-col justify-between p-4 md:p-6 transition-all duration-300">
     
-    <!-- TOP BAR (Progress Bars + Close) -->
+    <!-- TOP BAR -->
     <div class="w-full max-w-lg mx-auto">
       <div id="progressContainer" class="flex gap-1.5 mb-4">
-        <!-- Paski postępu slajdów wstrzykiwane dynamicznie -->
+        <!-- Paski postępu slajdów -->
       </div>
       
       <div class="flex items-center justify-between text-white">
@@ -205,7 +205,7 @@
       </div>
     </div>
 
-    <!-- BOTTOM CONTROLS (NAVIGATION BUTTONS) -->
+    <!-- BOTTOM CONTROLS -->
     <div class="w-full max-w-lg mx-auto flex items-center justify-between gap-4 pt-2">
       <button onclick="prevSlide()" id="prevBtn" class="flex-1 py-3.5 rounded-2xl bg-white/10 hover:bg-white/20 active:scale-95 text-white font-bold text-sm flex items-center justify-center gap-2 transition disabled:opacity-30">
         <i data-lucide="chevron-left" class="w-5 h-5"></i> Wstecz
@@ -217,7 +217,7 @@
 
   </div>
 
-  <!-- MODAL USTAWIEŃ (GEMINI API KEY) -->
+  <!-- MODAL USTAWIEŃ -->
   <div id="settingsModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
     <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-md w-full p-6 shadow-2xl border border-slate-200 dark:border-slate-800">
       <div class="flex items-center justify-between mb-4">
@@ -245,7 +245,6 @@
 
   <!-- BAZA DANYCH & LOGIKA APLIKACJI -->
   <script>
-    // --- BAZA PIGUŁEK WIEDZY (LUŹNY STYL SLAJADOWY) ---
     const defaultPills = [
       {
         id: 'sen-mozg',
@@ -366,7 +365,7 @@
           },
           {
             title: '📌 ZAPAMIĘTAJ NA DZIŚ',
-            content: 'Rutyna drastycznie skraca Twoje poczucie czasu. Żeby wydłużyć weekend czy wakacje – dostarczaj mózgowi jak najwięcej nowych wrażeń!'
+            content: 'Rutyna drastically skraca Twoje poczucie czasu. Żeby wydłużyć weekend czy wakacje – dostarczaj mózgowi jak najwięcej nowych wrażeń!'
           }
         ],
         quiz: {
@@ -389,6 +388,16 @@
 
     // INIT
     document.addEventListener('DOMContentLoaded', () => {
+      // Inicjalizacja motywu (Domyślnie DARK)
+      const savedTheme = localStorage.getItem('astra_theme') || 'dark';
+      if (savedTheme === 'dark') {
+        document.documentElement.classList.add('dark');
+        document.getElementById('themeIcon').setAttribute('data-lucide', 'sun');
+      } else {
+        document.documentElement.classList.remove('dark');
+        document.getElementById('themeIcon').setAttribute('data-lucide', 'moon');
+      }
+
       lucide.createIcons();
       generateAppIconCanvas();
       setupDailyPill();
@@ -403,7 +412,6 @@
       const canvas = document.getElementById('iconCanvas');
       const ctx = canvas.getContext('2d');
       
-      // Tło
       const grad = ctx.createLinearGradient(0, 0, 512, 512);
       grad.addColorStop(0, '#0b0f19');
       grad.addColorStop(0.5, '#1e1b4b');
@@ -411,7 +419,6 @@
       ctx.fillStyle = grad;
       ctx.fillRect(0, 0, 512, 512);
 
-      // Gwiazdy tła
       ctx.fillStyle = '#ffffff';
       for(let i=0; i<40; i++) {
         ctx.globalAlpha = Math.random() * 0.7;
@@ -420,14 +427,12 @@
         ctx.fill();
       }
 
-      // Gwiazda Główna
       ctx.globalAlpha = 1;
       ctx.shadowColor = '#818cf8';
       ctx.shadowBlur = 40;
       
       ctx.fillStyle = '#ffffff';
       ctx.beginPath();
-      // 4-ramienna fasetowana gwiazda
       const cx = 256, cy = 256, outer = 160, inner = 45;
       for (let i = 0; i < 8; i++) {
         let r = (i % 2 === 0) ? outer : inner;
@@ -440,7 +445,6 @@
       ctx.closePath();
       ctx.fill();
 
-      // Ustaw jako Apple Touch Icon
       const dataUrl = canvas.toDataURL('image/png');
       let link = document.querySelector("link[rel*='apple-touch-icon']") || document.createElement('link');
       link.type = 'image/png';
@@ -449,9 +453,7 @@
       document.getElementsByTagName('head')[0].appendChild(link);
     }
 
-    // USTAWIENIE PIGUŁKI DNIA
     function setupDailyPill() {
-      // Wybierz pigułkę na podstawie dzisiejszego dnia
       const dayOfYear = Math.floor((new Date() - new Date(new Date().getFullYear(), 0, 0)) / (1000 * 60 * 60 * 24));
       const dailyIndex = dayOfYear % pills.length;
       const dailyPill = pills[dailyIndex];
@@ -463,7 +465,6 @@
       }
     }
 
-    // RENDEROWANIE KART
     function renderPills() {
       const container = document.getElementById('pillsGrid');
       const searchVal = document.getElementById('searchInput').value.toLowerCase();
@@ -528,7 +529,6 @@
       lucide.createIcons();
     }
 
-    // --- LOGIKA CZYTNIKA SLAJDÓW ---
     function openReader(id) {
       currentPill = pills.find(p => p.id === id);
       if(!currentPill) return;
@@ -553,7 +553,6 @@
       const progressContainer = document.getElementById('progressContainer');
       const totalSlides = currentPill.slides.length + (currentPill.quiz ? 1 : 0);
 
-      // Renderowanie pasków postępu
       progressContainer.innerHTML = '';
       for(let i=0; i<totalSlides; i++) {
         const bar = document.createElement('div');
@@ -561,13 +560,11 @@
         progressContainer.appendChild(bar);
       }
 
-      // Animacja odświeżenia slajdu
       const card = document.getElementById('slideCard');
       card.classList.remove('slide-enter');
-      void card.offsetWidth; // trigger reflow
+      void card.offsetWidth;
       card.classList.add('slide-enter');
 
-      // Czy to slajd z treścią czy quiz?
       if(currentSlideIndex < currentPill.slides.length) {
         const slide = currentPill.slides[currentSlideIndex];
         container.innerHTML = `
@@ -577,7 +574,6 @@
           </div>
         `;
       } else {
-        // Slajd z Quizem!
         const q = currentPill.quiz;
         container.innerHTML = `
           <div class="inline-block px-3 py-1 rounded-full bg-indigo-500/20 border border-indigo-400/30 text-indigo-300 font-bold text-xs mb-2">
@@ -594,7 +590,6 @@
         `;
       }
 
-      // Update stopki
       document.getElementById('slideCounter').innerText = `Slajd ${currentSlideIndex + 1} z ${totalSlides}`;
       document.getElementById('prevBtn').disabled = currentSlideIndex === 0;
 
@@ -614,7 +609,6 @@
         currentSlideIndex++;
         renderSlide();
       } else {
-        // Ukończenie pigułki
         if(!completedIds.includes(currentPill.id)) {
           completedIds.push(currentPill.id);
           localStorage.setItem('astra_completed', JSON.stringify(completedIds));
@@ -648,7 +642,6 @@
       }
     }
 
-    // STEROWANIE KLAWIATURĄ
     function setupKeyboardListeners() {
       document.addEventListener('keydown', (e) => {
         if(document.getElementById('readerModal').classList.contains('hidden')) return;
@@ -658,7 +651,6 @@
       });
     }
 
-    // ZAKŁADKI (BOOKMARKS)
     function toggleBookmark(id) {
       if(savedIds.includes(id)) {
         savedIds = savedIds.filter(i => i !== id);
@@ -684,7 +676,6 @@
       }
     }
 
-    // FILTROWANIE
     function filterCategory(cat) {
       currentFilter = cat;
       document.querySelectorAll('.cat-btn').forEach(btn => {
@@ -699,15 +690,15 @@
       renderPills();
     }
 
-    // DARK MODE TOGGLE
+    // PRZEŁĄCZANIE MOTYWU Z ZAPISYWANIEM W LOCALSTORAGE
     function toggleDarkMode() {
       document.documentElement.classList.toggle('dark');
       const isDark = document.documentElement.classList.contains('dark');
       document.getElementById('themeIcon').setAttribute('data-lucide', isDark ? 'sun' : 'moon');
+      localStorage.setItem('astra_theme', isDark ? 'dark' : 'light');
       lucide.createIcons();
     }
 
-    // USTAWIENIA GEMINI API
     function openSettingsModal() {
       document.getElementById('geminiApiKeyInput').value = localStorage.getItem('astra_gemini_key') || '';
       document.getElementById('settingsModal').classList.remove('hidden');
