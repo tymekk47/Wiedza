@@ -1,0 +1,55 @@
+name: Autogenerowanie Pigułki
+
+on:
+  schedule:
+    - cron: '0 4 * * *' # Odpala się automatycznie codziennie o 04:00 rano
+  workflow_dispatch: # Pozwala ręcznie odpalić test w zakładce Actions
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Pobranie kodu repozytorium
+        uses: actions/checkout@v3
+
+      - name: Konfiguracja Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Generowanie nowej pigułki wiedzy
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          node -e '
+          const fs = require("fs");
+          async function generate() {
+            const today = new Date().toISOString().split("T")[0];
+            const prompt = `Wygeneruj 1 pigułkę wiedzy o świecie, biologii, psychologii lub kosmosie w formacie czystego JSON. Pisz bardzo luźnym, młodzieżowym i ciekawym językiem, używając emotek. Struktura JSON: {"id": "pill-${Date.now()}", "title": "Ciekawy Tytuł", "desc": "Krótki opis", "category": "ciało", "date": "${today}", "timeToRead": "3 min", "icon": "sparkles", "slides": [{"title": "Nagłówek", "content": "Treść slajdu..."}], "quiz": {"question": "Pytanie?", "options": ["Opcja 1", "Opcja 2", "Opcja 3"], "correct": 0}}. Zwróć WYŁĄCZNIE czysty kod JSON bez znaczników markdown.`;
+            
+            const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+            });
+            
+            const data = await res.json();
+            let rawText = data.candidates[0].content.parts[0].text.replace(/```json|```/g, "").trim();
+            const newPill = JSON.parse(rawText);
+
+            let html = fs.readFileSync("index.html", "utf8");
+            html = html.replace("const defaultPills = [", "const defaultPills = [\n      " + JSON.stringify(newPill) + ",");
+            fs.writeFileSync("index.html", html);
+          }
+          generate();
+          '
+
+      - name: Zapisanie zmian w pliku index.html
+        run: |
+          git config --global user.name "Astra Bot"
+          git config --global user.email "bot@astra.app"
+          git add index.html
+          git commit -m "Automatyczna pigułka wiedzy na dzień: $(date +'%Y-%m-%d')" || exit 0
+          git push
