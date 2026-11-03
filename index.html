@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pigułki Wiedzy – Codzienna Porcja Mądrości</title>
+    <title>Astra • Pigułki Wiedzy – Biała Gwiazda</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -56,11 +56,18 @@
             -webkit-backdrop-filter: blur(12px);
         }
         @keyframes pulse-subtle {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.03); }
+            0%, 100% { transform: scale(1); opacity: 0.95; }
+            50% { transform: scale(1.05); opacity: 1; }
+        }
+        @keyframes star-twinkle {
+            0%, 100% { opacity: 0.3; transform: scale(0.8); }
+            50% { opacity: 1; transform: scale(1.2); }
         }
         .animate-pulse-subtle {
             animation: pulse-subtle 3s ease-in-out infinite;
+        }
+        .animate-twinkle {
+            animation: star-twinkle 2.5s ease-in-out infinite;
         }
     </style>
 </head>
@@ -69,13 +76,55 @@
     <!-- Top Navigation Header -->
     <header class="sticky top-0 z-30 glass-header bg-white/80 dark:bg-slate-900/80 border-b border-slate-200/60 dark:border-slate-800/80 transition-colors">
         <div class="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
-            <div class="flex items-center gap-2 cursor-pointer" onclick="filterCategory('all')">
-                <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-500 flex items-center justify-center text-white shadow-md shadow-brand-500/20">
-                    <i data-lucide="pill" class="w-5 h-5"></i>
+            
+            <!-- Logo & Brand Title with White Star (Biała Gwiazda) Emblem -->
+            <div class="flex items-center gap-3 cursor-pointer" onclick="filterCategory('all')">
+                <div class="relative group">
+                    <!-- Glow Aura -->
+                    <div class="absolute -inset-1 bg-gradient-to-r from-sky-400 via-indigo-300 to-fuchsia-400 rounded-2xl blur-sm opacity-75 group-hover:opacity-100 transition duration-300 animate-pulse-subtle"></div>
+                    
+                    <!-- Emblem Box -->
+                    <div class="relative w-10 h-10 rounded-xl bg-gradient-to-tr from-slate-950 via-indigo-950 to-slate-900 border border-white/30 flex items-center justify-center text-white shadow-lg overflow-hidden">
+                        <!-- Micro Stars Background -->
+                        <svg class="absolute inset-0 w-full h-full opacity-40" viewBox="0 0 100 100" fill="none">
+                            <circle cx="15" cy="20" r="1.2" fill="white" class="animate-twinkle"/>
+                            <circle cx="85" cy="15" r="1.5" fill="white"/>
+                            <circle cx="75" cy="80" r="1" fill="white" class="animate-twinkle" style="animation-delay: 1s;"/>
+                            <circle cx="20" cy="75" r="1.2" fill="white"/>
+                        </svg>
+                        
+                        <!-- Faceted White Star SVG -->
+                        <svg class="w-6 h-6 text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.95)] transform group-hover:rotate-12 transition-transform duration-300" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <!-- Main 8-pointed star rays -->
+                            <path d="M12 2L14.2 9.2L21.4 11.4L14.2 13.6L12 20.8L9.8 13.6L2.6 11.4L9.8 9.2L12 2Z" fill="url(#star-white-grad)"/>
+                            <path d="M12 5.5L13.2 10.2L17.9 11.4L13.2 12.6L12 17.3L10.8 12.6L6.1 11.4L10.8 10.2L12 5.5Z" fill="#FFFFFF"/>
+                            <!-- Facet highlights for 3D depth -->
+                            <polygon points="12,2 12,11.4 14.2,9.2" fill="#E0F2FE" fill-opacity="0.9"/>
+                            <polygon points="12,2 12,11.4 9.8,9.2" fill="#FFFFFF"/>
+                            <polygon points="21.4,11.4 12,11.4 14.2,13.6" fill="#BAE6FD" fill-opacity="0.7"/>
+                            <polygon points="12,20.8 12,11.4 14.2,13.6" fill="#7DD3FC" fill-opacity="0.8"/>
+                            <polygon points="12,20.8 12,11.4 9.8,13.6" fill="#F0F9FF"/>
+                            <polygon points="2.6,11.4 12,11.4 9.8,9.2" fill="#38BDF8" fill-opacity="0.6"/>
+                            <defs>
+                                <linearGradient id="star-white-grad" x1="2.6" y1="2" x2="21.4" y2="20.8" gradientUnits="userSpaceOnUse">
+                                    <stop stop-color="#FFFFFF"/>
+                                    <stop offset="0.5" stop-color="#F0F9FF"/>
+                                    <stop offset="1" stop-color="#E0F2FE"/>
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                    </div>
                 </div>
+
                 <div>
-                    <h1 class="text-lg font-bold leading-none tracking-tight bg-gradient-to-r from-slate-900 via-brand-700 to-slate-800 dark:from-white dark:via-sky-300 dark:to-slate-200 bg-clip-text text-transparent">Pigułki Wiedzy</h1>
-                    <p class="text-[10px] text-slate-500 dark:text-slate-400 font-medium">Bite-sized daily wisdom</p>
+                    <div class="flex items-center gap-1.5">
+                        <h1 class="text-lg font-bold leading-none tracking-tight bg-gradient-to-r from-slate-900 via-brand-700 to-indigo-900 dark:from-white dark:via-sky-200 dark:to-slate-200 bg-clip-text text-transparent">
+                            Astra <span class="text-slate-400 font-light">|</span> Pigułki Wiedzy
+                        </h1>
+                    </div>
+                    <p class="text-[10px] text-slate-500 dark:text-slate-400 font-medium flex items-center gap-1 mt-0.5">
+                        <span class="inline-block w-1.5 h-1.5 rounded-full bg-sky-400"></span> Biała Gwiazda • Daily Wisdom
+                    </p>
                 </div>
             </div>
 
@@ -95,7 +144,7 @@
 
                 <!-- Add New Pill Modal Trigger -->
                 <button onclick="openAddModal()" class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-semibold shadow-sm transition">
-                    <i data-lucide="plus" class="w-4 h-4"></i>
+                    <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
                     Dodaj
                 </button>
             </div>
@@ -105,20 +154,30 @@
     <!-- Main Container -->
     <main class="flex-grow max-w-4xl w-full mx-auto px-4 py-6 space-y-6">
 
-        <!-- Welcome Banner & Quick Stats -->
-        <section class="p-5 rounded-2xl bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white shadow-xl relative overflow-hidden">
-            <!-- Decorative Background Blobs -->
-            <div class="absolute -right-8 -top-8 w-40 h-40 bg-brand-500/20 rounded-full blur-2xl"></div>
-            <div class="absolute right-20 -bottom-10 w-32 h-32 bg-indigo-500/20 rounded-full blur-xl"></div>
+        <!-- Welcome Banner with Cosmic White Star Theme -->
+        <section class="p-5 sm:p-6 rounded-2xl bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-900 text-white shadow-xl relative overflow-hidden border border-white/10">
+            <!-- Background Constellation & Nebulae -->
+            <div class="absolute -right-8 -top-8 w-44 h-44 bg-sky-500/20 rounded-full blur-3xl"></div>
+            <div class="absolute right-24 -bottom-10 w-36 h-36 bg-purple-500/20 rounded-full blur-2xl"></div>
+
+            <!-- Floating White Stars Accents -->
+            <svg class="absolute inset-0 w-full h-full pointer-events-none opacity-30" viewBox="0 0 400 150" fill="none">
+                <path d="M350 20L352 25L357 27L352 29L350 34L348 29L343 27L348 25L350 20Z" fill="white" class="animate-twinkle"/>
+                <path d="M280 110L281.5 113.5L285 115L281.5 116.5L280 120L278.5 116.5L275 115L278.5 113.5L280 110Z" fill="white" class="animate-twinkle" style="animation-delay: 0.7s;"/>
+                <circle cx="50" cy="30" r="1.5" fill="white"/>
+                <circle cx="120" cy="120" r="1.2" fill="white"/>
+            </svg>
 
             <div class="relative z-10 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
-                    <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white/10 backdrop-blur-md text-sky-300 text-xs font-medium mb-2 border border-white/10">
-                        <i data-lucide="sparkles" class="w-3 h-3"></i>
-                        Pigułka na dziś gotowa
+                    <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white/10 backdrop-blur-md text-sky-200 text-xs font-medium mb-2 border border-white/15">
+                        <svg class="w-3.5 h-3.5 text-white" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2L14.2 9.2L21.4 11.4L14.2 13.6L12 20.8L9.8 13.6L2.6 11.4L9.8 9.2L12 2Z"/>
+                        </svg>
+                        Odkrywaj mądrość pod Białą Gwiazdą
                     </div>
                     <h2 class="text-xl sm:text-2xl font-bold tracking-tight">Czego pragniesz się dzisiaj dowiedzieć?</h2>
-                    <p class="text-xs sm:text-sm text-slate-300 mt-1 max-w-md">Krótkie, 5-minutowe opracowania skomplikowanych tematów o świecie, mózgu i społeczeństwie.</p>
+                    <p class="text-xs sm:text-sm text-slate-300 mt-1 max-w-md leading-relaxed">Krótkie, 5-minutowe pigułki wiedzy o ludzkim ciele, psychologii, świecie i kosmosie.</p>
                 </div>
 
                 <!-- Stats summary chips -->
