@@ -1,1208 +1,728 @@
 <!DOCTYPE html>
-<html lang="pl" class="h-full">
+<html lang="pl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Astra • Pigułki Wiedzy – Biała Gwiazda</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Astra | Pigułki Wiedzy</title>
+  
+  <!-- PWA & Mobile Meta Tags -->
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Astra" />
+  <meta name="theme-color" content="#0b0f19" />
+  
+  <!-- Tailwind CSS & Lucide Icons -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
-    <!-- Mobile & PWA Web App Meta Tags -->
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Astra">
-    <meta name="theme-color" content="#0b0f19">
-
-    <!-- Favicon, Apple Touch Icon & Web App Manifest -->
-    <link rel="icon" id="dynamicFavicon" type="image/png" href="">
-    <link rel="apple-touch-icon" id="dynamicAppleIcon" sizes="512x512" href="">
-    <link rel="manifest" id="dynamicManifest" href="">
-
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        brand: {
-                            50: '#f0f9ff',
-                            100: '#e0f2fe',
-                            500: '#0284c7',
-                            600: '#0369a1',
-                            700: '#075985',
-                        }
-                    },
-                    fontFamily: {
-                        sans: ['-apple-system', 'BlinkMacSystemFont', 'SF Pro Text', 'Inter', 'Segoe UI', 'Roboto', 'sans-serif'],
-                    }
-                }
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            star: {
+              50: '#f0f4ff',
+              100: '#e0e9ff',
+              400: '#818cf8',
+              500: '#6366f1',
+              600: '#4f46e5',
+              900: '#0b0f19',
+              950: '#05070c',
             }
+          }
         }
-    </script>
-    <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <!-- Canvas Confetti for Quiz celebration -->
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-    <style>
-        /* Custom scrollbar & iOS smooth scroll */
-        ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: rgba(156, 163, 175, 0.4);
-            border-radius: 9999px;
-        }
-        .no-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
-        .no-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
-        .glass-header {
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-        }
-        @keyframes pulse-subtle {
-            0%, 100% { transform: scale(1); opacity: 0.95; }
-            50% { transform: scale(1.05); opacity: 1; }
-        }
-        @keyframes star-twinkle {
-            0%, 100% { opacity: 0.3; transform: scale(0.8); }
-            50% { opacity: 1; transform: scale(1.2); }
-        }
-        .animate-pulse-subtle {
-            animation: pulse-subtle 3s ease-in-out infinite;
-        }
-        .animate-twinkle {
-            animation: star-twinkle 2.5s ease-in-out infinite;
-        }
-    </style>
+      }
+    }
+  </script>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+    
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+
+    .glass {
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+    .dark .glass {
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+
+    /* Glow 효과 Biała Gwiazda */
+    .star-glow {
+      box-shadow: 0 0 25px rgba(255, 255, 255, 0.4), 0 0 50px rgba(99, 102, 241, 0.25);
+    }
+
+    /* Animacja slajdów */
+    .slide-enter {
+      animation: slideIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(20px) scale(0.98); }
+      to { opacity: 1; transform: translateX(0) scale(1); }
+    }
+
+    /* Custom scrollbar */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(156, 163, 175, 0.3); border-radius: 10px; }
+  </style>
 </head>
-<body class="bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-100 min-h-full flex flex-col font-sans transition-colors duration-200 selection:bg-brand-500 selection:text-white">
+<body class="bg-slate-50 dark:bg-star-900 text-slate-900 dark:text-slate-100 min-h-screen transition-colors duration-300 pb-20">
 
-    <!-- Top Navigation Header -->
-    <header class="sticky top-0 z-30 glass-header bg-white/80 dark:bg-slate-900/80 border-b border-slate-200/60 dark:border-slate-800/80 transition-colors">
-        <div class="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
-            
-            <!-- Logo & Brand Title with White Star (Biała Gwiazda) Emblem -->
-            <div class="flex items-center gap-3 cursor-pointer" onclick="filterCategory('all')">
-                <div class="relative group">
-                    <!-- Glow Aura -->
-                    <div class="absolute -inset-1 bg-gradient-to-r from-sky-400 via-indigo-300 to-fuchsia-400 rounded-2xl blur-sm opacity-75 group-hover:opacity-100 transition duration-300 animate-pulse-subtle"></div>
-                    
-                    <!-- Emblem Box -->
-                    <div class="relative w-10 h-10 rounded-xl bg-gradient-to-tr from-slate-950 via-indigo-950 to-slate-900 border border-white/30 flex items-center justify-center text-white shadow-lg overflow-hidden">
-                        <!-- Micro Stars Background -->
-                        <svg class="absolute inset-0 w-full h-full opacity-40" viewBox="0 0 100 100" fill="none">
-                            <circle cx="15" cy="20" r="1.2" fill="white" class="animate-twinkle"/>
-                            <circle cx="85" cy="15" r="1.5" fill="white"/>
-                            <circle cx="75" cy="80" r="1" fill="white" class="animate-twinkle" style="animation-delay: 1s;"/>
-                            <circle cx="20" cy="75" r="1.2" fill="white"/>
-                        </svg>
-                        
-                        <!-- Faceted White Star SVG -->
-                        <svg class="w-6 h-6 text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.95)] transform group-hover:rotate-12 transition-transform duration-300" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <!-- Main 8-pointed star rays -->
-                            <path d="M12 2L14.2 9.2L21.4 11.4L14.2 13.6L12 20.8L9.8 13.6L2.6 11.4L9.8 9.2L12 2Z" fill="url(#star-white-grad)"/>
-                            <path d="M12 5.5L13.2 10.2L17.9 11.4L13.2 12.6L12 17.3L10.8 12.6L6.1 11.4L10.8 10.2L12 5.5Z" fill="#FFFFFF"/>
-                            <!-- Facet highlights for 3D depth -->
-                            <polygon points="12,2 12,11.4 14.2,9.2" fill="#E0F2FE" fill-opacity="0.9"/>
-                            <polygon points="12,2 12,11.4 9.8,9.2" fill="#FFFFFF"/>
-                            <polygon points="21.4,11.4 12,11.4 14.2,13.6" fill="#BAE6FD" fill-opacity="0.7"/>
-                            <polygon points="12,20.8 12,11.4 14.2,13.6" fill="#7DD3FC" fill-opacity="0.8"/>
-                            <polygon points="12,20.8 12,11.4 9.8,13.6" fill="#F0F9FF"/>
-                            <polygon points="2.6,11.4 12,11.4 9.8,9.2" fill="#38BDF8" fill-opacity="0.6"/>
-                            <defs>
-                                <linearGradient id="star-white-grad" x1="2.6" y1="2" x2="21.4" y2="20.8" gradientUnits="userSpaceOnUse">
-                                    <stop stop-color="#FFFFFF"/>
-                                    <stop offset="0.5" stop-color="#F0F9FF"/>
-                                    <stop offset="1" stop-color="#E0F2FE"/>
-                                </linearGradient>
-                            </defs>
-                        </svg>
-                    </div>
-                </div>
+  <!-- DYNAMIC ICON GENERATOR (Apple Touch Icon & Favicon) -->
+  <canvas id="iconCanvas" width="512" height="512" class="hidden"></canvas>
 
-                <div>
-                    <div class="flex items-center gap-1.5">
-                        <h1 class="text-lg font-bold leading-none tracking-tight bg-gradient-to-r from-slate-900 via-brand-700 to-indigo-900 dark:from-white dark:via-sky-200 dark:to-slate-200 bg-clip-text text-transparent">
-                            Astra <span class="text-slate-400 font-light">|</span> Pigułki Wiedzy
-                        </h1>
-                    </div>
-                    <p class="text-[10px] text-slate-500 dark:text-slate-400 font-medium flex items-center gap-1 mt-0.5">
-                        <span class="inline-block w-1.5 h-1.5 rounded-full bg-sky-400"></span> Biała Gwiazda • Daily Wisdom
-                    </p>
-                </div>
-            </div>
-
-            <!-- Header Actions -->
-            <div class="flex items-center gap-2">
-                <!-- Streak Badge -->
-                <div id="streakBadge" class="flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-400 text-xs font-bold" title="Twoja seria codziennej nauki">
-                    <i data-lucide="flame" class="w-3.5 h-3.5 fill-amber-500 text-amber-500"></i>
-                    <span id="streakCount">1</span>d
-                </div>
-
-                <!-- Dark Mode Toggle -->
-                <button id="themeToggleBtn" onclick="toggleTheme()" class="p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition" aria-label="Przełącz motyw">
-                    <i data-lucide="moon" id="themeIconMoon" class="w-5 h-5 hidden"></i>
-                    <i data-lucide="sun" id="themeIconSun" class="w-5 h-5 hidden"></i>
-                </button>
-
-                <!-- Add New Pill Modal Trigger -->
-                <button onclick="openAddModal()" class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-semibold shadow-sm transition">
-                    <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
-                    Dodaj
-                </button>
-            </div>
+  <!-- HEADER -->
+  <header class="sticky top-0 z-30 glass border-b border-slate-200/80 dark:border-slate-800/80 px-4 py-3">
+    <div class="max-w-2xl mx-auto flex items-center justify-between">
+      
+      <!-- LOGO BIAŁA GWIAZDA -->
+      <div class="flex items-center gap-3 cursor-pointer" onclick="filterCategory('all')">
+        <div class="relative w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-900 via-star-900 to-black p-0.5 shadow-lg flex items-center justify-center overflow-hidden border border-white/20">
+          <svg class="w-6 h-6 text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.8)]" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z"/>
+          </svg>
         </div>
-    </header>
+        <div>
+          <h1 class="font-extrabold text-lg tracking-tight leading-none bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-700 dark:from-white dark:via-indigo-200 dark:to-slate-300 bg-clip-text text-transparent">
+            ASTRA
+          </h1>
+          <p class="text-[10px] font-semibold text-indigo-600 dark:text-indigo-400 tracking-wider uppercase">Pigułki Wiedzy</p>
+        </div>
+      </div>
 
-    <!-- Main Container -->
-    <main class="flex-grow max-w-4xl w-full mx-auto px-4 py-6 space-y-6">
+      <!-- PASEK AKCJI (Streak, Gemini API Key, Dark Mode) -->
+      <div class="flex items-center gap-2">
+        <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 font-bold text-xs border border-amber-500/20">
+          <i data-lucide="flame" class="w-4 h-4 fill-amber-500"></i>
+          <span id="streakCount">1</span>
+        </div>
 
-        <!-- Welcome Banner with Cosmic White Star Theme -->
-        <section class="p-5 sm:p-6 rounded-2xl bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-900 text-white shadow-xl relative overflow-hidden border border-white/10">
-            <!-- Background Constellation & Nebulae -->
-            <div class="absolute -right-8 -top-8 w-44 h-44 bg-sky-500/20 rounded-full blur-3xl"></div>
-            <div class="absolute right-24 -bottom-10 w-36 h-36 bg-purple-500/20 rounded-full blur-2xl"></div>
+        <button onclick="openSettingsModal()" class="p-2 rounded-xl hover:bg-slate-200/60 dark:hover:bg-slate-800 transition text-slate-600 dark:text-slate-300" title="Ustawienia AI">
+          <i data-lucide="key" class="w-5 h-5"></i>
+        </button>
 
-            <!-- Floating White Stars Accents -->
-            <svg class="absolute inset-0 w-full h-full pointer-events-none opacity-30" viewBox="0 0 400 150" fill="none">
-                <path d="M350 20L352 25L357 27L352 29L350 34L348 29L343 27L348 25L350 20Z" fill="white" class="animate-twinkle"/>
-                <path d="M280 110L281.5 113.5L285 115L281.5 116.5L280 120L278.5 116.5L275 115L278.5 113.5L280 110Z" fill="white" class="animate-twinkle" style="animation-delay: 0.7s;"/>
-                <circle cx="50" cy="30" r="1.5" fill="white"/>
-                <circle cx="120" cy="120" r="1.2" fill="white"/>
-            </svg>
+        <button onclick="toggleDarkMode()" class="p-2 rounded-xl hover:bg-slate-200/60 dark:hover:bg-slate-800 transition text-slate-600 dark:text-slate-300">
+          <i data-lucide="moon" id="themeIcon" class="w-5 h-5"></i>
+        </button>
+      </div>
 
-            <div class="relative z-10 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                <div>
-                    <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white/10 backdrop-blur-md text-sky-200 text-xs font-medium mb-2 border border-white/15">
-                        <svg class="w-3.5 h-3.5 text-white" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M12 2L14.2 9.2L21.4 11.4L14.2 13.6L12 20.8L9.8 13.6L2.6 11.4L9.8 9.2L12 2Z"/>
-                        </svg>
-                        Odkrywaj mądrość pod Białą Gwiazdą
-                    </div>
-                    <h2 class="text-xl sm:text-2xl font-bold tracking-tight">Czego pragniesz się dzisiaj dowiedzieć?</h2>
-                    <p class="text-xs sm:text-sm text-slate-300 mt-1 max-w-md leading-relaxed">Krótkie, 5-minutowe pigułki wiedzy o ludzkim ciele, psychologii, świecie i kosmosie.</p>
-                </div>
+    </div>
+  </header>
 
-                <!-- Stats summary chips -->
-                <div class="flex sm:flex-col gap-3 w-full sm:w-auto border-t sm:border-t-0 sm:border-l border-white/10 pt-3 sm:pt-0 sm:pl-5">
-                    <div class="flex items-center gap-2">
-                        <div class="p-1.5 rounded-lg bg-emerald-500/20 text-emerald-400">
-                            <i data-lucide="check-circle-2" class="w-4 h-4"></i>
-                        </div>
-                        <div>
-                            <div class="text-xs text-slate-400">Przeczytano</div>
-                            <div class="text-sm font-bold" id="completedCountStat">0 pigułek</div>
-                        </div>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <div class="p-1.5 rounded-lg bg-sky-500/20 text-sky-400">
-                            <i data-lucide="bookmark" class="w-4 h-4"></i>
-                        </div>
-                        <div>
-                            <div class="text-xs text-slate-400">Zapisane</div>
-                            <div class="text-sm font-bold" id="savedCountStat">0 pigułek</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
+  <!-- BANNER PIGUŁKI DNIA -->
+  <section class="max-w-2xl mx-auto p-4">
+    <div id="dailyBanner" class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-600 via-indigo-700 to-star-900 text-white p-6 shadow-xl border border-indigo-400/30">
+      <div class="absolute -right-8 -bottom-8 w-40 h-40 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
+      
+      <div class="flex items-center justify-between mb-3">
+        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-white/20 backdrop-blur-md border border-white/30 text-white">
+          <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> Dzisiejsza Pigułka
+        </span>
+        <span id="currentDateText" class="text-xs font-medium text-indigo-200"></span>
+      </div>
 
-        <!-- Search Bar & Filters -->
-        <section class="space-y-4">
-            <!-- Search Input -->
-            <div class="relative">
-                <i data-lucide="search" class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                <input 
-                    type="text" 
-                    id="searchInput" 
-                    oninput="handleSearch()"
-                    placeholder="Szukaj zagadnienia np. sen, apetyt, państwa..." 
-                    class="w-full pl-10 pr-10 py-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 shadow-sm transition"
-                >
-                <button id="clearSearchBtn" onclick="clearSearch()" class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
-                    <i data-lucide="x" class="w-4 h-4"></i>
-                </button>
-            </div>
+      <h2 id="dailyTitle" class="text-xl font-extrabold mb-2 leading-snug">Ładowanie dzisiejszej wiedzy...</h2>
+      <p id="dailyDesc" class="text-xs text-indigo-100/90 mb-4 line-clamp-2">Chwila, szykujemy dla Ciebie coś ciekawego na dzisiaj...</p>
 
-            <!-- Category Filter Chips -->
-            <div class="flex items-center gap-2 overflow-x-auto no-scrollbar py-1">
-                <button onclick="filterCategory('all')" id="catBtn-all" class="cat-btn flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-sm">
-                    <i data-lucide="grid" class="w-3.5 h-3.5"></i> Wszystkie
-                </button>
-                <button onclick="filterCategory('Biologia & Ciało')" id="catBtn-Biologia & Ciało" class="cat-btn flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800">
-                    <i data-lucide="heart-pulse" class="w-3.5 h-3.5 text-rose-500"></i> Biologia & Ciało
-                </button>
-                <button onclick="filterCategory('Psychologia')" id="catBtn-Psychologia" class="cat-btn flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800">
-                    <i data-lucide="brain" class="w-3.5 h-3.5 text-purple-500"></i> Psychologia
-                </button>
-                <button onclick="filterCategory('Świat & Polityka')" id="catBtn-Świat & Polityka" class="cat-btn flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800">
-                    <i data-lucide="globe" class="w-3.5 h-3.5 text-emerald-500"></i> Świat & Polityka
-                </button>
-                <button onclick="filterCategory('Nauka & Kosmos')" id="catBtn-Nauka & Kosmos" class="cat-btn flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800">
-                    <i data-lucide="atom" class="w-3.5 h-3.5 text-sky-500"></i> Nauka & Kosmos
-                </button>
-                <button onclick="filterCategory('saved')" id="catBtn-saved" class="cat-btn flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800">
-                    <i data-lucide="bookmark" class="w-3.5 h-3.5 text-amber-500"></i> Zapisane
-                </button>
-                <button onclick="filterCategory('completed')" id="catBtn-completed" class="cat-btn flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800">
-                    <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-500"></i> Przeczytane
-                </button>
-            </div>
-        </section>
+      <button id="dailyBtn" onclick="" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-white text-indigo-950 font-bold text-sm shadow-lg hover:bg-indigo-50 active:scale-95 transition">
+        <i data-lucide="play" class="w-4 h-4 fill-indigo-950"></i> Otwórz dzisiejszą pigułkę
+      </button>
+    </div>
+  </section>
 
-        <!-- Pills Grid List -->
-        <section>
-            <div id="pillsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <!-- Cards will be dynamically rendered here -->
-            </div>
+  <!-- SZUKAJ I KATEGORIE -->
+  <section class="max-w-2xl mx-auto px-4 mb-4">
+    <div class="relative mb-3">
+      <i data-lucide="search" class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"></i>
+      <input type="text" id="searchInput" oninput="handleSearch()" placeholder="Szukaj tematu (np. sen, mózg, kosmos)..." class="w-full pl-10 pr-4 py-2.5 rounded-2xl bg-white dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/80 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition shadow-sm" />
+    </div>
 
-            <!-- Empty State -->
-            <div id="emptyState" class="hidden text-center py-12 space-y-3">
-                <div class="w-12 h-12 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center mx-auto text-slate-400">
-                    <i data-lucide="inbox" class="w-6 h-6"></i>
-                </div>
-                <h3 class="text-base font-semibold">Brak pigułek w tej kategorii</h3>
-                <p class="text-xs text-slate-500 dark:text-slate-400">Zmień filtr lub wyszukaj coś innego.</p>
-            </div>
-        </section>
-    </main>
+    <!-- CHIPSY KATEGORII -->
+    <div class="flex gap-2 overflow-x-auto pb-2 no-scrollbar text-xs font-semibold">
+      <button onclick="filterCategory('all')" class="cat-btn active px-4 py-2 rounded-xl bg-indigo-600 text-white whitespace-nowrap shadow-sm transition">Wszystkie</button>
+      <button onclick="filterCategory('ciało')" class="cat-btn px-4 py-2 rounded-xl bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 whitespace-nowrap shadow-sm transition">🧠 Ciało i Mózg</button>
+      <button onclick="filterCategory('świat')" class="cat-btn px-4 py-2 rounded-xl bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 whitespace-nowrap shadow-sm transition">🌍 Świat i Życie</button>
+      <button onclick="filterCategory('kosmos')" class="cat-btn px-4 py-2 rounded-xl bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 whitespace-nowrap shadow-sm transition">🚀 Nauka i Kosmos</button>
+      <button onclick="filterCategory('saved')" class="cat-btn px-4 py-2 rounded-xl bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 whitespace-nowrap shadow-sm transition">⭐ Zapisane</button>
+    </div>
+  </section>
 
-    <!-- Floating Action Button for Mobile Add Pill -->
-    <button onclick="openAddModal()" class="sm:hidden fixed bottom-5 right-5 z-20 w-12 h-12 rounded-full bg-brand-600 text-white shadow-lg flex items-center justify-center active:scale-95 transition" aria-label="Dodaj nową pigułkę">
-        <i data-lucide="plus" class="w-6 h-6"></i>
-    </button>
+  <!-- LISTA PIGUŁEK -->
+  <main class="max-w-2xl mx-auto px-4">
+    <div id="pillsGrid" class="grid grid-cols-1 gap-3">
+      <!-- Wstrzykiwane przez JS -->
+    </div>
+  </main>
 
-    <!-- Reading Modal / Fullscreen Sheet -->
-    <div id="readerModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex justify-center items-end sm:items-center p-0 sm:p-4 transition-opacity">
+  <!-- MODAL CZYTNIKA SLAJDÓW (STORIES / PRESENTATION MODE) -->
+  <div id="readerModal" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-xl hidden flex-col justify-between p-4 md:p-6 transition-all duration-300">
+    
+    <!-- TOP BAR (Progress Bars + Close) -->
+    <div class="w-full max-w-lg mx-auto">
+      <div id="progressContainer" class="flex gap-1.5 mb-4">
+        <!-- Paski postępu slajdów wstrzykiwane dynamicznie -->
+      </div>
+      
+      <div class="flex items-center justify-between text-white">
+        <span id="readerCategory" class="text-xs font-bold uppercase tracking-wider text-indigo-400">Kategoria</span>
+        <div class="flex items-center gap-2">
+          <button onclick="toggleBookmarkCurrent()" class="p-2 rounded-full hover:bg-white/10 transition text-slate-300">
+            <i data-lucide="bookmark" id="readerBookmarkIcon" class="w-5 h-5"></i>
+          </button>
+          <button onclick="closeReader()" class="p-2 rounded-full hover:bg-white/10 transition text-slate-300">
+            <i data-lucide="x" class="w-6 h-6"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- OBSZAR SLAJDU -->
+    <div class="w-full max-w-lg mx-auto my-auto flex-1 flex flex-col justify-center py-4">
+      <div id="slideCard" class="slide-enter bg-slate-900/90 border border-white/10 rounded-3xl p-6 text-white shadow-2xl relative overflow-hidden min-h-[380px] flex flex-col justify-between">
         
-        <div class="bg-white dark:bg-slate-900 w-full max-w-2xl max-h-[92vh] sm:max-h-[88vh] rounded-t-3xl sm:rounded-3xl shadow-2xl flex flex-col overflow-hidden transform transition-transform duration-300 translate-y-full sm:translate-y-0" id="readerSheet">
-            
-            <!-- Modal Header with Progress Bar -->
-            <div class="relative border-b border-slate-100 dark:border-slate-800 p-4 flex items-center justify-between bg-white/90 dark:bg-slate-900/90 backdrop-blur-md">
-                <!-- Reading Progress Bar -->
-                <div class="absolute top-0 left-0 right-0 h-1 bg-slate-100 dark:bg-slate-800">
-                    <div id="readingProgress" class="h-full bg-brand-500 w-0 transition-all duration-150"></div>
-                </div>
-
-                <div class="flex items-center gap-2">
-                    <span id="modalCategoryTag" class="text-xs font-semibold px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
-                        Kategoria
-                    </span>
-                    <span id="modalReadTime" class="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1">
-                        <i data-lucide="clock" class="w-3 h-3"></i> 5 min
-                    </span>
-                </div>
-
-                <div class="flex items-center gap-1">
-                    <button id="modalBookmarkBtn" onclick="toggleBookmarkCurrent()" class="p-2 rounded-xl text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
-                        <i data-lucide="bookmark" class="w-5 h-5"></i>
-                    </button>
-                    <button onclick="closeReader()" class="p-2 rounded-xl text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition" aria-label="Zamknij">
-                        <i data-lucide="x" class="w-5 h-5"></i>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Modal Content Scrollable Area -->
-            <div id="modalScrollBody" onscroll="updateReadingProgress()" class="p-5 sm:p-8 overflow-y-auto space-y-6 flex-grow">
-                
-                <!-- Pill Title Header -->
-                <div class="space-y-3">
-                    <div id="modalIconHeader" class="w-12 h-12 rounded-2xl flex items-center justify-center text-white shadow-md">
-                        <i data-lucide="book-open" class="w-6 h-6"></i>
-                    </div>
-                    <h2 id="modalTitle" class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white leading-tight">
-                        Tytuł Pigułki Wiedzy
-                    </h2>
-                    <p id="modalSubtitle" class="text-sm text-slate-500 dark:text-slate-400 font-medium">
-                        Krótkie wprowadzenie do tematu.
-                    </p>
-                </div>
-
-                <hr class="border-slate-100 dark:border-slate-800" />
-
-                <!-- Rich Text Sections -->
-                <div id="modalContent" class="space-y-5 text-sm sm:text-base leading-relaxed text-slate-700 dark:text-slate-300">
-                    <!-- Dynamic Body -->
-                </div>
-
-                <!-- Key Takeaways Box -->
-                <div class="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-900 dark:text-amber-200 space-y-2">
-                    <div class="flex items-center gap-2 font-bold text-xs uppercase tracking-wider text-amber-600 dark:text-amber-400">
-                        <i data-lucide="lightbulb" class="w-4 h-4"></i> Kluczowy wniosek
-                    </div>
-                    <p id="modalTakeaway" class="text-xs sm:text-sm font-medium">
-                        Podsumowanie w jednym zdaniu.
-                    </p>
-                </div>
-
-                <!-- Interactive Quiz Section -->
-                <div class="p-5 rounded-2xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700 space-y-4">
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center gap-2">
-                            <i data-lucide="help-circle" class="w-5 h-5 text-brand-500"></i>
-                            <h3 class="font-bold text-sm sm:text-base">Sprawdź swoją wiedzę (Szybki Quiz)</h3>
-                        </div>
-                        <span class="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded bg-brand-500/10 text-brand-600 dark:text-brand-400 font-bold">1 pytanie</span>
-                    </div>
-
-                    <p id="quizQuestion" class="font-semibold text-xs sm:text-sm text-slate-800 dark:text-slate-200">
-                        Pytanie quizowe?
-                    </p>
-
-                    <div id="quizOptions" class="space-y-2">
-                        <!-- Dynamic quiz options -->
-                    </div>
-
-                    <div id="quizFeedback" class="hidden p-3 rounded-xl text-xs font-medium space-y-1">
-                        <!-- Feedback after selecting answer -->
-                    </div>
-                </div>
-
-            </div>
-
-            <!-- Modal Footer Controls -->
-            <div class="p-4 border-t border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 flex items-center justify-between gap-3">
-                <button id="modalCompleteBtn" onclick="toggleCompleteCurrent()" class="flex-1 py-3 px-4 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition bg-emerald-600 hover:bg-emerald-700 text-white shadow-md">
-                    <i data-lucide="check-circle" class="w-4 h-4"></i>
-                    Oznacz jako przeczytane
-                </button>
-            </div>
-
+        <div id="slideContent" class="space-y-4">
+          <!-- Treść slajdu -->
         </div>
+
+        <div id="slideFooter" class="pt-4 border-t border-white/10 text-xs text-slate-400 flex items-center justify-between">
+          <span id="slideCounter">Slajd 1 z 4</span>
+          <span class="text-[11px] text-indigo-300 flex items-center gap-1">
+            <i data-lucide="sparkles" class="w-3 h-3"></i> Użyj strzałek lub przycisków
+          </span>
+        </div>
+
+      </div>
     </div>
 
-    <!-- Modal for Adding Custom AI Pill -->
-    <div id="addModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-slate-900 w-full max-w-lg rounded-2xl shadow-2xl p-6 space-y-4 border border-slate-200 dark:border-slate-800">
-            <div class="flex items-center justify-between">
-                <h3 class="font-bold text-base flex items-center gap-2">
-                    <i data-lucide="sparkles" class="w-5 h-5 text-brand-500"></i>
-                    Dodaj nową pigułkę wiedzy
-                </h3>
-                <button onclick="closeAddModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
-                    <i data-lucide="x" class="w-5 h-5"></i>
+    <!-- BOTTOM CONTROLS (NAVIGATION BUTTONS) -->
+    <div class="w-full max-w-lg mx-auto flex items-center justify-between gap-4 pt-2">
+      <button onclick="prevSlide()" id="prevBtn" class="flex-1 py-3.5 rounded-2xl bg-white/10 hover:bg-white/20 active:scale-95 text-white font-bold text-sm flex items-center justify-center gap-2 transition disabled:opacity-30">
+        <i data-lucide="chevron-left" class="w-5 h-5"></i> Wstecz
+      </button>
+      <button onclick="nextSlide()" id="nextBtn" class="flex-1 py-3.5 rounded-2xl bg-indigo-600 hover:bg-indigo-500 active:scale-95 text-white font-bold text-sm flex items-center justify-center gap-2 shadow-lg shadow-indigo-600/40 transition">
+        Dalej <i data-lucide="chevron-right" class="w-5 h-5"></i>
+      </button>
+    </div>
+
+  </div>
+
+  <!-- MODAL USTAWIEŃ (GEMINI API KEY) -->
+  <div id="settingsModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-md w-full p-6 shadow-2xl border border-slate-200 dark:border-slate-800">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="font-bold text-lg flex items-center gap-2">
+          <i data-lucide="cpu" class="w-5 h-5 text-indigo-500"></i> Generator Nowych Pigułek
+        </h3>
+        <button onclick="closeSettingsModal()" class="p-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <p class="text-xs text-slate-500 dark:text-slate-400 mb-4 leading-relaxed">
+        Aplikacja codziennie sama odblokowuje nową wiedzę. Jeśli wkleisz swój darmowy klucz <strong>Google Gemini API Key</strong>, aplikacja będzie mogła generować dla Ciebie unikalne pigułki na dowolny temat!
+      </p>
+
+      <label class="block text-xs font-bold uppercase tracking-wider mb-2 text-slate-600 dark:text-slate-300">Klucz Gemini API</label>
+      <input type="password" id="geminiApiKeyInput" placeholder="AIzaSy..." class="w-full px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm mb-4 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+
+      <div class="flex items-center justify-end gap-2">
+        <button onclick="closeSettingsModal()" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800">Anuluj</button>
+        <button onclick="saveApiKey()" class="px-4 py-2 rounded-xl text-xs font-bold bg-indigo-600 text-white hover:bg-indigo-500">Zapisz Klucz</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- BAZA DANYCH & LOGIKA APLIKACJI -->
+  <script>
+    // --- BAZA PIGUŁEK WIEDZY (LUŹNY STYL SLAJADOWY) ---
+    const defaultPills = [
+      {
+        id: 'sen-mozg',
+        title: 'Czemu Twój mózg robi nocą sprzątanie?',
+        desc: 'Myślisz, że w nocy Twój mózg śpi? Oho, wcale nie! Wtedy wjeżdża nocna ekipa sprzątająca.',
+        category: 'ciało',
+        date: '2026-11-01',
+        timeToRead: '3 min',
+        icon: 'moon',
+        slides: [
+          {
+            title: '🛌 Nocna Ekipa Czyszcząca',
+            content: 'Wyobraź sobie, że cały dzień pracujesz na kompie i zostawiasz na pulpicie 500 śmieciowych plików. Twój mózg robi to samo. Gdy zasypiasz, włącza się tzw. <strong>układ glimfatyczny</strong> — dosłownie spłukuje komórki mózgowe płynem, czyszcząc je z toksyn nagromadzonych za dnia.'
+          },
+          {
+            title: '🧹 Po co właściwie śpimy?',
+            content: 'Brak snu to nie tylko podkrążone oczy. Gdy nie śpisz, te toksyny zostają. Mózg zaczyna działać jak komputer z zakurzoną kartą graficzną — zwiesza się, gubi wątki i reaguje wolniej. Sen to jedyny moment, kiedy mózg potrafi skasować ten szum.'
+          },
+          {
+            title: '💡 Faza REM, czyli układanie klocków',
+            content: 'W fazie sennej (REM) Twój mózg przegląda wszystko, co dzisiaj przeżyłeś i układa to w szufladkach. To dlatego po przespanej nocy łatwiej ogarniasz trudne rzeczy z chemii czy matmy — mózg dosłownie uczy się podczas snu!'
+          },
+          {
+            title: '📌 ZAPAMIĘTAJ NA DZIŚ',
+            content: 'Zamiast zarywać nockę przed ważnym sprawdzianem, prześpij chociaż 6-7 godzin. Twój mózg sam poukłada wiedzę i usunie śmieci z pamięci operacyjnej.'
+          }
+        ],
+        quiz: {
+          question: 'Co robi układ glimfatyczny podczas głębokiego snu?',
+          options: ['Pali kalorie z całego dnia', 'Spłukuje toksyny z mózgu', 'Produkuje więcej kofeiny'],
+          correct: 1
+        }
+      },
+      {
+        id: 'deser-zoladek',
+        title: 'Dlaczego na deser ZAWSZE znajdzie się miejsce?',
+        desc: 'Jesteś nażarty po korek, ale na gofra albo ciacho nagle masz osobny żołądek? To nie magia, to biologia!',
+        category: 'ciało',
+        date: '2026-11-02',
+        timeToRead: '2 min',
+        icon: 'utensils',
+        slides: [
+          {
+            title: '🍕 „Jestem pełny... o, sernik!”',
+            content: 'Znasz to uczucie? Zjadłeś całą pizzę, czujesz się jak balon, ale gdy ktoś pyta o deser, nagle dostajesz nowe życie. Zjawisko to nazywa się <strong>sytością sensorycznie specyficzną</strong>.'
+          },
+          {
+            title: '🧠 Mózg się po prostu nudzi',
+            content: 'Gdy jesz jedno danie (np. wytrawne, słone), Twój mózg z czasem wysyła sygnał: „Dobra, starczy tego smaku, jestem najedzony”. Ale gdy na stole pojawia się nowy smak (słodki), mózg dostaje strzał dopaminy i kasuje uczucie sytości!'
+          },
+          {
+            title: '🦴 Ewolucyjny podstęp',
+            content: 'Nasi przodkowie musieli zbierać różne wartości odżywcze. Gdyby jedli tylko jedno mięso, brakowałoby im witamin. Mózg nauczył nas więc robić miejsce na nowości, żebyśmy jedli różnorodnie.'
+          },
+          {
+            title: '📌 ZAPAMIĘTAJ NA DZIŚ',
+            content: 'Drugi „żołądek na deser” naprawdę istnieje w Twoim mózgu. To po prostu reakcja na nowy bodziec smakowy, a nie fizyczny brak miejsca w brzuchu!'
+          }
+        ],
+        quiz: {
+          question: 'Jak nazywa się mechanizm sprawiający, że robimy miejsce na deser?',
+          options: ['Sytość sensorycznie specyficzna', 'Efekt sernika', 'Zmniejszenie żołądka'],
+          correct: 0
+        }
+      },
+      {
+        id: 'deja-vu',
+        title: 'Błąd w matriksie: Czym naprawdę jest Déjà Vu?',
+        desc: 'Wchodzisz w nowe miejsce i przysięgasz, że już tu byłeś? Twój mózg po prostu zaliczył mały lag.',
+        category: 'świat',
+        date: '2026-11-03',
+        timeToRead: '3 min',
+        icon: 'zap',
+        slides: [
+          {
+            title: '🌀 Przeniesienie w czasie?',
+            content: 'Stoisz w sklepie i nagle masz 100% pewności, że dokładnie ta sama sytuacja, z tym samym tekstem znajomego, wydarzyła się kiedyś w Twoim śnie lub poprzednim życiu. Spokojnie, nie jesteś w Symulacji.'
+          },
+          {
+            title: '⚡ Lag na skrzyżowaniu pamięci',
+            content: 'Déjà vu to po prostu krótkie spięcie w płacie skroniowym mózgu. Informacja z Twoich oczu zamiast trafić najpierw do pamięci podręcznej (krótkotrwałej), pomyłkowo trafia od razu do szuflady z pamięcią długotrwałą!'
+          },
+          {
+            title: '🎞️ Mózg myśli, że to wspomnienie',
+            content: 'Twój mózg rejestruje to, co dzieje się TERAZ, ale odczytuje to tak, jakby wydarzyło się ROK TEMU. Stąd to dziwne wrażenie znania przyszłości.'
+          },
+          {
+            title: '📌 ZAPAMIĘTAJ NA DZIŚ',
+            content: 'Déjà vu zdarza się najczęściej u młodych, zmęczonych i zestresowanych osób. To po prostu uroczy błąd w synchronizacji Twojego wewnętrznego twardego dysku.'
+          }
+        ],
+        quiz: {
+          question: 'Czym spowodowane jest déjà vu?',
+          options: ['Podróżą w czasie', 'Przeskokiem informacji bezpośrednio do pamięci długotrwałej', 'Przegrzaniem oczu'],
+          correct: 1
+        }
+      },
+      {
+        id: 'czas-wiek',
+        title: 'Czemu wakacje za dzieciaka trwały wieczność?',
+        desc: 'Pamiętasz jak lato w podstawówce wydawało się trwać 5 lat, a teraz rok mija w 3 tygodnie? Oto powód.',
+        category: 'kosmos',
+        date: '2026-11-04',
+        timeToRead: '3 min',
+        icon: 'clock',
+        slides: [
+          {
+            title: '⏳ Zegar w głowie pędzi',
+            content: 'Gdy masz 5 lat, jeden rok to aż 20% całego Twojego dotychczasowego życia. Gdy masz 20 lat, rok to już tylko 5%. Czysta matematyka proporcji sprawia, że czas przyspiesza.'
+          },
+          {
+            title: '📸 Brak nowych „klatek”',
+            content: 'Dziecko codziennie doświadcza nowości: nowy plac zabaw, pierwsza jazda na rowerze, nowi ludzie. Mózg zapisuje mnóstwo klatek i szczegółów. U dorosłych włącza się rutyna (szkoła/praca -> dom), więc mózg nie traci energii na zapisywanie powtórek.'
+          },
+          {
+            title: '🛠️ Jak zwolnić czas?',
+            content: 'Chcesz, żeby czas płynął wolniej? Rób nowe rzeczy! Zmień drogę do domu, spróbuj nowego sportu, pojedź w nieznane miejsce. Nowe bodźce zmuszają mózg do gęstszego zapisywania wspomnień.'
+          },
+          {
+            title: '📌 ZAPAMIĘTAJ NA DZIŚ',
+            content: 'Rutyna drastycznie skraca Twoje poczucie czasu. Żeby wydłużyć weekend czy wakacje – dostarczaj mózgowi jak najwięcej nowych wrażeń!'
+          }
+        ],
+        quiz: {
+          question: 'Co pozwala zwolnić subiektywne poczucie upływu czasu?',
+          options: ['Robienie ciągle tego samego', 'Nowe doświadczenia i przełamywanie rutyny', 'Patrzenie w zegarek'],
+          correct: 1
+        }
+      }
+    ];
+
+    // STATE
+    let pills = JSON.parse(localStorage.getItem('astra_pills')) || defaultPills;
+    let savedIds = JSON.parse(localStorage.getItem('astra_saved')) || [];
+    let completedIds = JSON.parse(localStorage.getItem('astra_completed')) || [];
+    let currentFilter = 'all';
+    
+    // READER STATE
+    let currentPill = null;
+    let currentSlideIndex = 0;
+
+    // INIT
+    document.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+      generateAppIconCanvas();
+      setupDailyPill();
+      renderPills();
+      setupKeyboardListeners();
+
+      document.getElementById('currentDateText').innerText = new Date().toLocaleDateString('pl-PL', { weekday: 'long', day: 'numeric', month: 'long' });
+    });
+
+    // GENERATE BIAŁA GWIAZDA CANVAS ICON FOR PWA
+    function generateAppIconCanvas() {
+      const canvas = document.getElementById('iconCanvas');
+      const ctx = canvas.getContext('2d');
+      
+      // Tło
+      const grad = ctx.createLinearGradient(0, 0, 512, 512);
+      grad.addColorStop(0, '#0b0f19');
+      grad.addColorStop(0.5, '#1e1b4b');
+      grad.addColorStop(1, '#05070c');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, 512, 512);
+
+      // Gwiazdy tła
+      ctx.fillStyle = '#ffffff';
+      for(let i=0; i<40; i++) {
+        ctx.globalAlpha = Math.random() * 0.7;
+        ctx.beginPath();
+        ctx.arc(Math.random()*512, Math.random()*512, Math.random()*2.5, 0, Math.PI*2);
+        ctx.fill();
+      }
+
+      // Gwiazda Główna
+      ctx.globalAlpha = 1;
+      ctx.shadowColor = '#818cf8';
+      ctx.shadowBlur = 40;
+      
+      ctx.fillStyle = '#ffffff';
+      ctx.beginPath();
+      // 4-ramienna fasetowana gwiazda
+      const cx = 256, cy = 256, outer = 160, inner = 45;
+      for (let i = 0; i < 8; i++) {
+        let r = (i % 2 === 0) ? outer : inner;
+        let a = (i * Math.PI) / 4 - Math.PI/2;
+        let x = cx + Math.cos(a) * r;
+        let y = cy + Math.sin(a) * r;
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.closePath();
+      ctx.fill();
+
+      // Ustaw jako Apple Touch Icon
+      const dataUrl = canvas.toDataURL('image/png');
+      let link = document.querySelector("link[rel*='apple-touch-icon']") || document.createElement('link');
+      link.type = 'image/png';
+      link.rel = 'apple-touch-icon';
+      link.href = dataUrl;
+      document.getElementsByTagName('head')[0].appendChild(link);
+    }
+
+    // USTAWIENIE PIGUŁKI DNIA
+    function setupDailyPill() {
+      // Wybierz pigułkę na podstawie dzisiejszego dnia
+      const dayOfYear = Math.floor((new Date() - new Date(new Date().getFullYear(), 0, 0)) / (1000 * 60 * 60 * 24));
+      const dailyIndex = dayOfYear % pills.length;
+      const dailyPill = pills[dailyIndex];
+
+      if(dailyPill) {
+        document.getElementById('dailyTitle').innerText = dailyPill.title;
+        document.getElementById('dailyDesc').innerText = dailyPill.desc;
+        document.getElementById('dailyBtn').onclick = () => openReader(dailyPill.id);
+      }
+    }
+
+    // RENDEROWANIE KART
+    function renderPills() {
+      const container = document.getElementById('pillsGrid');
+      const searchVal = document.getElementById('searchInput').value.toLowerCase();
+      container.innerHTML = '';
+
+      let filtered = pills.filter(p => {
+        const matchesSearch = p.title.toLowerCase().includes(searchVal) || p.desc.toLowerCase().includes(searchVal);
+        if(currentFilter === 'all') return matchesSearch;
+        if(currentFilter === 'saved') return matchesSearch && savedIds.includes(p.id);
+        return matchesSearch && p.category === currentFilter;
+      });
+
+      if(filtered.length === 0) {
+        container.innerHTML = `
+          <div class="text-center py-12 text-slate-400">
+            <i data-lucide="sparkles" class="w-8 h-8 mx-auto mb-2 opacity-40"></i>
+            <p class="text-sm font-medium">Brak pigułek w tej kategorii</p>
+          </div>
+        `;
+        lucide.createIcons();
+        return;
+      }
+
+      filtered.forEach(pill => {
+        const isSaved = savedIds.includes(pill.id);
+        const isCompleted = completedIds.includes(pill.id);
+
+        const card = document.createElement('div');
+        card.className = `p-4 rounded-2xl bg-white dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/70 shadow-sm hover:shadow-md transition cursor-pointer flex flex-col justify-between group`;
+        card.onclick = () => openReader(pill.id);
+
+        card.innerHTML = `
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-lg bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 border border-indigo-200/40 dark:border-indigo-800/40">
+                ${pill.category}
+              </span>
+              <div class="flex items-center gap-2">
+                ${isCompleted ? '<span class="text-emerald-500 text-xs font-bold flex items-center gap-1"><i data-lucide="check-circle-2" class="w-4 h-4"></i> Przeczytane</span>' : ''}
+                <button onclick="event.stopPropagation(); toggleBookmark('${pill.id}')" class="p-1 text-slate-400 hover:text-amber-500 transition">
+                  <i data-lucide="star" class="w-4 h-4 ${isSaved ? 'fill-amber-400 text-amber-400' : ''}"></i>
                 </button>
+              </div>
             </div>
 
-            <p class="text-xs text-slate-500 dark:text-slate-400">
-                Możesz wkleić prompt do ChatGPT / Gemini, a następnie wkleić wygenerowaną odpowiedź poniżej, aby dodać własną lekcję do aplikacji!
+            <h3 class="font-bold text-base text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition mb-1 leading-snug">
+              ${pill.title}
+            </h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed mb-3">
+              ${pill.desc}
             </p>
+          </div>
 
-            <div class="p-3 bg-slate-100 dark:bg-slate-800 rounded-xl space-y-2">
-                <div class="flex items-center justify-between text-xs font-bold text-slate-700 dark:text-slate-300">
-                    <span>💡 Prompt dla AI (skopiuj go):</span>
-                    <button onclick="copyAiPrompt()" class="text-brand-600 dark:text-brand-400 hover:underline flex items-center gap-1">
-                        <i data-lucide="copy" class="w-3 h-3"></i> Kopiuj prompt
-                    </button>
-                </div>
-                <div class="text-[11px] text-slate-600 dark:text-slate-400 italic bg-white dark:bg-slate-900 p-2.5 rounded-lg border border-slate-200 dark:border-slate-700 font-mono">
-                    "Przygotuj pigułkę wiedzy na temat [TWÓJ TEMAT] w formacie JSON dla mojej aplikacji..."
-                </div>
-            </div>
+          <div class="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-slate-700/50 text-[11px] text-slate-400">
+            <span class="flex items-center gap-1"><i data-lucide="clock" class="w-3.5 h-3.5"></i> ${pill.timeToRead || '3 min'}</span>
+            <span class="font-bold text-indigo-600 dark:text-indigo-400 flex items-center gap-0.5">Czytaj slajdy <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i></span>
+          </div>
+        `;
+        container.appendChild(card);
+      });
 
-            <form id="addPillForm" onsubmit="handleCustomPillSubmit(event)" class="space-y-3">
-                <div>
-                    <label class="block text-xs font-semibold mb-1">Tytuł pigułki</label>
-                    <input type="text" id="customTitle" required placeholder="np. Jak działają szczepionki?" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs focus:ring-2 focus:ring-brand-500 outline-none">
-                </div>
-                
-                <div class="grid grid-cols-2 gap-2">
-                    <div>
-                        <label class="block text-xs font-semibold mb-1">Kategoria</label>
-                        <select id="customCategory" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs focus:ring-2 focus:ring-brand-500 outline-none">
-                            <option value="Biologia & Ciało">Biologia & Ciało</option>
-                            <option value="Psychologia">Psychologia</option>
-                            <option value="Świat & Polityka">Świat & Polityka</option>
-                            <option value="Nauka & Kosmos">Nauka & Kosmos</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold mb-1">Czas czytania</label>
-                        <input type="text" id="customReadTime" required value="5 min" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs focus:ring-2 focus:ring-brand-500 outline-none">
-                    </div>
-                </div>
+      lucide.createIcons();
+    }
 
-                <div>
-                    <label class="block text-xs font-semibold mb-1">Treść artykułu (Akapity oddziel kropkami lub nową linią)</label>
-                    <textarea id="customContent" rows="4" required placeholder="Napisz lub wklej treść wygenerowaną przez AI..." class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs focus:ring-2 focus:ring-brand-500 outline-none"></textarea>
-                </div>
+    // --- LOGIKA CZYTNIKA SLAJDÓW ---
+    function openReader(id) {
+      currentPill = pills.find(p => p.id === id);
+      if(!currentPill) return;
 
-                <div>
-                    <label class="block text-xs font-semibold mb-1">Kluczowy wniosek</label>
-                    <input type="text" id="customTakeaway" required placeholder="Jednozdaniowa puenta..." class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs focus:ring-2 focus:ring-brand-500 outline-none">
-                </div>
+      currentSlideIndex = 0;
+      document.getElementById('readerModal').classList.remove('hidden');
+      document.getElementById('readerModal').classList.add('flex');
+      document.getElementById('readerCategory').innerText = currentPill.category;
+      
+      updateBookmarkIconState();
+      renderSlide();
+    }
 
-                <div class="pt-2 flex gap-2">
-                    <button type="button" onclick="closeAddModal()" class="flex-1 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-semibold">Anuluj</button>
-                    <button type="submit" class="flex-1 py-2.5 rounded-xl bg-brand-600 text-white text-xs font-semibold shadow-md hover:bg-brand-700 transition">Zapisz pigułkę</button>
-                </div>
-            </form>
-        </div>
-    </div>
+    function closeReader() {
+      document.getElementById('readerModal').classList.add('hidden');
+      document.getElementById('readerModal').classList.remove('flex');
+      currentPill = null;
+    }
 
-    <!-- Notification Toast -->
-    <div id="toast" class="fixed bottom-5 left-1/2 -translate-x-1/2 z-50 px-4 py-2.5 rounded-full bg-slate-900 text-white dark:bg-white dark:text-slate-900 text-xs font-semibold shadow-xl opacity-0 transition-opacity pointer-events-none flex items-center gap-2">
-        <i data-lucide="info" class="w-4 h-4 text-brand-400"></i>
-        <span id="toastMsg">Powiadomienie</span>
-    </div>
+    function renderSlide() {
+      const container = document.getElementById('slideContent');
+      const progressContainer = document.getElementById('progressContainer');
+      const totalSlides = currentPill.slides.length + (currentPill.quiz ? 1 : 0);
 
-    <!-- Javascript Logic -->
-    <script>
-        // Sample 5 fully detailed Pills in Polish
-        const INITIAL_PILLS = [
-            {
-                id: 'pill-1',
-                title: 'Dlaczego musimy spać i co dzieje się w mózgu nocą?',
-                subtitle: 'Oczyszczanie z toksyn, ukryty układ glymfatyczny i konsolidacja pamięci.',
-                category: 'Biologia & Ciało',
-                readTime: '6 min',
-                icon: 'moon',
-                gradient: 'from-indigo-600 to-purple-600',
-                content: [
-                    "Przez setki lat naukowcy zastanawiali się, dlaczego spędzamy niemal 1/3 swojego życia w stanie całkowitej bezbronności i braku świadomości. Dziś neurobiologia daje nam jasną odpowiedź: sen nie jest biernym odpoczynkiem, lecz czasem najbardziej intensywnych prac serwisowych w naszym organizmie.",
-                    "W 2012 roku odkryto tzw. **układ glymfatyczny**. Gdy zapadamy w głęboki sen (fazę NREM), komórki mózgowe kurczą się o około 60%. Dzięki temu płyn mózgowo-rdzeniowy może swobodnie przepływać między neuronami, 'wypłukując' toksyczne białka nagromadzone w ciągu dnia – w tym beta-amyloid, bezpośrednio powiązany z chorobą Alzheimera.",
-                    "Drugą kluczową funkcją snu jest **konsolidacja pamięci**. Podczas fazy REM mózg odtwarza wydarzenia minionego dnia, przenosząc ważne informacje z krótkotrwałego hipokampa do trwałej kory mózgowej, jednocześnie kasując niepotrzebne szczegóły.",
-                    "Brak zaledwie jednej nocy należytego snu obniża naszą zdolność zapamiętywania nowych faktów aż o 40% i drastycznie podnosi poziom kortyzolu (hormonu stresu), Osłabia to także układ odpornościowy nawet o 70%."
-                ],
-                takeaway: "Sen to nie luksus, lecz podstawowy proces biologiczny oczyszczający mózg z toksyn i porządkujący nasze wspomnienia.",
-                quiz: {
-                    question: "Jak nazywa się układ w mózgu, który podczas głębokiego snu wypłukuje toksyczne białka?",
-                    options: [
-                        "Układ pokarmowy",
-                        "Układ glymfatyczny",
-                        "Układ limfatyczny obwodowy"
-                    ],
-                    correctIndex: 1,
-                    explanation: "Dokładnie! Układ glymfatyczny aktywuje się głównie w nocy, kurcząc komórki mózgowe i wypłukując metaboliczne szkodliwe odpady."
-                }
-            },
-            {
-                id: 'pill-2',
-                title: 'Jak działa apetyt i dlaczego zawsze znajdzie się miejsce na deser?',
-                subtitle: 'Sensory-Specific Satiety, neurobiologia głodu oraz walka Leptyny z Ghreliną.',
-                category: 'Biologia & Ciało',
-                readTime: '5 min',
-                icon: 'utensils',
-                gradient: 'from-amber-500 to-rose-500',
-                content: [
-                    "Czy zdarzyło Ci się zjeść tak obfity obiad, że miałeś wrażenie, iż pękniesz, a chwilę później bez problemu zjadłeś duży kawałek ciasta? To nie brak silnej woli – to biologiczny mechanizm przetrwania zwany **sytością czuciowo-specyficzną** (ang. *Sensory-Specific Satiety*).",
-                    "Głód i sytość są kontrolowane przez dwa główne hormony: **Ghrelinę** (nazywaną hormonem głodu, wydzielaną przez pusty żołądek) oraz **Leptynę** (hormon sytości, wytwarzany przez tkankę tłuszczową). Mózg (podzgórze) stale analizuje ich poziom.",
-                    "Jednak gdy jemy ten sam rodzaj jedzenia (np. słone mięso i ziemniaki), nasze receptory smakowe i układ nagrody (dopamina) stają się nim znużone. Czujemy się 'pełni'. Wystarczy jednak, że na stole pojawi się całkowicie nowy bodziec smakowy – np. słodki lub kwaśny – a mózg natychmiast resetuje odczucie sytości i uwalnia nową dawkę dopaminy.",
-                    "Ewolucyjnie miało to ogromny sens: zmuszało naszych przodków do różnicowania diety i poszukiwania rozmaitych składników odżywczych, zamiast objadania się tylko jednym typem pożywienia."
-                ],
-                takeaway: "Twój żołądek nie jest dosłownie pełny – uczucie sytości zależy od bodźców smakowych. Nowy smak (np. słodki) oszukuje mózg i resetuje poczucie sytości.",
-                quiz: {
-                    question: "Jak nazywa się zjawisko sprawiające, że znużeni jednym smakiem nagle nabieramy apetytu na coś słodkiego?",
-                    options: [
-                        "Sytość czuciowo-specyficzna",
-                        "Efekt Pavlov'a",
-                        "Niedoczynność tarczycy"
-                    ],
-                    correctIndex: 0,
-                    explanation: "Świetnie! Zjawisko sytości czuciowo-specyficznej chroniło naszych przodków przed monodieta i zmuszało do próbowania nowych smaków."
-                }
-            },
-            {
-                id: 'pill-3',
-                title: 'Skąd wzięły się państwa i granice? Krótka historia suwerenności',
-                subtitle: 'Od feudalnych lenn i imperiów do Pokoju Westfalskiego z 1648 roku.',
-                category: 'Świat & Polityka',
-                readTime: '8 min',
-                icon: 'globe',
-                gradient: 'from-emerald-600 to-teal-700',
-                content: [
-                    "Współcześnie przyjmujemy istnienie państw, paszportów i granic za coś oczywistego. Jednak przez większość historii ludzkości świat nie był podzielony na wyraźnie odgraniczone państwa suwerenne. Istniały imperia o płynnych rubieżach, królestwa oraz skomplikowane sieci feudalnych zależności.",
-                    "Przełomem, który stworzył świat w obecnym kształcie, był **Pokój Westfalski z 1648 roku**, kończący wyniszczającą Wojnę Trzydziestoletnią w Europie. To wtedy po raz pierwszy sformułowano zasadę *Cuius regio, eius religio* oraz pojęcie suwerenności terytorialnej.",
-                    "Zgodnie z nowym ładem westfalskim: każdy władca ma wyłączną władzę nad swoim terytorium i ludnością, a inne państwa nie mają prawa ingerować w jego wewnętrzne sprawy. Zamiast uniwersalnego cesarstwa czy władzy papieża, świat stał się mozaiką równorzędnych podmiotów.",
-                    "W XIX wieku ład ten połączył się z ideą **narodu**, tworząc znane nam dzisiaj państwa narodowe. Granice na mapach nie są więc wiecznym prawem natury, lecz sztuczną umową społeczną wymyśloną dla utrzymania porządku geopolitycznego."
-                ],
-                takeaway: "Nowoczesny system państw i suwerennych granic narodził się w XVII wieku (Pokój Westfalski), by położyć kres niekończącym się wojnom o władzę i religię.",
-                quiz: {
-                    question: "Które wydarzenie historyczne uznaje się za narodziny nowoczesnego systemu państw suwerennych?",
-                    options: [
-                        "Rewolucję Francuską w 1789 r.",
-                        "Pokój Westfalski z 1648 r.",
-                        "Traktat Wersalski z 1919 r."
-                    ],
-                    correctIndex: 1,
-                    explanation: "Poprawnie! Pokój Westfalski z 1648 r. ustanowił pojęcie suwerenności terytorialnej i zakaz ingerencji w sprawy wewnętrzne sąsiadów."
-                }
-            },
-            {
-                id: 'pill-4',
-                title: 'Błąd w matriksie mózgu: Czym naprawdę jest déjà vu?',
-                subtitle: 'Desynchronizacja płatów skroniowych i opóźnienia w przesyłaniu sygnałów wzrokowych.',
-                category: 'Psychologia',
-                readTime: '5 min',
-                icon: 'brain',
-                gradient: 'from-fuchsia-600 to-pink-600',
-                content: [
-                    "Aż 60-70% ludzi przynajmniej raz w życiu doświadcza uczucia *déjà vu* – dojmującego wrażenia, że nowo przeżywana sytuacja wydarzyła się już w przeszłości. Choć dawniej przypisywano to reinkarnacji lub wspomnieniom ze snów, nauka znalazła znacznie bardziej ziemskie wyjaśnienie.",
-                    "Najpopularniejsza teoria neurobiologiczna mówi o **chwilowej desynchronizacji w płacie skroniowym mózgu**. Normalnie, gdy patrzymy na coś nowe, informacja z oczu trafia najpierw do ośrodka przetwarzania wzrokowego, a ułamek sekundy później zostaje zapisana jako bieżące doświadczenie.",
-                    "Jeśli jednak w wyniku zmęczenia lub stresu nastąpi mikro-opóźnienie sygnału w jednej ze ścieżek nerwowych, mózg przetwarza docierający bodziec tak, jakby był on wyciągany z pamięci długotrwałej! Otrzymujemy wrażenie 'już to widziałem', mimo że sytuacja trwa dopiero ułamek sekundy.",
-                    "Déjà vu zdarza się najczęściej u osób młodych (między 15 a 25 rokiem życia), których układ nerwowy charakteryzuje się bardzo wysoką neuroplastycznością i poddatnością na drobne mikrobłędy synchronizacji."
-                ],
-                takeaway: "Déjà vu to nie wspomnienie z poprzedniego życia, lecz chwilowy 'glitch' (desynchronizacja) w prędkości przesyłania sygnałów w mózgu.",
-                quiz: {
-                    question: "Co według neurobiologii bezpośrednio wywołuje uczucie déjà vu?",
-                    options: [
-                        "Przeczucie przyszłych wydarzeń",
-                        "Chwilowa desynchronizacja w przetwarzaniu sygnałów w płacie skroniowym",
-                        "Zbyt niski poziom potasu w diecie"
-                    ],
-                    correctIndex: 1,
-                    explanation: "Dokładnie tak! Mózg przesyła sygnał dwiema ścieżkami, a milisekundowe opóźnienie sprawia, że teraźniejszość jest błędnie klasyfikowana jako wspomnienie."
-                }
-            },
-            {
-                id: 'pill-5',
-                title: 'Dlaczego czas płynie szybciej, gdy jesteśmy starsi?',
-                subtitle: 'Teoria proporcji, spadek poziomu dopaminy i wpływ rutyny na postrzeganie lat.',
-                category: 'Nauka & Kosmos',
-                readTime: '7 min',
-                icon: 'clock',
-                gradient: 'from-blue-600 to-cyan-600',
-                content: [
-                    "Pamiętasz wakacje z dzieciństwa, które zdawały się trwać całe wieki? A teraz lata mijają w mgnieniu oka. Czy czas naprawdę przyspiesza? Z punktu widzenia fizyki – nie. Z punktu widzenia naszej psychiki – jak najbardziej.",
-                    "Pierwsze wyjaśnienie to **Teoria Proporcjonalności**: dla 5-latka jeden rok stanowi aż 20% całego jego dotychczasowego życia. Dla 50-latka ten sam rok to zaledwie 2% jego przeżytego czasu. Stąd subiektywnie wydaje się on znacznie krótszym epizodem.",
-                    "Drugi mechanizm wiąże się z **gęstością nowych doświadczeń**. Dziecko codziennie uczy się czegoś nowego (nowe słowa, obiekty, zasady gry). Mózg koduje mnóstwo bogatych wspomnień, co po czasie daje wrażenie bardzo długiego okresu.",
-                    "U dorosłych dominować zaczyna rutyna (ta sama praca, stałe trasy, powtarzalne nawyki). Gdy mózg nie rejestruje nowych bodźców, przechodzi w stan 'autopilota' i nie tworzy szczegółowych śladów pamięciowych. W konsekwencji po upływie roku odczuwamy, jakby minął tydzień.",
-                    "Chcesz zwolnić bieg czasu? Przełamuj rutynę! Podróżuj w nowe miejsca, ucz się nowych umiejętności i poznawaj nowe osoby – to zmusza mózg do intensywnej rejestracji danych."
-                ],
-                takeaway: "Czas subiektywnie przyspiesza przez rutynę. Aby 'spowolnić' upływ lat, musisz stale dostarczać mózgowi nowych doświadczeń.",
-                quiz: {
-                    question: "Co według psychologii pomaga najskuteczniej 'spowolnić' subiektywne poczucie upływu czasu?",
-                    options: [
-                        "Wykonanie tych samych rutynowych zadań codziennie",
-                        "Wprowadzanie nowości, uczenie się nowych rzeczy i zmiana nawyków",
-                        "Krótszy sen w ciągu nocy"
-                    ],
-                    correctIndex: 1,
-                    explanation: "Super! Nowe doświadczenia zmuszają mózg do tworzenia gęstych śladów pamięciowych, co sprawia, że miniony czas wydaje się dłuższy i bogatszy."
-                }
-            }
-        ];
+      // Renderowanie pasków postępu
+      progressContainer.innerHTML = '';
+      for(let i=0; i<totalSlides; i++) {
+        const bar = document.createElement('div');
+        bar.className = `h-1 flex-1 rounded-full transition-all duration-300 ${i <= currentSlideIndex ? 'bg-white shadow-[0_0_8px_rgba(255,255,255,0.8)]' : 'bg-white/20'}`;
+        progressContainer.appendChild(bar);
+      }
 
-        // App State
-        let pills = [];
-        let completedPills = new Set();
-        let savedPills = new Set();
-        let currentCategory = 'all';
-        let searchQuery = '';
-        let currentOpenPillId = null;
-        let streakCount = 1;
+      // Animacja odświeżenia slajdu
+      const card = document.getElementById('slideCard');
+      card.classList.remove('slide-enter');
+      void card.offsetWidth; // trigger reflow
+      card.classList.add('slide-enter');
 
-        // Initialize App on DOM Loaded
-        document.addEventListener('DOMContentLoaded', () => {
-            generateAppIcons();
-            loadLocalStorage();
-            pills = getStoredPills();
-            initTheme();
-            renderCategoryButtons();
-            renderPills();
-            updateStats();
-            lucide.createIcons();
-        });
+      // Czy to slajd z treścią czy quiz?
+      if(currentSlideIndex < currentPill.slides.length) {
+        const slide = currentPill.slides[currentSlideIndex];
+        container.innerHTML = `
+          <h2 class="text-xl font-extrabold text-white leading-tight mb-3">${slide.title}</h2>
+          <div class="text-sm text-slate-200 leading-relaxed space-y-2">
+            <p>${slide.content}</p>
+          </div>
+        `;
+      } else {
+        // Slajd z Quizem!
+        const q = currentPill.quiz;
+        container.innerHTML = `
+          <div class="inline-block px-3 py-1 rounded-full bg-indigo-500/20 border border-indigo-400/30 text-indigo-300 font-bold text-xs mb-2">
+            🧠 Szybki Quiz Sprawdzający
+          </div>
+          <h2 class="text-lg font-bold text-white mb-4">${q.question}</h2>
+          <div id="quizOptions" class="space-y-2.5">
+            ${q.options.map((opt, idx) => `
+              <button onclick="checkQuiz(${idx}, ${q.correct})" class="w-full text-left p-3.5 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 text-sm font-medium transition text-white">
+                ${opt}
+              </button>
+            `).join('')}
+          </div>
+        `;
+      }
 
-        // Dynamic Home Screen & Favicon Icon Canvas Generator (512x512 White Star)
-        function generateAppIcons() {
-            try {
-                const canvas = document.createElement('canvas');
-                canvas.width = 512;
-                canvas.height = 512;
-                const ctx = canvas.getContext('2d');
+      // Update stopki
+      document.getElementById('slideCounter').innerText = `Slajd ${currentSlideIndex + 1} z ${totalSlides}`;
+      document.getElementById('prevBtn').disabled = currentSlideIndex === 0;
 
-                // 1. Cosmic Deep Gradient Background
-                const bgGrad = ctx.createRadialGradient(256, 256, 20, 256, 256, 360);
-                bgGrad.addColorStop(0, '#1e1b4b');   // Deep indigo
-                bgGrad.addColorStop(0.5, '#0f172a'); // Slate black
-                bgGrad.addColorStop(1, '#0b0f19');   // Deep cosmic dark
-                ctx.fillStyle = bgGrad;
-                ctx.fillRect(0, 0, 512, 512);
+      const nextBtn = document.getElementById('nextBtn');
+      if(currentSlideIndex === totalSlides - 1) {
+        nextBtn.innerHTML = 'Ukończ <i data-lucide="check" class="w-5 h-5"></i>';
+      } else {
+        nextBtn.innerHTML = 'Dalej <i data-lucide="chevron-right" class="w-5 h-5"></i>';
+      }
 
-                // 2. Cosmic Nebulae
-                const neb1 = ctx.createRadialGradient(180, 180, 0, 180, 180, 220);
-                neb1.addColorStop(0, 'rgba(56, 189, 248, 0.35)');
-                neb1.addColorStop(1, 'rgba(56, 189, 248, 0)');
-                ctx.fillStyle = neb1;
-                ctx.fillRect(0, 0, 512, 512);
+      lucide.createIcons();
+    }
 
-                const neb2 = ctx.createRadialGradient(340, 340, 0, 340, 340, 240);
-                neb2.addColorStop(0, 'rgba(168, 85, 247, 0.3)');
-                neb2.addColorStop(1, 'rgba(168, 85, 247, 0)');
-                ctx.fillStyle = neb2;
-                ctx.fillRect(0, 0, 512, 512);
-
-                // 3. Background Stars / Sparkles
-                const stars = [
-                    {x: 70, y: 80, r: 2.5, a: 0.8}, {x: 430, y: 90, r: 3, a: 0.9},
-                    {x: 100, y: 400, r: 2.5, a: 0.7}, {x: 420, y: 420, r: 2, a: 0.85},
-                    {x: 256, y: 50, r: 3.5, a: 1}, {x: 450, y: 250, r: 1.5, a: 0.6},
-                    {x: 60, y: 260, r: 2, a: 0.75}, {x: 380, y: 150, r: 2.5, a: 0.8}
-                ];
-                stars.forEach(s => {
-                    ctx.beginPath();
-                    ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
-                    ctx.fillStyle = `rgba(255, 255, 255, ${s.a})`;
-                    ctx.shadowColor = '#ffffff';
-                    ctx.shadowBlur = 8;
-                    ctx.fill();
-                });
-                ctx.shadowBlur = 0;
-
-                // 4. Central Star Outer Aura
-                const starGlow = ctx.createRadialGradient(256, 256, 10, 256, 256, 180);
-                starGlow.addColorStop(0, 'rgba(255, 255, 255, 0.95)');
-                starGlow.addColorStop(0.3, 'rgba(186, 230, 253, 0.6)');
-                starGlow.addColorStop(0.7, 'rgba(125, 211, 252, 0.2)');
-                starGlow.addColorStop(1, 'rgba(255, 255, 255, 0)');
-                ctx.fillStyle = starGlow;
-                ctx.beginPath();
-                ctx.arc(256, 256, 180, 0, Math.PI * 2);
-                ctx.fill();
-
-                // 5. Faceted 8-Pointed White Star
-                const cx = 256, cy = 256;
-                function drawPoly(pts, color) {
-                    ctx.beginPath();
-                    ctx.moveTo(pts[0][0], pts[0][1]);
-                    for (let i = 1; i < pts.length; i++) {
-                        ctx.lineTo(pts[i][0], pts[i][1]);
-                    }
-                    ctx.closePath();
-                    ctx.fillStyle = color;
-                    ctx.fill();
-                }
-
-                // Main vertical & horizontal rays
-                drawPoly([[cx, 55], [cx, cy], [cx + 35, cy - 45]], '#f0f9ff');
-                drawPoly([[cx, 55], [cx, cy], [cx - 35, cy - 45]], '#ffffff');
-
-                drawPoly([[cx, 457], [cx, cy], [cx + 35, cy + 45]], '#bae6fd');
-                drawPoly([[cx, 457], [cx, cy], [cx - 35, cy + 45]], '#e0f2fe');
-
-                drawPoly([[457, cy], [cx, cy], [cx + 45, cy - 35]], '#e0f2fe');
-                drawPoly([[457, cy], [cx, cy], [cx + 45, cy + 35]], '#7dd3fc');
-
-                drawPoly([[55, cy], [cx, cy], [cx - 45, cy - 35]], '#ffffff');
-                drawPoly([[55, cy], [cx, cy], [cx - 45, cy + 35]], '#bae6fd');
-
-                // Diagonal rays
-                drawPoly([[375, 137], [cx, cy], [cx + 35, cy - 10]], '#f0f9ff');
-                drawPoly([[375, 137], [cx, cy], [cx + 10, cy - 35]], '#ffffff');
-
-                drawPoly([[375, 375], [cx, cy], [cx + 35, cy + 10]], '#7dd3fc');
-                drawPoly([[375, 375], [cx, cy], [cx + 10, cy + 35]], '#bae6fd');
-
-                drawPoly([[137, 375], [cx, cy], [cx - 35, cy + 10]], '#bae6fd');
-                drawPoly([[137, 375], [cx, cy], [cx - 10, cy + 35]], '#e0f2fe');
-
-                drawPoly([[137, 137], [cx, cy], [cx - 35, cy - 10]], '#ffffff');
-                drawPoly([[137, 137], [cx, cy], [cx - 10, cy - 35]], '#f0f9ff');
-
-                // Inner core diamond highlight
-                drawPoly([[cx, cy - 38], [cx + 38, cy], [cx, cy + 38], [cx - 38, cy]], '#ffffff');
-
-                const iconDataUrl = canvas.toDataURL('image/png');
-
-                // Apply image URL to Apple Touch Icon & Favicon
-                const appleIconTag = document.getElementById('dynamicAppleIcon');
-                if (appleIconTag) appleIconTag.href = iconDataUrl;
-
-                const faviconTag = document.getElementById('dynamicFavicon');
-                if (faviconTag) faviconTag.href = iconDataUrl;
-
-                // Web App Manifest
-                const manifestObj = {
-                    name: "Astra - Pigułki Wiedzy",
-                    short_name: "Astra",
-                    description: "Biała Gwiazda • Daily Wisdom",
-                    start_url: "./",
-                    display: "standalone",
-                    background_color: "#0b0f19",
-                    theme_color: "#0b0f19",
-                    icons: [
-                        {
-                            src: iconDataUrl,
-                            sizes: "512x512",
-                            type: "image/png",
-                            purpose: "any maskable"
-                        }
-                    ]
-                };
-
-                const manifestDataUri = 'data:application/manifest+json;charset=utf-8,' + encodeURIComponent(JSON.stringify(manifestObj));
-                const manifestTag = document.getElementById('dynamicManifest');
-                if (manifestTag) manifestTag.href = manifestDataUri;
-            } catch (err) {
-                console.error("Failed to generate dynamic app icons", err);
-            }
+    function nextSlide() {
+      const totalSlides = currentPill.slides.length + (currentPill.quiz ? 1 : 0);
+      if(currentSlideIndex < totalSlides - 1) {
+        currentSlideIndex++;
+        renderSlide();
+      } else {
+        // Ukończenie pigułki
+        if(!completedIds.includes(currentPill.id)) {
+          completedIds.push(currentPill.id);
+          localStorage.setItem('astra_completed', JSON.stringify(completedIds));
+          confetti({ particleCount: 70, spread: 60, origin: { y: 0.7 } });
         }
+        closeReader();
+        renderPills();
+      }
+    }
 
-        // Local Storage Helpers
-        function loadLocalStorage() {
-            try {
-                const completedArr = JSON.parse(localStorage.getItem('pigulki_completed') || '[]');
-                completedPills = new Set(completedArr);
+    function prevSlide() {
+      if(currentSlideIndex > 0) {
+        currentSlideIndex--;
+        renderSlide();
+      }
+    }
 
-                const savedArr = JSON.parse(localStorage.getItem('pigulki_saved') || '[]');
-                savedPills = new Set(savedArr);
-
-                streakCount = parseInt(localStorage.getItem('pigulki_streak') || '1', 10);
-            } catch (e) {
-                console.error("Local storage parse error", e);
-            }
+    function checkQuiz(selectedIdx, correctIdx) {
+      const buttons = document.querySelectorAll('#quizOptions button');
+      buttons.forEach((btn, idx) => {
+        btn.disabled = true;
+        if(idx === correctIdx) {
+          btn.className = "w-full text-left p-3.5 rounded-2xl bg-emerald-500/20 border border-emerald-500 text-sm font-bold text-emerald-300";
+        } else if(idx === selectedIdx) {
+          btn.className = "w-full text-left p-3.5 rounded-2xl bg-rose-500/20 border border-rose-500 text-sm font-bold text-rose-300";
         }
+      });
 
-        function getStoredPills() {
-            try {
-                const customArr = JSON.parse(localStorage.getItem('pigulki_custom') || '[]');
-                return [...INITIAL_PILLS, ...customArr];
-            } catch (e) {
-                return INITIAL_PILLS;
-            }
-        }
+      if(selectedIdx === correctIdx) {
+        confetti({ particleCount: 40, spread: 50, origin: { y: 0.6 } });
+      }
+    }
 
-        function saveState() {
-            localStorage.setItem('pigulki_completed', JSON.stringify(Array.from(completedPills)));
-            localStorage.setItem('pigulki_saved', JSON.stringify(Array.from(savedPills)));
-            localStorage.setItem('pigulki_streak', streakCount.toString());
-            updateStats();
-        }
+    // STEROWANIE KLAWIATURĄ
+    function setupKeyboardListeners() {
+      document.addEventListener('keydown', (e) => {
+        if(document.getElementById('readerModal').classList.contains('hidden')) return;
+        if(e.key === 'ArrowRight') nextSlide();
+        if(e.key === 'ArrowLeft') prevSlide();
+        if(e.key === 'Escape') closeReader();
+      });
+    }
 
-        // Theme Switcher (Light/Dark)
-        function initTheme() {
-            const savedTheme = localStorage.getItem('pigulki_theme');
-            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-            if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
-                document.documentElement.classList.add('dark');
-                document.getElementById('themeIconSun').classList.remove('hidden');
-            } else {
-                document.documentElement.classList.remove('dark');
-                document.getElementById('themeIconMoon').classList.remove('hidden');
-            }
-        }
+    // ZAKŁADKI (BOOKMARKS)
+    function toggleBookmark(id) {
+      if(savedIds.includes(id)) {
+        savedIds = savedIds.filter(i => i !== id);
+      } else {
+        savedIds.push(id);
+      }
+      localStorage.setItem('astra_saved', JSON.stringify(savedIds));
+      renderPills();
+    }
 
-        function toggleTheme() {
-            const isDark = document.documentElement.classList.toggle('dark');
-            localStorage.setItem('pigulki_theme', isDark ? 'dark' : 'light');
-            document.getElementById('themeIconSun').classList.toggle('hidden', !isDark);
-            document.getElementById('themeIconMoon').classList.toggle('hidden', isDark);
-        }
+    function toggleBookmarkCurrent() {
+      if(!currentPill) return;
+      toggleBookmark(currentPill.id);
+      updateBookmarkIconState();
+    }
 
-        // Render Cards Grid
-        function renderPills() {
-            const grid = document.getElementById('pillsGrid');
-            const emptyState = document.getElementById('emptyState');
-            grid.innerHTML = '';
+    function updateBookmarkIconState() {
+      const icon = document.getElementById('readerBookmarkIcon');
+      if(savedIds.includes(currentPill.id)) {
+        icon.className = "w-5 h-5 fill-amber-400 text-amber-400";
+      } else {
+        icon.className = "w-5 h-5 text-slate-300";
+      }
+    }
 
-            let filtered = pills.filter(p => {
-                // Category Filter
-                if (currentCategory === 'saved') return savedPills.has(p.id);
-                if (currentCategory === 'completed') return completedPills.has(p.id);
-                if (currentCategory !== 'all' && p.category !== currentCategory) return false;
+    // FILTROWANIE
+    function filterCategory(cat) {
+      currentFilter = cat;
+      document.querySelectorAll('.cat-btn').forEach(btn => {
+        btn.classList.remove('bg-indigo-600', 'text-white');
+        btn.classList.add('bg-white', 'dark:bg-slate-800', 'text-slate-600', 'dark:text-slate-300');
+      });
+      event.target.classList.add('bg-indigo-600', 'text-white');
+      renderPills();
+    }
 
-                // Search Filter
-                if (searchQuery.trim() !== '') {
-                    const q = searchQuery.toLowerCase();
-                    const titleMatch = p.title.toLowerCase().includes(q);
-                    const subMatch = p.subtitle.toLowerCase().includes(q);
-                    const catMatch = p.category.toLowerCase().includes(q);
-                    return titleMatch || subMatch || catMatch;
-                }
-                return true;
-            });
+    function handleSearch() {
+      renderPills();
+    }
 
-            if (filtered.length === 0) {
-                emptyState.classList.remove('hidden');
-                return;
-            } else {
-                emptyState.classList.add('hidden');
-            }
+    // DARK MODE TOGGLE
+    function toggleDarkMode() {
+      document.documentElement.classList.toggle('dark');
+      const isDark = document.documentElement.classList.contains('dark');
+      document.getElementById('themeIcon').setAttribute('data-lucide', isDark ? 'sun' : 'moon');
+      lucide.createIcons();
+    }
 
-            filtered.forEach(pill => {
-                const isCompleted = completedPills.has(pill.id);
-                const isSaved = savedPills.has(pill.id);
+    // USTAWIENIA GEMINI API
+    function openSettingsModal() {
+      document.getElementById('geminiApiKeyInput').value = localStorage.getItem('astra_gemini_key') || '';
+      document.getElementById('settingsModal').classList.remove('hidden');
+    }
 
-                const card = document.createElement('div');
-                card.className = "group relative bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200/80 dark:border-slate-800 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between cursor-pointer transform hover:-translate-y-1";
-                
-                card.onclick = (e) => {
-                    // Prevent trigger if bookmark clicked
-                    if (e.target.closest('.bookmark-btn')) return;
-                    openReader(pill.id);
-                };
+    function closeSettingsModal() {
+      document.getElementById('settingsModal').classList.add('hidden');
+    }
 
-                card.innerHTML = `
-                    <div class="space-y-3">
-                        <!-- Top Row Tags -->
-                        <div class="flex items-center justify-between">
-                            <span class="text-[11px] font-bold px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 flex items-center gap-1">
-                                <i data-lucide="${pill.icon || 'book-open'}" class="w-3.5 h-3.5 text-brand-500"></i>
-                                ${pill.category}
-                            </span>
-                            
-                            <div class="flex items-center gap-1.5">
-                                ${isCompleted ? `
-                                    <span class="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
-                                        <i data-lucide="check" class="w-3 h-3"></i> Przeczytane
-                                    </span>
-                                ` : ''}
-                                
-                                <button onclick="toggleBookmark('${pill.id}')" class="bookmark-btn p-1.5 rounded-lg text-slate-400 hover:text-amber-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition" title="Zapisz pigułkę">
-                                    <i data-lucide="bookmark" class="w-4 h-4 ${isSaved ? 'fill-amber-500 text-amber-500' : ''}"></i>
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Header Gradient Accent Bar -->
-                        <div class="h-1.5 w-12 rounded-full bg-gradient-to-r ${pill.gradient || 'from-brand-500 to-indigo-500'}"></div>
-
-                        <!-- Card Title & Subtitle -->
-                        <div>
-                            <h3 class="font-bold text-base sm:text-lg text-slate-900 dark:text-white group-hover:text-brand-600 dark:group-hover:text-brand-400 transition leading-snug">
-                                ${pill.title}
-                            </h3>
-                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1.5 line-clamp-2 leading-relaxed">
-                                ${pill.subtitle}
-                            </p>
-                        </div>
-                    </div>
-
-                    <!-- Bottom Footer -->
-                    <div class="mt-5 pt-3 border-t border-slate-100 dark:border-slate-800/60 flex items-center justify-between text-xs text-slate-400 font-medium">
-                        <span class="flex items-center gap-1">
-                            <i data-lucide="clock" class="w-3.5 h-3.5"></i> ${pill.readTime} czytania
-                        </span>
-                        <span class="text-brand-600 dark:text-brand-400 font-bold group-hover:translate-x-1 transition-transform flex items-center gap-1">
-                            Czytaj <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
-                        </span>
-                    </div>
-                `;
-
-                grid.appendChild(card);
-            });
-
-            lucide.createIcons();
-        }
-
-        // Category Filter Logic
-        function filterCategory(cat) {
-            currentCategory = cat;
-            renderCategoryButtons();
-            renderPills();
-        }
-
-        function renderCategoryButtons() {
-            document.querySelectorAll('.cat-btn').forEach(btn => {
-                const catId = btn.id.replace('catBtn-', '');
-                if (catId === currentCategory) {
-                    btn.className = "cat-btn flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-sm";
-                } else {
-                    btn.className = "cat-btn flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800";
-                }
-            });
-        }
-
-        // Search Input Logic
-        function handleSearch() {
-            const input = document.getElementById('searchInput');
-            searchQuery = input.value;
-            document.getElementById('clearSearchBtn').classList.toggle('hidden', searchQuery.length === 0);
-            renderPills();
-        }
-
-        function clearSearch() {
-            document.getElementById('searchInput').value = '';
-            searchQuery = '';
-            document.getElementById('clearSearchBtn').classList.add('hidden');
-            renderPills();
-        }
-
-        // Bookmark & Complete Actions
-        function toggleBookmark(id) {
-            if (savedPills.has(id)) {
-                savedPills.delete(id);
-                showToast("Usunięto z zapisanych");
-            } else {
-                savedPills.add(id);
-                showToast("Zapisano pigułkę na później");
-            }
-            saveState();
-            renderPills();
-            if (currentOpenPillId === id) updateModalBookmarkState();
-        }
-
-        function toggleBookmarkCurrent() {
-            if (currentOpenPillId) toggleBookmark(currentOpenPillId);
-        }
-
-        function toggleCompleteCurrent() {
-            if (!currentOpenPillId) return;
-            
-            if (completedPills.has(currentOpenPillId)) {
-                completedPills.delete(currentOpenPillId);
-                showToast("Oznaczono jako nieprzeczytane");
-            } else {
-                completedPills.add(currentOpenPillId);
-                showToast("Gratulacje! Pigułka ukończona 🎉");
-                // Fire celebratory confetti
-                confetti({
-                    particleCount: 60,
-                    spread: 70,
-                    origin: { y: 0.8 }
-                });
-            }
-            saveState();
-            renderPills();
-            updateModalCompleteState();
-        }
-
-        // Stats Banner Update
-        function updateStats() {
-            document.getElementById('completedCountStat').innerText = `${completedPills.size} pigułek`;
-            document.getElementById('savedCountStat').innerText = `${savedPills.size} pigułek`;
-            document.getElementById('streakCount').innerText = streakCount;
-        }
-
-        // Open & Close Reader Modal
-        function openReader(id) {
-            const pill = pills.find(p => p.id === id);
-            if (!pill) return;
-
-            currentOpenPillId = id;
-            const modal = document.getElementById('readerModal');
-            const sheet = document.getElementById('readerSheet');
-
-            // Set Header Tags & Details
-            document.getElementById('modalCategoryTag').innerText = pill.category;
-            document.getElementById('modalReadTime').innerText = `${pill.readTime} czytania`;
-            document.getElementById('modalTitle').innerText = pill.title;
-            document.getElementById('modalSubtitle').innerText = pill.subtitle;
-            document.getElementById('modalTakeaway').innerText = pill.takeaway;
-
-            // Header Icon Box Gradient
-            const iconHeader = document.getElementById('modalIconHeader');
-            iconHeader.className = `w-12 h-12 rounded-2xl flex items-center justify-center text-white shadow-md bg-gradient-to-tr ${pill.gradient || 'from-brand-600 to-indigo-600'}`;
-            iconHeader.innerHTML = `<i data-lucide="${pill.icon || 'book-open'}" class="w-6 h-6"></i>`;
-
-            // Content Body Rendering
-            const contentContainer = document.getElementById('modalContent');
-            contentContainer.innerHTML = pill.content.map(paragraph => {
-                // Format bold Markdown style **text**
-                const formatted = paragraph.replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold text-slate-900 dark:text-white">$1</strong>');
-                return `<p class="leading-relaxed">${formatted}</p>`;
-            }).join('');
-
-            // Render Quiz Section
-            renderQuiz(pill.quiz);
-
-            // Modal Button States
-            updateModalBookmarkState();
-            updateModalCompleteState();
-
-            // Reset Scroll & Progress
-            document.getElementById('modalScrollBody').scrollTop = 0;
-            document.getElementById('readingProgress').style.width = '0%';
-
-            // Show Modal with Animation
-            modal.classList.remove('hidden');
-            setTimeout(() => {
-                sheet.classList.remove('translate-y-full');
-            }, 10);
-
-            lucide.createIcons();
-        }
-
-        function closeReader() {
-            const modal = document.getElementById('readerModal');
-            const sheet = document.getElementById('readerSheet');
-
-            sheet.classList.add('translate-y-full');
-            setTimeout(() => {
-                modal.classList.add('hidden');
-                currentOpenPillId = null;
-            }, 250);
-        }
-
-        function updateModalBookmarkState() {
-            const btn = document.getElementById('modalBookmarkBtn');
-            const isSaved = savedPills.has(currentOpenPillId);
-            btn.innerHTML = `<i data-lucide="bookmark" class="w-5 h-5 ${isSaved ? 'fill-amber-500 text-amber-500' : ''}"></i>`;
-            lucide.createIcons();
-        }
-
-        function updateModalCompleteState() {
-            const btn = document.getElementById('modalCompleteBtn');
-            const isCompleted = completedPills.has(currentOpenPillId);
-
-            if (isCompleted) {
-                btn.className = "flex-1 py-3 px-4 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300";
-                btn.innerHTML = `<i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-500"></i> Ukończono (Kliknij, aby cofnąć)`;
-            } else {
-                btn.className = "flex-1 py-3 px-4 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition bg-emerald-600 hover:bg-emerald-700 text-white shadow-md";
-                btn.innerHTML = `<i data-lucide="check-circle" class="w-4 h-4"></i> Oznacz jako przeczytane`;
-            }
-            lucide.createIcons();
-        }
-
-        function updateReadingProgress() {
-            const body = document.getElementById('modalScrollBody');
-            const totalScroll = body.scrollHeight - body.clientHeight;
-            if (totalScroll <= 0) return;
-            const percentage = (body.scrollTop / totalScroll) * 100;
-            document.getElementById('readingProgress').style.width = `${Math.min(100, Math.max(0, percentage))}%`;
-        }
-
-        // Quiz Logic inside Modal
-        function renderQuiz(quiz) {
-            const questionEl = document.getElementById('quizQuestion');
-            const optionsEl = document.getElementById('quizOptions');
-            const feedbackEl = document.getElementById('quizFeedback');
-
-            feedbackEl.className = "hidden p-3 rounded-xl text-xs font-medium space-y-1";
-            feedbackEl.innerHTML = '';
-
-            if (!quiz) {
-                questionEl.innerText = "Brak dostępnego quizu dla tej pigułki.";
-                optionsEl.innerHTML = '';
-                return;
-            }
-
-            questionEl.innerText = quiz.question;
-            optionsEl.innerHTML = '';
-
-            quiz.options.forEach((opt, idx) => {
-                const btn = document.createElement('button');
-                btn.className = "quiz-opt-btn w-full text-left p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs sm:text-sm font-medium hover:border-brand-500 transition flex items-center justify-between";
-                btn.onclick = () => checkQuizAnswer(idx, quiz.correctIndex, quiz.explanation);
-                btn.innerHTML = `
-                    <span>${opt}</span>
-                    <i data-lucide="circle" class="w-4 h-4 text-slate-300 dark:text-slate-600 opt-icon"></i>
-                `;
-                optionsEl.appendChild(btn);
-            });
-
-            lucide.createIcons();
-        }
-
-        function checkQuizAnswer(selectedIdx, correctIdx, explanation) {
-            const optionsBtns = document.querySelectorAll('.quiz-opt-btn');
-            const feedbackEl = document.getElementById('quizFeedback');
-
-            optionsBtns.forEach((btn, idx) => {
-                btn.disabled = true; // Disable further clicks
-                if (idx === correctIdx) {
-                    btn.className = "quiz-opt-btn w-full text-left p-3 rounded-xl border-2 border-emerald-500 bg-emerald-500/10 text-emerald-900 dark:text-emerald-200 text-xs sm:text-sm font-bold flex items-center justify-between";
-                } else if (idx === selectedIdx && selectedIdx !== correctIdx) {
-                    btn.className = "quiz-opt-btn w-full text-left p-3 rounded-xl border-2 border-rose-500 bg-rose-500/10 text-rose-900 dark:text-rose-200 text-xs sm:text-sm font-bold flex items-center justify-between";
-                }
-            });
-
-            feedbackEl.classList.remove('hidden');
-            if (selectedIdx === correctIdx) {
-                feedbackEl.classList.add('bg-emerald-500/10', 'text-emerald-800', 'dark:text-emerald-300', 'border', 'border-emerald-500/20');
-                feedbackEl.innerHTML = `<div class="font-bold flex items-center gap-1"><i data-lucide="check-circle" class="w-4 h-4"></i> Świetnie! Prawidłowa odpowiedź.</div><div>${explanation}</div>`;
-                confetti({ particleCount: 40, spread: 60, origin: { y: 0.8 } });
-            } else {
-                feedbackEl.classList.add('bg-rose-500/10', 'text-rose-800', 'dark:text-rose-300', 'border', 'border-rose-500/20');
-                feedbackEl.innerHTML = `<div class="font-bold flex items-center gap-1"><i data-lucide="alert-circle" class="w-4 h-4"></i> Niezupełnie. Wyjaśnienie:</div><div>${explanation}</div>`;
-            }
-
-            lucide.createIcons();
-        }
-
-        // Add Custom AI Pill Logic
-        function openAddModal() {
-            document.getElementById('addModal').classList.remove('hidden');
-        }
-
-        function closeAddModal() {
-            document.getElementById('addModal').classList.add('hidden');
-        }
-
-        function copyAiPrompt() {
-            const promptText = `Napisz wartościową pigułkę wiedzy na temat [TWÓJ TEMAT] w formacie JSON:\n{\n  "title": "Tytuł pigułki",\n  "subtitle": "Krótkie podsumowanie",\n  "category": "Biologia & Ciało / Psychologia / Świat & Polityka / Nauka & Kosmos",\n  "readTime": "5 min",\n  "content": ["Akapit 1", "Akapit 2", "Akapit 3"],\n  "takeaway": "Kluczowy wniosek w 1 zdaniu",\n  "quiz": {\n    "question": "Pytanie?",\n    "options": ["Opcja A", "Opcja B", "Opcja C"],\n    "correctIndex": 0,\n    "explanation": "Wyjaśnienie odpowiedzi"\n  }\n}`;
-            
-            navigator.clipboard.writeText(promptText).then(() => {
-                showToast("Skopiowano prompt dla AI!");
-            }).catch(() => {
-                // Fallback execCommand
-                const textArea = document.createElement("textarea");
-                textArea.value = promptText;
-                document.body.appendChild(textArea);
-                textArea.select();
-                document.execCommand('copy');
-                document.body.removeChild(textArea);
-                showToast("Skopiowano prompt dla AI!");
-            });
-        }
-
-        function handleCustomPillSubmit(e) {
-            e.preventDefault();
-            const title = document.getElementById('customTitle').value;
-            const category = document.getElementById('customCategory').value;
-            const readTime = document.getElementById('customReadTime').value;
-            const rawContent = document.getElementById('customContent').value;
-            const takeaway = document.getElementById('customTakeaway').value;
-
-            const paragraphs = rawContent.split('\n').filter(p => p.trim().length > 0);
-
-            const newPill = {
-                id: 'custom-' + Date.now(),
-                title: title,
-                subtitle: takeaway,
-                category: category,
-                readTime: readTime,
-                icon: category.includes('Biologia') ? 'heart-pulse' : category.includes('Psychologia') ? 'brain' : category.includes('Polityka') ? 'globe' : 'atom',
-                gradient: 'from-brand-600 to-sky-600',
-                content: paragraphs.length > 0 ? paragraphs : [rawContent],
-                takeaway: takeaway,
-                quiz: {
-                    question: `Jakie jest główne przesłanie artykułu "${title}"?`,
-                    options: [takeaway, "Zjawisko niespotykane w przyrodzie", "Brak jednoznacznych wniosków"],
-                    correctIndex: 0,
-                    explanation: "Oto najważniejsza puenta z zaprezentowanej wiedzy!"
-                }
-            };
-
-            // Save custom pill to LocalStorage
-            try {
-                const existing = JSON.parse(localStorage.getItem('pigulki_custom') || '[]');
-                existing.push(newPill);
-                localStorage.setItem('pigulki_custom', JSON.stringify(existing));
-                
-                pills.unshift(newPill);
-                renderPills();
-                closeAddModal();
-                showToast("Pomyślnie dodano nową pigułkę!");
-                document.getElementById('addPillForm').reset();
-            } catch (err) {
-                console.error(err);
-                showToast("Błąd podczas zapisywania");
-            }
-        }
-
-        // Notification Toast Helper
-        function showToast(msg) {
-            const toast = document.getElementById('toast');
-            document.getElementById('toastMsg').innerText = msg;
-            toast.classList.remove('opacity-0', 'pointer-events-none');
-            setTimeout(() => {
-                toast.classList.add('opacity-0', 'pointer-events-none');
-            }, 3000);
-        }
-    </script>
+    function saveApiKey() {
+      const key = document.getElementById('geminiApiKeyInput').value.trim();
+      localStorage.setItem('astra_gemini_key', key);
+      alert('Klucz API zapisany pomyślnie!');
+      closeSettingsModal();
+    }
+  </script>
 </body>
 </html>
