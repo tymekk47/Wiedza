@@ -246,7 +246,6 @@
   <!-- BAZA DANYCH & LOGIKA APLIKACJI -->
   <script>
     const defaultPills = [
-      {"id":"pill-fallback-2-1793690638766","title":"Dlaczego morze szumi w muszli?","desc":"Nie, nie słyszysz oceanu. Dźwięk ten ma bezpośredni związek z Twoim własnym ciałem!","category":"świat","date":"2026-11-03","timeToRead":"2 min","icon":"sparkles","slides":[{"title":"🐚 Mity z dzieciństwa","content":"Bujda o zachowanym szumie fal w muszli jest piękna, ale rzeczywistość jest o wiele bardziej fascynująca."},{"title":"🔊 Wzmacniacz dźwięków","content":"Muszla działa jak rezonator. Wyłapuje ciche dźwięki z otoczenia oraz szum krwi przepływającej w Twoim uchu i je odbija!"},{"title":"📌 ZAPAMIĘTAJ NA DZIŚ","content":"Gdy przykładasz muszlę do ucha, tak naprawdę słyszysz wzmocnione echo otoczenia i puls własnej krwi."}],"quiz":{"question":"Co tak naprawdę słyszymy w muszli?","options":["Szum oceanu","Dźwięki otoczenia i szum własnej krwi","Wiatr sprzed lat"],"correct":1}},
       {
         id: 'sen-mozg',
         title: 'Czemu Twój mózg robi nocą sprzątanie?',
@@ -366,7 +365,7 @@
           },
           {
             title: '📌 ZAPAMIĘTAJ NA DZIŚ',
-            content: 'Rutyna drastically skraca Twoje poczucie czasu. Żeby wydłużyć weekend czy wakacje – dostarczaj mózgowi jak najwięcej nowych wrażeń!'
+            content: 'Rutyna drastycznie skraca Twoje poczucie czasu. Żeby wydłużyć weekend czy wakacje – dostarczaj mózgowi jak najwięcej nowych wrażeń!'
           }
         ],
         quiz: {
@@ -454,12 +453,24 @@
       document.getElementsByTagName('head')[0].appendChild(link);
     }
 
+    // ULEPSZONY WYBÓR PIGUŁKI DNIA
     function setupDailyPill() {
-      const dayOfYear = Math.floor((new Date() - new Date(new Date().getFullYear(), 0, 0)) / (1000 * 60 * 60 * 24));
-      const dailyIndex = dayOfYear % pills.length;
-      const dailyPill = pills[dailyIndex];
+      const todayStr = new Date().toISOString().split('T')[0];
+      
+      // 1. Priorytet: Pigułka wygenerowana z dzisiejszą datą
+      let dailyPill = pills.find(p => p.date === todayStr);
 
-      if(dailyPill) {
+      // 2. Jeśli brak dzisiejszej: Pierwsza pigułka, której jeszcze NIE przeczytałeś
+      if (!dailyPill) {
+        dailyPill = pills.find(p => !completedIds.includes(p.id));
+      }
+
+      // 3. Awaryjnie (gdy przeczytałeś absolutnie wszystko): Pierwsza pigułka z listy
+      if (!dailyPill) {
+        dailyPill = pills[0];
+      }
+
+      if (dailyPill) {
         document.getElementById('dailyTitle').innerText = dailyPill.title;
         document.getElementById('dailyDesc').innerText = dailyPill.desc;
         document.getElementById('dailyBtn').onclick = () => openReader(dailyPill.id);
@@ -617,6 +628,7 @@
         }
         closeReader();
         renderPills();
+        setupDailyPill(); // Aktualizacja po przeczytaniu
       }
     }
 
@@ -691,7 +703,6 @@
       renderPills();
     }
 
-    // PRZEŁĄCZANIE MOTYWU Z ZAPISYWANIEM W LOCALSTORAGE
     function toggleDarkMode() {
       document.documentElement.classList.toggle('dark');
       const isDark = document.documentElement.classList.contains('dark');
