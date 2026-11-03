@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="pl" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pigułki Wiedzy – Codzienna Porcja Mądrości</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            500: '#0284c7',
+                            600: '#0369a1',
+                            700: '#075985',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['-apple-system', 'BlinkMacSystemFont', 'SF Pro Text', 'Inter', 'Segoe UI', 'Roboto', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Canvas Confetti for Quiz celebration -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        /* Custom scrollbar & iOS smooth scroll */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(156, 163, 175, 0.4);
+            border-radius: 9999px;
+        }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .glass-header {
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        @keyframes pulse-subtle {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+        }
+        .animate-pulse-subtle {
+            animation: pulse-subtle 3s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-100 min-h-full flex flex-col font-sans transition-colors duration-200 selection:bg-brand-500 selection:text-white">
+
+    <!-- Top Navigation Header -->
+    <header class="sticky top-0 z-30 glass-header bg-white/80 dark:bg-slate-900/80 border-b border-slate-200/60 dark:border-slate-800/80 transition-colors">
+        <div class="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center gap-2 cursor-pointer" onclick="filterCategory('all')">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-500 flex items-center justify-center text-white shadow-md shadow-brand-500/20">
+                    <i data-lucide="pill" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg font-bold leading-none tracking-tight bg-gradient-to-r from-slate-900 via-brand-700 to-slate-800 dark:from-white dark:via-sky-300 dark:to-slate-200 bg-clip-text text-transparent">Pigułki Wiedzy</h1>
+                    <p class="text-[10px] text-slate-500 dark:text-slate-400 font-medium">Bite-sized daily wisdom</p>
+                </div>
+            </div>
+
+            <!-- Header Actions -->
+            <div class="flex items-center gap-2">
+                <!-- Streak Badge -->
+                <div id="streakBadge" class="flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-400 text-xs font-bold" title="Twoja seria codziennej nauki">
+                    <i data-lucide="flame" class="w-3.5 h-3.5 fill-amber-500 text-amber-500"></i>
+                    <span id="streakCount">1</span>d
+                </div>
+
+                <!-- Dark Mode Toggle -->
+                <button id="themeToggleBtn" onclick="toggleTheme()" class="p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition" aria-label="Przełącz motyw">
+                    <i data-lucide="moon" id="themeIconMoon" class="w-5 h-5 hidden"></i>
+                    <i data-lucide="sun" id="themeIconSun" class="w-5 h-5 hidden"></i>
+                </button>
+
+                <!-- Add New Pill Modal Trigger -->
+                <button onclick="openAddModal()" class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-semibold shadow-sm transition">
+                    <i data-lucide="plus" class="w-4 h-4"></i>
+                    Dodaj
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="flex-grow max-w-4xl w-full mx-auto px-4 py-6 space-y-6">
+
+        <!-- Welcome Banner & Quick Stats -->
+        <section class="p-5 rounded-2xl bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white shadow-xl relative overflow-hidden">
+            <!-- Decorative Background Blobs -->
+            <div class="absolute -right-8 -top-8 w-40 h-40 bg-brand-500/20 rounded-full blur-2xl"></div>
+            <div class="absolute right-20 -bottom-10 w-32 h-32 bg-indigo-500/20 rounded-full blur-xl"></div>
+
+            <div class="relative z-10 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div>
+                    <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white/10 backdrop-blur-md text-sky-300 text-xs font-medium mb-2 border border-white/10">
+                        <i data-lucide="sparkles" class="w-3 h-3"></i>
+                        Pigułka na dziś gotowa
+                    </div>
+                    <h2 class="text-xl sm:text-2xl font-bold tracking-tight">Czego pragniesz się dzisiaj dowiedzieć?</h2>
+                    <p class="text-xs sm:text-sm text-slate-300 mt-1 max-w-md">Krótkie, 5-minutowe opracowania skomplikowanych tematów o świecie, mózgu i społeczeństwie.</p>
+                </div>
+
+                <!-- Stats summary chips -->
+                <div class="flex sm:flex-col gap-3 w-full sm:w-auto border-t sm:border-t-0 sm:border-l border-white/10 pt-3 sm:pt-0 sm:pl-5">
+                    <div class="flex items-center gap-2">
+                        <div class="p-1.5 rounded-lg bg-emerald-500/20 text-emerald-400">
+                            <i data-lucide="check-circle-2" class="w-4 h-4"></i>
+                        </div>
+                        <div>
+                            <div class="text-xs text-slate-400">Przeczytano</div>
+                            <div class="text-sm font-bold" id="completedCountStat">0 pigułek</div>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div class="p-1.5 rounded-lg bg-sky-500/20 text-sky-400">
+                            <i data-lucide="bookmark" class="w-4 h-4"></i>
+                        </div>
+                        <div>
+                            <div class="text-xs text-slate-400">Zapisane</div>
+                            <div class="text-sm font-bold" id="savedCountStat">0 pigułek</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Search Bar & Filters -->
+        <section class="space-y-4">
+            <!-- Search Input -->
+            <div class="relative">
+                <i data-lucide="search" class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                <input 
+                    type="text" 
+                    id="searchInput" 
+                    oninput="handleSearch()"
+                    placeholder="Szukaj zagadnienia np. sen, apetyt, państwa..." 
+                    class="w-full pl-10 pr-10 py-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 shadow-sm transition"
+                >
+                <button id="clearSearchBtn" onclick="clearSearch()" class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            </div>
+
+            <!-- Category Filter Chips -->
+            <div class="flex items-center gap-2 overflow-x-auto no-scrollbar py-1">
+                <button onclick="filterCategory('all')" id="catBtn-all" class="cat-btn flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-sm">
+                    <i data-lucide="grid" class="w-3.5 h-3.5"></i> Wszystkie
+                </button>
+                <button onclick="filterCategory('Biologia & Ciało')" id="catBtn-Biologia & Ciało" class="cat-btn flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800">
+                    <i data-lucide="heart-pulse" class="w-3.5 h-3.5 text-rose-500"></i> Biologia & Ciało
+                </button>
+                <button onclick="filterCategory('Psychologia')" id="catBtn-Psychologia" class="cat-btn flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800">
+                    <i data-lucide="brain" class="w-3.5 h-3.5 text-purple-500"></i> Psychologia
+                </button>
+                <button onclick="filterCategory('Świat & Polityka')" id="catBtn-Świat & Polityka" class="cat-btn flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800">
+                    <i data-lucide="globe" class="w-3.5 h-3.5 text-emerald-500"></i> Świat & Polityka
+                </button>
+                <button onclick="filterCategory('Nauka & Kosmos')" id="catBtn-Nauka & Kosmos" class="cat-btn flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800">
+                    <i data-lucide="atom" class="w-3.5 h-3.5 text-sky-500"></i> Nauka & Kosmos
+                </button>
+                <button onclick="filterCategory('saved')" id="catBtn-saved" class="cat-btn flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800">
+                    <i data-lucide="bookmark" class="w-3.5 h-3.5 text-amber-500"></i> Zapisane
+                </button>
+                <button onclick="filterCategory('completed')" id="catBtn-completed" class="cat-btn flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800">
+                    <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-500"></i> Przeczytane
+                </button>
+            </div>
+        </section>
+
+        <!-- Pills Grid List -->
+        <section>
+            <div id="pillsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Cards will be dynamically rendered here -->
+            </div>
+
+            <!-- Empty State -->
+            <div id="emptyState" class="hidden text-center py-12 space-y-3">
+                <div class="w-12 h-12 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center mx-auto text-slate-400">
+                    <i data-lucide="inbox" class="w-6 h-6"></i>
+                </div>
+                <h3 class="text-base font-semibold">Brak pigułek w tej kategorii</h3>
+                <p class="text-xs text-slate-500 dark:text-slate-400">Zmień filtr lub wyszukaj coś innego.</p>
+            </div>
+        </section>
+    </main>
+
+    <!-- Floating Action Button for Mobile Add Pill -->
+    <button onclick="openAddModal()" class="sm:hidden fixed bottom-5 right-5 z-20 w-12 h-12 rounded-full bg-brand-600 text-white shadow-lg flex items-center justify-center active:scale-95 transition" aria-label="Dodaj nową pigułkę">
+        <i data-lucide="plus" class="w-6 h-6"></i>
+    </button>
+
+    <!-- Reading Modal / Fullscreen Sheet -->
+    <div id="readerModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex justify-center items-end sm:items-center p-0 sm:p-4 transition-opacity">
+        
+        <div class="bg-white dark:bg-slate-900 w-full max-w-2xl max-h-[92vh] sm:max-h-[88vh] rounded-t-3xl sm:rounded-3xl shadow-2xl flex flex-col overflow-hidden transform transition-transform duration-300 translate-y-full sm:translate-y-0" id="readerSheet">
+            
+            <!-- Modal Header with Progress Bar -->
+            <div class="relative border-b border-slate-100 dark:border-slate-800 p-4 flex items-center justify-between bg-white/90 dark:bg-slate-900/90 backdrop-blur-md">
+                <!-- Reading Progress Bar -->
+                <div class="absolute top-0 left-0 right-0 h-1 bg-slate-100 dark:bg-slate-800">
+                    <div id="readingProgress" class="h-full bg-brand-500 w-0 transition-all duration-150"></div>
+                </div>
+
+                <div class="flex items-center gap-2">
+                    <span id="modalCategoryTag" class="text-xs font-semibold px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+                        Kategoria
+                    </span>
+                    <span id="modalReadTime" class="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1">
+                        <i data-lucide="clock" class="w-3 h-3"></i> 5 min
+                    </span>
+                </div>
+
+                <div class="flex items-center gap-1">
+                    <button id="modalBookmarkBtn" onclick="toggleBookmarkCurrent()" class="p-2 rounded-xl text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+                        <i data-lucide="bookmark" class="w-5 h-5"></i>
+                    </button>
+                    <button onclick="closeReader()" class="p-2 rounded-xl text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition" aria-label="Zamknij">
+                        <i data-lucide="x" class="w-5 h-5"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Modal Content Scrollable Area -->
+            <div id="modalScrollBody" onscroll="updateReadingProgress()" class="p-5 sm:p-8 overflow-y-auto space-y-6 flex-grow">
+                
+                <!-- Pill Title Header -->
+                <div class="space-y-3">
+                    <div id="modalIconHeader" class="w-12 h-12 rounded-2xl flex items-center justify-center text-white shadow-md">
+                        <i data-lucide="book-open" class="w-6 h-6"></i>
+                    </div>
+                    <h2 id="modalTitle" class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white leading-tight">
+                        Tytuł Pigułki Wiedzy
+                    </h2>
+                    <p id="modalSubtitle" class="text-sm text-slate-500 dark:text-slate-400 font-medium">
+                        Krótkie wprowadzenie do tematu.
+                    </p>
+                </div>
+
+                <hr class="border-slate-100 dark:border-slate-800" />
+
+                <!-- Rich Text Sections -->
+                <div id="modalContent" class="space-y-5 text-sm sm:text-base leading-relaxed text-slate-700 dark:text-slate-300">
+                    <!-- Dynamic Body -->
+                </div>
+
+                <!-- Key Takeaways Box -->
+                <div class="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-900 dark:text-amber-200 space-y-2">
+                    <div class="flex items-center gap-2 font-bold text-xs uppercase tracking-wider text-amber-600 dark:text-amber-400">
+                        <i data-lucide="lightbulb" class="w-4 h-4"></i> Kluczowy wniosek
+                    </div>
+                    <p id="modalTakeaway" class="text-xs sm:text-sm font-medium">
+                        Podsumowanie w jednym zdaniu.
+                    </p>
+                </div>
+
+                <!-- Interactive Quiz Section -->
+                <div class="p-5 rounded-2xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700 space-y-4">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <i data-lucide="help-circle" class="w-5 h-5 text-brand-500"></i>
+                            <h3 class="font-bold text-sm sm:text-base">Sprawdź swoją wiedzę (Szybki Quiz)</h3>
+                        </div>
+                        <span class="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded bg-brand-500/10 text-brand-600 dark:text-brand-400 font-bold">1 pytanie</span>
+                    </div>
+
+                    <p id="quizQuestion" class="font-semibold text-xs sm:text-sm text-slate-800 dark:text-slate-200">
+                        Pytanie quizowe?
+                    </p>
+
+                    <div id="quizOptions" class="space-y-2">
+                        <!-- Dynamic quiz options -->
+                    </div>
+
+                    <div id="quizFeedback" class="hidden p-3 rounded-xl text-xs font-medium space-y-1">
+                        <!-- Feedback after selecting answer -->
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Modal Footer Controls -->
+            <div class="p-4 border-t border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 flex items-center justify-between gap-3">
+                <button id="modalCompleteBtn" onclick="toggleCompleteCurrent()" class="flex-1 py-3 px-4 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition bg-emerald-600 hover:bg-emerald-700 text-white shadow-md">
+                    <i data-lucide="check-circle" class="w-4 h-4"></i>
+                    Oznacz jako przeczytane
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Modal for Adding Custom AI Pill -->
+    <div id="addModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 w-full max-w-lg rounded-2xl shadow-2xl p-6 space-y-4 border border-slate-200 dark:border-slate-800">
+            <div class="flex items-center justify-between">
+                <h3 class="font-bold text-base flex items-center gap-2">
+                    <i data-lucide="sparkles" class="w-5 h-5 text-brand-500"></i>
+                    Dodaj nową pigułkę wiedzy
+                </h3>
+                <button onclick="closeAddModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <p class="text-xs text-slate-500 dark:text-slate-400">
+                Możesz wkleić prompt do ChatGPT / Gemini, a następnie wkleić wygenerowaną odpowiedź poniżej, aby dodać własną lekcję do aplikacji!
+            </p>
+
+            <div class="p-3 bg-slate-100 dark:bg-slate-800 rounded-xl space-y-2">
+                <div class="flex items-center justify-between text-xs font-bold text-slate-700 dark:text-slate-300">
+                    <span>💡 Prompt dla AI (skopiuj go):</span>
+                    <button onclick="copyAiPrompt()" class="text-brand-600 dark:text-brand-400 hover:underline flex items-center gap-1">
+                        <i data-lucide="copy" class="w-3 h-3"></i> Kopiuj prompt
+                    </button>
+                </div>
+                <div class="text-[11px] text-slate-600 dark:text-slate-400 italic bg-white dark:bg-slate-900 p-2.5 rounded-lg border border-slate-200 dark:border-slate-700 font-mono">
+                    "Przygotuj pigułkę wiedzy na temat [TWÓJ TEMAT] w formacie JSON dla mojej aplikacji..."
+                </div>
+            </div>
+
+            <form id="addPillForm" onsubmit="handleCustomPillSubmit(event)" class="space-y-3">
+                <div>
+                    <label class="block text-xs font-semibold mb-1">Tytuł pigułki</label>
+                    <input type="text" id="customTitle" required placeholder="np. Jak działają szczepionki?" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs focus:ring-2 focus:ring-brand-500 outline-none">
+                </div>
+                
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block text-xs font-semibold mb-1">Kategoria</label>
+                        <select id="customCategory" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs focus:ring-2 focus:ring-brand-500 outline-none">
+                            <option value="Biologia & Ciało">Biologia & Ciało</option>
+                            <option value="Psychologia">Psychologia</option>
+                            <option value="Świat & Polityka">Świat & Polityka</option>
+                            <option value="Nauka & Kosmos">Nauka & Kosmos</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold mb-1">Czas czytania</label>
+                        <input type="text" id="customReadTime" required value="5 min" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs focus:ring-2 focus:ring-brand-500 outline-none">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold mb-1">Treść artykułu (Akapity oddziel kropkami lub nową linią)</label>
+                    <textarea id="customContent" rows="4" required placeholder="Napisz lub wklej treść wygenerowaną przez AI..." class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs focus:ring-2 focus:ring-brand-500 outline-none"></textarea>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold mb-1">Kluczowy wniosek</label>
+                    <input type="text" id="customTakeaway" required placeholder="Jednozdaniowa puenta..." class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs focus:ring-2 focus:ring-brand-500 outline-none">
+                </div>
+
+                <div class="pt-2 flex gap-2">
+                    <button type="button" onclick="closeAddModal()" class="flex-1 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-semibold">Anuluj</button>
+                    <button type="submit" class="flex-1 py-2.5 rounded-xl bg-brand-600 text-white text-xs font-semibold shadow-md hover:bg-brand-700 transition">Zapisz pigułkę</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="fixed bottom-5 left-1/2 -translate-x-1/2 z-50 px-4 py-2.5 rounded-full bg-slate-900 text-white dark:bg-white dark:text-slate-900 text-xs font-semibold shadow-xl opacity-0 transition-opacity pointer-events-none flex items-center gap-2">
+        <i data-lucide="info" class="w-4 h-4 text-brand-400"></i>
+        <span id="toastMsg">Powiadomienie</span>
+    </div>
+
+    <!-- Javascript Logic -->
+    <script>
+        // Sample 5 fully detailed Pills in Polish
+        const INITIAL_PILLS = [
+            {
+                id: 'pill-1',
+                title: 'Dlaczego musimy spać i co dzieje się w mózgu nocą?',
+                subtitle: 'Oczyszczanie z toksyn, ukryty układ glymfatyczny i konsolidacja pamięci.',
+                category: 'Biologia & Ciało',
+                readTime: '6 min',
+                icon: 'moon',
+                gradient: 'from-indigo-600 to-purple-600',
+                content: [
+                    "Przez setki lat naukowcy zastanawiali się, dlaczego spędzamy niemal 1/3 swojego życia w stanie całkowitej bezbronności i braku świadomości. Dziś neurobiologia daje nam jasną odpowiedź: sen nie jest biernym odpoczynkiem, lecz czasem najbardziej intensywnych prac serwisowych w naszym organizmie.",
+                    "W 2012 roku odkryto tzw. **układ glymfatyczny**. Gdy zapadamy w głęboki sen (fazę NREM), komórki mózgowe kurczą się o około 60%. Dzięki temu płyn mózgowo-rdzeniowy może swobodnie przepływać między neuronami, 'wypłukując' toksyczne białka nagromadzone w ciągu dnia – w tym beta-amyloid, bezpośrednio powiązany z chorobą Alzheimera.",
+                    "Drugą kluczową funkcją snu jest **konsolidacja pamięci**. Podczas fazy REM mózg odtwarza wydarzenia minionego dnia, przenosząc ważne informacje z krótkotrwałego hipokampa do trwałej kory mózgowej, jednocześnie kasując niepotrzebne szczegóły.",
+                    "Brak zaledwie jednej nocy należytego snu obniża naszą zdolność zapamiętywania nowych faktów aż o 40% i drastycznie podnosi poziom kortyzolu (hormonu stresu), Osłabia to także układ odpornościowy nawet o 70%."
+                ],
+                takeaway: "Sen to nie luksus, lecz podstawowy proces biologiczny oczyszczający mózg z toksyn i porządkujący nasze wspomnienia.",
+                quiz: {
+                    question: "Jak nazywa się układ w mózgu, który podczas głębokiego snu wypłukuje toksyczne białka?",
+                    options: [
+                        "Układ pokarmowy",
+                        "Układ glymfatyczny",
+                        "Układ limfatyczny obwodowy"
+                    ],
+                    correctIndex: 1,
+                    explanation: "Dokładnie! Układ glymfatyczny aktywuje się głównie w nocy, kurcząc komórki mózgowe i wypłukując metaboliczne szkodliwe odpady."
+                }
+            },
+            {
+                id: 'pill-2',
+                title: 'Jak działa apetyt i dlaczego zawsze znajdzie się miejsce na deser?',
+                subtitle: 'Sensory-Specific Satiety, neurobiologia głodu oraz walka Leptyny z Ghreliną.',
+                category: 'Biologia & Ciało',
+                readTime: '5 min',
+                icon: 'utensils',
+                gradient: 'from-amber-500 to-rose-500',
+                content: [
+                    "Czy zdarzyło Ci się zjeść tak obfity obiad, że miałeś wrażenie, iż pękniesz, a chwilę później bez problemu zjadłeś duży kawałek ciasta? To nie brak silnej woli – to biologiczny mechanizm przetrwania zwany **sytością czuciowo-specyficzną** (ang. *Sensory-Specific Satiety*).",
+                    "Głód i sytość są kontrolowane przez dwa główne hormony: **Ghrelinę** (nazywaną hormonem głodu, wydzielaną przez pusty żołądek) oraz **Leptynę** (hormon sytości, wytwarzany przez tkankę tłuszczową). Mózg (podzgórze) stale analizuje ich poziom.",
+                    "Jednak gdy jemy ten sam rodzaj jedzenia (np. słone mięso i ziemniaki), nasze receptory smakowe i układ nagrody (dopamina) stają się nim znużone. Czujemy się 'pełni'. Wystarczy jednak, że na stole pojawi się całkowicie nowy bodziec smakowy – np. słodki lub kwaśny – a mózg natychmiast resetuje odczucie sytości i uwalnia nową dawkę dopaminy.",
+                    "Ewolucyjnie miało to ogromny sens: zmuszało naszych przodków do różnicowania diety i poszukiwania rozmaitych składników odżywczych, zamiast objadania się tylko jednym typem pożywienia."
+                ],
+                takeaway: "Twój żołądek nie jest dosłownie pełny – uczucie sytości zależy od bodźców smakowych. Nowy smak (np. słodki) oszukuje mózg i resetuje poczucie sytości.",
+                quiz: {
+                    question: "Jak nazywa się zjawisko sprawiające, że znużeni jednym smakiem nagle nabieramy apetytu na coś słodkiego?",
+                    options: [
+                        "Sytość czuciowo-specyficzna",
+                        "Efekt Pavlov'a",
+                        "Niedoczynność tarczycy"
+                    ],
+                    correctIndex: 0,
+                    explanation: "Świetnie! Zjawisko sytości czuciowo-specyficznej chroniło naszych przodków przed monodieta i zmuszało do próbowania nowych smaków."
+                }
+            },
+            {
+                id: 'pill-3',
+                title: 'Skąd wzięły się państwa i granice? Krótka historia suwerenności',
+                subtitle: 'Od feudalnych lenn i imperiów do Pokoju Westfalskiego z 1648 roku.',
+                category: 'Świat & Polityka',
+                readTime: '8 min',
+                icon: 'globe',
+                gradient: 'from-emerald-600 to-teal-700',
+                content: [
+                    "Współcześnie przyjmujemy istnienie państw, paszportów i granic za coś oczywistego. Jednak przez większość historii ludzkości świat nie był podzielony na wyraźnie odgraniczone państwa suwerenne. Istniały imperia o płynnych rubieżach, królestwa oraz skomplikowane sieci feudalnych zależności.",
+                    "Przełomem, który stworzył świat w obecnym kształcie, był **Pokój Westfalski z 1648 roku**, kończący wyniszczającą Wojnę Trzydziestoletnią w Europie. To wtedy po raz pierwszy sformułowano zasadę *Cuius regio, eius religio* oraz pojęcie suwerenności terytorialnej.",
+                    "Zgodnie z nowym ładem westfalskim: każdy władca ma wyłączną władzę nad swoim terytorium i ludnością, a inne państwa nie mają prawa ingerować w jego wewnętrzne sprawy. Zamiast uniwersalnego cesarstwa czy władzy papieża, świat stał się mozaiką równorzędnych podmiotów.",
+                    "W XIX wieku ład ten połączył się z ideą **narodu**, tworząc znane nam dzisiaj państwa narodowe. Granice na mapach nie są więc wiecznym prawem natury, lecz sztuczną umową społeczną wymyśloną dla utrzymania porządku geopolitycznego."
+                ],
+                takeaway: "Nowoczesny system państw i suwerennych granic narodził się w XVII wieku (Pokój Westfalski), by położyć kres niekończącym się wojnom o władzę i religię.",
+                quiz: {
+                    question: "Które wydarzenie historyczne uznaje się za narodziny nowoczesnego systemu państw suwerennych?",
+                    options: [
+                        "Rewolucję Francuską w 1789 r.",
+                        "Pokój Westfalski z 1648 r.",
+                        "Traktat Wersalski z 1919 r."
+                    ],
+                    correctIndex: 1,
+                    explanation: "Poprawnie! Pokój Westfalski z 1648 r. ustanowił pojęcie suwerenności terytorialnej i zakaz ingerencji w sprawy wewnętrzne sąsiadów."
+                }
+            },
+            {
+                id: 'pill-4',
+                title: 'Błąd w matriksie mózgu: Czym naprawdę jest déjà vu?',
+                subtitle: 'Desynchronizacja płatów skroniowych i opóźnienia w przesyłaniu sygnałów wzrokowych.',
+                category: 'Psychologia',
+                readTime: '5 min',
+                icon: 'brain',
+                gradient: 'from-fuchsia-600 to-pink-600',
+                content: [
+                    "Aż 60-70% ludzi przynajmniej raz w życiu doświadcza uczucia *déjà vu* – dojmującego wrażenia, że nowo przeżywana sytuacja wydarzyła się już w przeszłości. Choć dawniej przypisywano to reinkarnacji lub wspomnieniom ze snów, nauka znalazła znacznie bardziej ziemskie wyjaśnienie.",
+                    "Najpopularniejsza teoria neurobiologiczna mówi o **chwilowej desynchronizacji w płacie skroniowym mózgu**. Normalnie, gdy patrzymy na coś nowe, informacja z oczu trafia najpierw do ośrodka przetwarzania wzrokowego, a ułamek sekundy później zostaje zapisana jako bieżące doświadczenie.",
+                    "Jeśli jednak w wyniku zmęczenia lub stresu nastąpi mikro-opóźnienie sygnału w jednej ze ścieżek nerwowych, mózg przetwarza docierający bodziec tak, jakby był on wyciągany z pamięci długotrwałej! Otrzymujemy wrażenie 'już to widziałem', mimo że sytuacja trwa dopiero ułamek sekundy.",
+                    "Déjà vu zdarza się najczęściej u osób młodych (między 15 a 25 rokiem życia), których układ nerwowy charakteryzuje się bardzo wysoką neuroplastycznością i poddatnością na drobne mikrobłędy synchronizacji."
+                ],
+                takeaway: "Déjà vu to nie wspomnienie z poprzedniego życia, lecz chwilowy 'glitch' (desynchronizacja) w prędkości przesyłania sygnałów w mózgu.",
+                quiz: {
+                    question: "Co według neurobiologii bezpośrednio wywołuje uczucie déjà vu?",
+                    options: [
+                        "Przeczucie przyszłych wydarzeń",
+                        "Chwilowa desynchronizacja w przetwarzaniu sygnałów w płacie skroniowym",
+                        "Zbyt niski poziom potasu w diecie"
+                    ],
+                    correctIndex: 1,
+                    explanation: "Dokładnie tak! Mózg przesyła sygnał dwiema ścieżkami, a milisekundowe opóźnienie sprawia, że teraźniejszość jest błędnie klasyfikowana jako wspomnienie."
+                }
+            },
+            {
+                id: 'pill-5',
+                title: 'Dlaczego czas płynie szybciej, gdy jesteśmy starsi?',
+                subtitle: 'Teoria proporcji, spadek poziomu dopaminy i wpływ rutyny na postrzeganie lat.',
+                category: 'Nauka & Kosmos',
+                readTime: '7 min',
+                icon: 'clock',
+                gradient: 'from-blue-600 to-cyan-600',
+                content: [
+                    "Pamiętasz wakacje z dzieciństwa, które zdawały się trwać całe wieki? A teraz lata mijają w mgnieniu oka. Czy czas naprawdę przyspiesza? Z punktu widzenia fizyki – nie. Z punktu widzenia naszej psychiki – jak najbardziej.",
+                    "Pierwsze wyjaśnienie to **Teoria Proporcjonalności**: dla 5-latka jeden rok stanowi aż 20% całego jego dotychczasowego życia. Dla 50-latka ten sam rok to zaledwie 2% jego przeżytego czasu. Stąd subiektywnie wydaje się on znacznie krótszym epizodem.",
+                    "Drugi mechanizm wiąże się z **gęstością nowych doświadczeń**. Dziecko codziennie uczy się czegoś nowego (nowe słowa, obiekty, zasady gry). Mózg koduje mnóstwo bogatych wspomnień, co po czasie daje wrażenie bardzo długiego okresu.",
+                    "U dorosłych dominować zaczyna rutyna (ta sama praca, stałe trasy, powtarzalne nawyki). Gdy mózg nie rejestruje nowych bodźców, przechodzi w stan 'autopilota' i nie tworzy szczegółowych śladów pamięciowych. W konsekwencji po upływie roku odczuwamy, jakby minął tydzień.",
+                    "Chcesz zwolnić bieg czasu? Przełamuj rutynę! Podróżuj w nowe miejsca, ucz się nowych umiejętności i poznawaj nowe osoby – to zmusza mózg do intensywnej rejestracji danych."
+                ],
+                takeaway: "Czas subiektywnie przyspiesza przez rutynę. Aby 'spowolnić' upływ lat, musisz stale dostarczać mózgowi nowych doświadczeń.",
+                quiz: {
+                    question: "Co według psychologii pomaga najskuteczniej 'spowolnić' subiektywne poczucie upływu czasu?",
+                    options: [
+                        "Wykonanie tych samych rutynowych zadań codziennie",
+                        "Wprowadzanie nowości, uczenie się nowych rzeczy i zmiana nawyków",
+                        "Krótszy sen w ciągu nocy"
+                    ],
+                    correctIndex: 1,
+                    explanation: "Super! Nowe doświadczenia zmuszają mózg do tworzenia gęstych śladów pamięciowych, co sprawia, że miniony czas wydaje się dłuższy i bogatszy."
+                }
+            }
+        ];
+
+        // App State
+        let pills = [];
+        let completedPills = new Set();
+        let savedPills = new Set();
+        let currentCategory = 'all';
+        let searchQuery = '';
+        let currentOpenPillId = null;
+        let streakCount = 1;
+
+        // Initialize App on DOM Loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            loadLocalStorage();
+            pills = getStoredPills();
+            initTheme();
+            renderCategoryButtons();
+            renderPills();
+            updateStats();
+            lucide.createIcons();
+        });
+
+        // Local Storage Helpers
+        function loadLocalStorage() {
+            try {
+                const completedArr = JSON.parse(localStorage.getItem('pigulki_completed') || '[]');
+                completedPills = new Set(completedArr);
+
+                const savedArr = JSON.parse(localStorage.getItem('pigulki_saved') || '[]');
+                savedPills = new Set(savedArr);
+
+                streakCount = parseInt(localStorage.getItem('pigulki_streak') || '1', 10);
+            } catch (e) {
+                console.error("Local storage parse error", e);
+            }
+        }
+
+        function getStoredPills() {
+            try {
+                const customArr = JSON.parse(localStorage.getItem('pigulki_custom') || '[]');
+                return [...INITIAL_PILLS, ...customArr];
+            } catch (e) {
+                return INITIAL_PILLS;
+            }
+        }
+
+        function saveState() {
+            localStorage.setItem('pigulki_completed', JSON.stringify(Array.from(completedPills)));
+            localStorage.setItem('pigulki_saved', JSON.stringify(Array.from(savedPills)));
+            localStorage.setItem('pigulki_streak', streakCount.toString());
+            updateStats();
+        }
+
+        // Theme Switcher (Light/Dark)
+        function initTheme() {
+            const savedTheme = localStorage.getItem('pigulki_theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+                document.documentElement.classList.add('dark');
+                document.getElementById('themeIconSun').classList.remove('hidden');
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.getElementById('themeIconMoon').classList.remove('hidden');
+            }
+        }
+
+        function toggleTheme() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.setItem('pigulki_theme', isDark ? 'dark' : 'light');
+            document.getElementById('themeIconSun').classList.toggle('hidden', !isDark);
+            document.getElementById('themeIconMoon').classList.toggle('hidden', isDark);
+        }
+
+        // Render Cards Grid
+        function renderPills() {
+            const grid = document.getElementById('pillsGrid');
+            const emptyState = document.getElementById('emptyState');
+            grid.innerHTML = '';
+
+            let filtered = pills.filter(p => {
+                // Category Filter
+                if (currentCategory === 'saved') return savedPills.has(p.id);
+                if (currentCategory === 'completed') return completedPills.has(p.id);
+                if (currentCategory !== 'all' && p.category !== currentCategory) return false;
+
+                // Search Filter
+                if (searchQuery.trim() !== '') {
+                    const q = searchQuery.toLowerCase();
+                    const titleMatch = p.title.toLowerCase().includes(q);
+                    const subMatch = p.subtitle.toLowerCase().includes(q);
+                    const catMatch = p.category.toLowerCase().includes(q);
+                    return titleMatch || subMatch || catMatch;
+                }
+                return true;
+            });
+
+            if (filtered.length === 0) {
+                emptyState.classList.remove('hidden');
+                return;
+            } else {
+                emptyState.classList.add('hidden');
+            }
+
+            filtered.forEach(pill => {
+                const isCompleted = completedPills.has(pill.id);
+                const isSaved = savedPills.has(pill.id);
+
+                const card = document.createElement('div');
+                card.className = "group relative bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200/80 dark:border-slate-800 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between cursor-pointer transform hover:-translate-y-1";
+                
+                card.onclick = (e) => {
+                    // Prevent trigger if bookmark clicked
+                    if (e.target.closest('.bookmark-btn')) return;
+                    openReader(pill.id);
+                };
+
+                card.innerHTML = `
+                    <div class="space-y-3">
+                        <!-- Top Row Tags -->
+                        <div class="flex items-center justify-between">
+                            <span class="text-[11px] font-bold px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 flex items-center gap-1">
+                                <i data-lucide="${pill.icon || 'book-open'}" class="w-3.5 h-3.5 text-brand-500"></i>
+                                ${pill.category}
+                            </span>
+                            
+                            <div class="flex items-center gap-1.5">
+                                ${isCompleted ? `
+                                    <span class="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+                                        <i data-lucide="check" class="w-3 h-3"></i> Przeczytane
+                                    </span>
+                                ` : ''}
+                                
+                                <button onclick="toggleBookmark('${pill.id}')" class="bookmark-btn p-1.5 rounded-lg text-slate-400 hover:text-amber-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition" title="Zapisz pigułkę">
+                                    <i data-lucide="bookmark" class="w-4 h-4 ${isSaved ? 'fill-amber-500 text-amber-500' : ''}"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Header Gradient Accent Bar -->
+                        <div class="h-1.5 w-12 rounded-full bg-gradient-to-r ${pill.gradient || 'from-brand-500 to-indigo-500'}"></div>
+
+                        <!-- Card Title & Subtitle -->
+                        <div>
+                            <h3 class="font-bold text-base sm:text-lg text-slate-900 dark:text-white group-hover:text-brand-600 dark:group-hover:text-brand-400 transition leading-snug">
+                                ${pill.title}
+                            </h3>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1.5 line-clamp-2 leading-relaxed">
+                                ${pill.subtitle}
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Bottom Footer -->
+                    <div class="mt-5 pt-3 border-t border-slate-100 dark:border-slate-800/60 flex items-center justify-between text-xs text-slate-400 font-medium">
+                        <span class="flex items-center gap-1">
+                            <i data-lucide="clock" class="w-3.5 h-3.5"></i> ${pill.readTime} czytania
+                        </span>
+                        <span class="text-brand-600 dark:text-brand-400 font-bold group-hover:translate-x-1 transition-transform flex items-center gap-1">
+                            Czytaj <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                        </span>
+                    </div>
+                `;
+
+                grid.appendChild(card);
+            });
+
+            lucide.createIcons();
+        }
+
+        // Category Filter Logic
+        function filterCategory(cat) {
+            currentCategory = cat;
+            renderCategoryButtons();
+            renderPills();
+        }
+
+        function renderCategoryButtons() {
+            document.querySelectorAll('.cat-btn').forEach(btn => {
+                const catId = btn.id.replace('catBtn-', '');
+                if (catId === currentCategory) {
+                    btn.className = "cat-btn flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-sm";
+                } else {
+                    btn.className = "cat-btn flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800";
+                }
+            });
+        }
+
+        // Search Input Logic
+        function handleSearch() {
+            const input = document.getElementById('searchInput');
+            searchQuery = input.value;
+            document.getElementById('clearSearchBtn').classList.toggle('hidden', searchQuery.length === 0);
+            renderPills();
+        }
+
+        function clearSearch() {
+            document.getElementById('searchInput').value = '';
+            searchQuery = '';
+            document.getElementById('clearSearchBtn').classList.add('hidden');
+            renderPills();
+        }
+
+        // Bookmark & Complete Actions
+        function toggleBookmark(id) {
+            if (savedPills.has(id)) {
+                savedPills.delete(id);
+                showToast("Usunięto z zapisanych");
+            } else {
+                savedPills.add(id);
+                showToast("Zapisano pigułkę na później");
+            }
+            saveState();
+            renderPills();
+            if (currentOpenPillId === id) updateModalBookmarkState();
+        }
+
+        function toggleBookmarkCurrent() {
+            if (currentOpenPillId) toggleBookmark(currentOpenPillId);
+        }
+
+        function toggleCompleteCurrent() {
+            if (!currentOpenPillId) return;
+            
+            if (completedPills.has(currentOpenPillId)) {
+                completedPills.delete(currentOpenPillId);
+                showToast("Oznaczono jako nieprzeczytane");
+            } else {
+                completedPills.add(currentOpenPillId);
+                showToast("Gratulacje! Pigułka ukończona 🎉");
+                // Fire celebratory confetti
+                confetti({
+                    particleCount: 60,
+                    spread: 70,
+                    origin: { y: 0.8 }
+                });
+            }
+            saveState();
+            renderPills();
+            updateModalCompleteState();
+        }
+
+        // Stats Banner Update
+        function updateStats() {
+            document.getElementById('completedCountStat').innerText = `${completedPills.size} pigułek`;
+            document.getElementById('savedCountStat').innerText = `${savedPills.size} pigułek`;
+            document.getElementById('streakCount').innerText = streakCount;
+        }
+
+        // Open & Close Reader Modal
+        function openReader(id) {
+            const pill = pills.find(p => p.id === id);
+            if (!pill) return;
+
+            currentOpenPillId = id;
+            const modal = document.getElementById('readerModal');
+            const sheet = document.getElementById('readerSheet');
+
+            // Set Header Tags & Details
+            document.getElementById('modalCategoryTag').innerText = pill.category;
+            document.getElementById('modalReadTime').innerText = `${pill.readTime} czytania`;
+            document.getElementById('modalTitle').innerText = pill.title;
+            document.getElementById('modalSubtitle').innerText = pill.subtitle;
+            document.getElementById('modalTakeaway').innerText = pill.takeaway;
+
+            // Header Icon Box Gradient
+            const iconHeader = document.getElementById('modalIconHeader');
+            iconHeader.className = `w-12 h-12 rounded-2xl flex items-center justify-center text-white shadow-md bg-gradient-to-tr ${pill.gradient || 'from-brand-600 to-indigo-600'}`;
+            iconHeader.innerHTML = `<i data-lucide="${pill.icon || 'book-open'}" class="w-6 h-6"></i>`;
+
+            // Content Body Rendering
+            const contentContainer = document.getElementById('modalContent');
+            contentContainer.innerHTML = pill.content.map(paragraph => {
+                // Format bold Markdown style **text**
+                const formatted = paragraph.replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold text-slate-900 dark:text-white">$1</strong>');
+                return `<p class="leading-relaxed">${formatted}</p>`;
+            }).join('');
+
+            // Render Quiz Section
+            renderQuiz(pill.quiz);
+
+            // Modal Button States
+            updateModalBookmarkState();
+            updateModalCompleteState();
+
+            // Reset Scroll & Progress
+            document.getElementById('modalScrollBody').scrollTop = 0;
+            document.getElementById('readingProgress').style.width = '0%';
+
+            // Show Modal with Animation
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                sheet.classList.remove('translate-y-full');
+            }, 10);
+
+            lucide.createIcons();
+        }
+
+        function closeReader() {
+            const modal = document.getElementById('readerModal');
+            const sheet = document.getElementById('readerSheet');
+
+            sheet.classList.add('translate-y-full');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                currentOpenPillId = null;
+            }, 250);
+        }
+
+        function updateModalBookmarkState() {
+            const btn = document.getElementById('modalBookmarkBtn');
+            const isSaved = savedPills.has(currentOpenPillId);
+            btn.innerHTML = `<i data-lucide="bookmark" class="w-5 h-5 ${isSaved ? 'fill-amber-500 text-amber-500' : ''}"></i>`;
+            lucide.createIcons();
+        }
+
+        function updateModalCompleteState() {
+            const btn = document.getElementById('modalCompleteBtn');
+            const isCompleted = completedPills.has(currentOpenPillId);
+
+            if (isCompleted) {
+                btn.className = "flex-1 py-3 px-4 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300";
+                btn.innerHTML = `<i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-500"></i> Ukończono (Kliknij, aby cofnąć)`;
+            } else {
+                btn.className = "flex-1 py-3 px-4 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition bg-emerald-600 hover:bg-emerald-700 text-white shadow-md";
+                btn.innerHTML = `<i data-lucide="check-circle" class="w-4 h-4"></i> Oznacz jako przeczytane`;
+            }
+            lucide.createIcons();
+        }
+
+        function updateReadingProgress() {
+            const body = document.getElementById('modalScrollBody');
+            const totalScroll = body.scrollHeight - body.clientHeight;
+            if (totalScroll <= 0) return;
+            const percentage = (body.scrollTop / totalScroll) * 100;
+            document.getElementById('readingProgress').style.width = `${Math.min(100, Math.max(0, percentage))}%`;
+        }
+
+        // Quiz Logic inside Modal
+        function renderQuiz(quiz) {
+            const questionEl = document.getElementById('quizQuestion');
+            const optionsEl = document.getElementById('quizOptions');
+            const feedbackEl = document.getElementById('quizFeedback');
+
+            feedbackEl.className = "hidden p-3 rounded-xl text-xs font-medium space-y-1";
+            feedbackEl.innerHTML = '';
+
+            if (!quiz) {
+                questionEl.innerText = "Brak dostępnego quizu dla tej pigułki.";
+                optionsEl.innerHTML = '';
+                return;
+            }
+
+            questionEl.innerText = quiz.question;
+            optionsEl.innerHTML = '';
+
+            quiz.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "quiz-opt-btn w-full text-left p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs sm:text-sm font-medium hover:border-brand-500 transition flex items-center justify-between";
+                btn.onclick = () => checkQuizAnswer(idx, quiz.correctIndex, quiz.explanation);
+                btn.innerHTML = `
+                    <span>${opt}</span>
+                    <i data-lucide="circle" class="w-4 h-4 text-slate-300 dark:text-slate-600 opt-icon"></i>
+                `;
+                optionsEl.appendChild(btn);
+            });
+
+            lucide.createIcons();
+        }
+
+        function checkQuizAnswer(selectedIdx, correctIdx, explanation) {
+            const optionsBtns = document.querySelectorAll('.quiz-opt-btn');
+            const feedbackEl = document.getElementById('quizFeedback');
+
+            optionsBtns.forEach((btn, idx) => {
+                btn.disabled = true; // Disable further clicks
+                if (idx === correctIdx) {
+                    btn.className = "quiz-opt-btn w-full text-left p-3 rounded-xl border-2 border-emerald-500 bg-emerald-500/10 text-emerald-900 dark:text-emerald-200 text-xs sm:text-sm font-bold flex items-center justify-between";
+                } else if (idx === selectedIdx && selectedIdx !== correctIdx) {
+                    btn.className = "quiz-opt-btn w-full text-left p-3 rounded-xl border-2 border-rose-500 bg-rose-500/10 text-rose-900 dark:text-rose-200 text-xs sm:text-sm font-bold flex items-center justify-between";
+                }
+            });
+
+            feedbackEl.classList.remove('hidden');
+            if (selectedIdx === correctIdx) {
+                feedbackEl.classList.add('bg-emerald-500/10', 'text-emerald-800', 'dark:text-emerald-300', 'border', 'border-emerald-500/20');
+                feedbackEl.innerHTML = `<div class="font-bold flex items-center gap-1"><i data-lucide="check-circle" class="w-4 h-4"></i> Świetnie! Prawidłowa odpowiedź.</div><div>${explanation}</div>`;
+                confetti({ particleCount: 40, spread: 60, origin: { y: 0.8 } });
+            } else {
+                feedbackEl.classList.add('bg-rose-500/10', 'text-rose-800', 'dark:text-rose-300', 'border', 'border-rose-500/20');
+                feedbackEl.innerHTML = `<div class="font-bold flex items-center gap-1"><i data-lucide="alert-circle" class="w-4 h-4"></i> Niezupełnie. Wyjaśnienie:</div><div>${explanation}</div>`;
+            }
+
+            lucide.createIcons();
+        }
+
+        // Add Custom AI Pill Logic
+        function openAddModal() {
+            document.getElementById('addModal').classList.remove('hidden');
+        }
+
+        function closeAddModal() {
+            document.getElementById('addModal').classList.add('hidden');
+        }
+
+        function copyAiPrompt() {
+            const promptText = `Napisz wartościową pigułkę wiedzy na temat [TWÓJ TEMAT] w formacie JSON:\n{\n  "title": "Tytuł pigułki",\n  "subtitle": "Krótkie podsumowanie",\n  "category": "Biologia & Ciało / Psychologia / Świat & Polityka / Nauka & Kosmos",\n  "readTime": "5 min",\n  "content": ["Akapit 1", "Akapit 2", "Akapit 3"],\n  "takeaway": "Kluczowy wniosek w 1 zdaniu",\n  "quiz": {\n    "question": "Pytanie?",\n    "options": ["Opcja A", "Opcja B", "Opcja C"],\n    "correctIndex": 0,\n    "explanation": "Wyjaśnienie odpowiedzi"\n  }\n}`;
+            
+            navigator.clipboard.writeText(promptText).then(() => {
+                showToast("Skopiowano prompt dla AI!");
+            }).catch(() => {
+                // Fallback execCommand
+                const textArea = document.createElement("textarea");
+                textArea.value = promptText;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                showToast("Skopiowano prompt dla AI!");
+            });
+        }
+
+        function handleCustomPillSubmit(e) {
+            e.preventDefault();
+            const title = document.getElementById('customTitle').value;
+            const category = document.getElementById('customCategory').value;
+            const readTime = document.getElementById('customReadTime').value;
+            const rawContent = document.getElementById('customContent').value;
+            const takeaway = document.getElementById('customTakeaway').value;
+
+            const paragraphs = rawContent.split('\n').filter(p => p.trim().length > 0);
+
+            const newPill = {
+                id: 'custom-' + Date.now(),
+                title: title,
+                subtitle: takeaway,
+                category: category,
+                readTime: readTime,
+                icon: category.includes('Biologia') ? 'heart-pulse' : category.includes('Psychologia') ? 'brain' : category.includes('Polityka') ? 'globe' : 'atom',
+                gradient: 'from-brand-600 to-sky-600',
+                content: paragraphs.length > 0 ? paragraphs : [rawContent],
+                takeaway: takeaway,
+                quiz: {
+                    question: `Jakie jest główne przesłanie artykułu "${title}"?`,
+                    options: [takeaway, "Zjawisko niespotykane w przyrodzie", "Brak jednoznacznych wniosków"],
+                    correctIndex: 0,
+                    explanation: "Oto najważniejsza puenta z zaprezentowanej wiedzy!"
+                }
+            };
+
+            // Save custom pill to LocalStorage
+            try {
+                const existing = JSON.parse(localStorage.getItem('pigulki_custom') || '[]');
+                existing.push(newPill);
+                localStorage.setItem('pigulki_custom', JSON.stringify(existing));
+                
+                pills.unshift(newPill);
+                renderPills();
+                closeAddModal();
+                showToast("Pomyślnie dodano nową pigułkę!");
+                document.getElementById('addPillForm').reset();
+            } catch (err) {
+                console.error(err);
+                showToast("Błąd podczas zapisywania");
+            }
+        }
+
+        // Notification Toast Helper
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastMsg').innerText = msg;
+            toast.classList.remove('opacity-0', 'pointer-events-none');
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'pointer-events-none');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
