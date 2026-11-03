@@ -57,12 +57,6 @@
       -webkit-backdrop-filter: blur(12px);
     }
 
-    /* Glow efekty */
-    .star-glow {
-      box-shadow: 0 0 25px rgba(255, 255, 255, 0.4), 0 0 50px rgba(99, 102, 241, 0.25);
-    }
-
-    /* Animacja slajdów */
     .slide-enter {
       animation: slideIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
@@ -71,22 +65,19 @@
       to { opacity: 1; transform: translateX(0) scale(1); }
     }
 
-    /* Custom scrollbar */
-    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar { width: 5px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: rgba(156, 163, 175, 0.3); border-radius: 10px; }
   </style>
 </head>
 <body class="bg-slate-50 dark:bg-star-900 text-slate-900 dark:text-slate-100 min-h-screen transition-colors duration-300 pb-20">
 
-  <!-- DYNAMIC ICON GENERATOR (Apple Touch Icon & Favicon) -->
   <canvas id="iconCanvas" width="512" height="512" class="hidden"></canvas>
 
   <!-- HEADER -->
   <header class="sticky top-0 z-30 glass border-b border-slate-200/80 dark:border-slate-800/80 px-4 py-3">
     <div class="max-w-2xl mx-auto flex items-center justify-between">
       
-      <!-- LOGO BIAŁA GWIAZDA -->
       <div class="flex items-center gap-3 cursor-pointer" onclick="filterCategory('all')">
         <div class="relative w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-900 via-star-900 to-black p-0.5 shadow-lg flex items-center justify-center overflow-hidden border border-white/20">
           <svg class="w-6 h-6 text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.8)]" viewBox="0 0 24 24" fill="currentColor">
@@ -101,7 +92,6 @@
         </div>
       </div>
 
-      <!-- PASEK AKCJI (Streak, Gemini API Key, Dark Mode) -->
       <div class="flex items-center gap-2">
         <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 font-bold text-xs border border-amber-500/20">
           <i data-lucide="flame" class="w-4 h-4 fill-amber-500"></i>
@@ -133,7 +123,7 @@
       </div>
 
       <h2 id="dailyTitle" class="text-xl font-extrabold mb-2 leading-snug">Ładowanie dzisiejszej wiedzy...</h2>
-      <p id="dailyDesc" class="text-xs text-indigo-100/90 mb-4 line-clamp-2">Chwila, szykujemy dla Ciebie coś ciekawego na dzisiaj...</p>
+      <p id="dailyDesc" class="text-xs text-indigo-100/90 mb-4 line-clamp-2">Szykujemy obszerną porcję solidnej wiedzy na dzisiaj...</p>
 
       <button id="dailyBtn" onclick="" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-white text-indigo-950 font-bold text-sm shadow-lg hover:bg-indigo-50 active:scale-95 transition">
         <i data-lucide="play" class="w-4 h-4 fill-indigo-950"></i> Otwórz dzisiejszą pigułkę
@@ -145,10 +135,9 @@
   <section class="max-w-2xl mx-auto px-4 mb-4">
     <div class="relative mb-3">
       <i data-lucide="search" class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"></i>
-      <input type="text" id="searchInput" oninput="handleSearch()" placeholder="Szukaj tematu (np. sen, mózg, kosmos)..." class="w-full pl-10 pr-4 py-2.5 rounded-2xl bg-white dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/80 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition shadow-sm" />
+      <input type="text" id="searchInput" oninput="handleSearch()" placeholder="Szukaj tematu (np. sen, mózg, kosmos, metabolizm)..." class="w-full pl-10 pr-4 py-2.5 rounded-2xl bg-white dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/80 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition shadow-sm" />
     </div>
 
-    <!-- CHIPSY KATEGORII -->
     <div class="flex gap-2 overflow-x-auto pb-2 no-scrollbar text-xs font-semibold">
       <button onclick="filterCategory('all')" class="cat-btn active px-4 py-2 rounded-xl bg-indigo-600 text-white whitespace-nowrap shadow-sm transition">Wszystkie</button>
       <button onclick="filterCategory('ciało')" class="cat-btn px-4 py-2 rounded-xl bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 whitespace-nowrap shadow-sm transition">🧠 Ciało i Mózg</button>
@@ -160,19 +149,15 @@
 
   <!-- LISTA PIGUŁEK -->
   <main class="max-w-2xl mx-auto px-4">
-    <div id="pillsGrid" class="grid grid-cols-1 gap-3">
-      <!-- Wstrzykiwane przez JS -->
-    </div>
+    <div id="pillsGrid" class="grid grid-cols-1 gap-3"></div>
   </main>
 
   <!-- MODAL CZYTNIKA SLAJDÓW -->
-  <div id="readerModal" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-xl hidden flex-col justify-between p-4 md:p-6 transition-all duration-300">
+  <div id="readerModal" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-xl hidden flex-col justify-between p-4 md:p-6 transition-all duration-300 overflow-y-auto">
     
     <!-- TOP BAR -->
-    <div class="w-full max-w-lg mx-auto">
-      <div id="progressContainer" class="flex gap-1.5 mb-4">
-        <!-- Paski postępu slajdów -->
-      </div>
+    <div class="w-full max-w-lg mx-auto pt-2">
+      <div id="progressContainer" class="flex gap-1.5 mb-4"></div>
       
       <div class="flex items-center justify-between text-white">
         <span id="readerCategory" class="text-xs font-bold uppercase tracking-wider text-indigo-400">Kategoria</span>
@@ -188,15 +173,13 @@
     </div>
 
     <!-- OBSZAR SLAJDU -->
-    <div class="w-full max-w-lg mx-auto my-auto flex-1 flex flex-col justify-center py-4">
-      <div id="slideCard" class="slide-enter bg-slate-900/90 border border-white/10 rounded-3xl p-6 text-white shadow-2xl relative overflow-hidden min-h-[380px] flex flex-col justify-between">
+    <div class="w-full max-w-lg mx-auto my-auto flex-1 flex flex-col justify-center py-3">
+      <div id="slideCard" class="slide-enter bg-slate-900/90 border border-white/10 rounded-3xl p-5 md:p-6 text-white shadow-2xl relative min-h-[420px] max-h-[75vh] flex flex-col justify-between">
         
-        <div id="slideContent" class="space-y-4">
-          <!-- Treść slajdu -->
-        </div>
+        <div id="slideContent" class="space-y-3 overflow-y-auto pr-1 flex-1 mb-3"></div>
 
-        <div id="slideFooter" class="pt-4 border-t border-white/10 text-xs text-slate-400 flex items-center justify-between">
-          <span id="slideCounter">Slajd 1 z 4</span>
+        <div id="slideFooter" class="pt-3 border-t border-white/10 text-xs text-slate-400 flex items-center justify-between shrink-0">
+          <span id="slideCounter">Slajd 1 z 5</span>
           <span class="text-[11px] text-indigo-300 flex items-center gap-1">
             <i data-lucide="sparkles" class="w-3 h-3"></i> Użyj strzałek lub przycisków
           </span>
@@ -206,7 +189,7 @@
     </div>
 
     <!-- BOTTOM CONTROLS -->
-    <div class="w-full max-w-lg mx-auto flex items-center justify-between gap-4 pt-2">
+    <div class="w-full max-w-lg mx-auto flex items-center justify-between gap-4 pb-2">
       <button onclick="prevSlide()" id="prevBtn" class="flex-1 py-3.5 rounded-2xl bg-white/10 hover:bg-white/20 active:scale-95 text-white font-bold text-sm flex items-center justify-center gap-2 transition disabled:opacity-30">
         <i data-lucide="chevron-left" class="w-5 h-5"></i> Wstecz
       </button>
@@ -230,7 +213,7 @@
       </div>
 
       <p class="text-xs text-slate-500 dark:text-slate-400 mb-4 leading-relaxed">
-        Aplikacja codziennie sama odblokowuje nową wiedzę. Jeśli wkleisz swój darmowy klucz <strong>Google Gemini API Key</strong>, aplikacja będzie mogła generować dla Ciebie unikalne pigułki na dowolny temat!
+        Aplikacja automatycznie dostarcza obszerną wiedzę. Zapisując tutaj swój klucz <strong>Google Gemini API Key</strong>, umożliwiasz wygenerowanie unikalnych pigułek bezpośrednio w aplikacji!
       </p>
 
       <label class="block text-xs font-bold uppercase tracking-wider mb-2 text-slate-600 dark:text-slate-300">Klucz Gemini API</label>
@@ -243,154 +226,163 @@
     </div>
   </div>
 
-  <!-- BAZA DANYCH & LOGIKA APLIKACJI -->
   <script>
     const defaultPills = [
-      {"id":"pill-fallback-1793691909285","title":"Dlaczego ziewanie jest zaraźliwe?","desc":"Ktoś obok ziewa i Ty nagle też musisz? To sprawka Twoich neuronów lustrzanych!","category":"ciało","date":"2026-11-03","timeToRead":"3 min","icon":"sparkles","slides":[{"title":"🥱 Magia ziewania","content":"Ziewasz nie tylko z senności. Ziewanie to sposób mózgu na szybkie schłodzenie się, gdy jest zbyt nagrzany lub zmęczony."},{"title":"🪞 Neurony lustrzane","content":"Gdy widzisz, że ktoś ziewa, w Twoim mózgu aktywują się neurony lustrzane. Odpowiadają one za empatię i podświadome naśladowanie zachowań innych."},{"title":"📌 ZAPAMIĘTAJ NA DZIŚ","content":"Zaraźliwe ziewanie to dowód na to, że Twój mózg jest społecznie dostrojony i zdolny do empatii!"}],"quiz":{"question":"Co odpowiada za zaraźliwość ziewania?","options":["Neurony lustrzane","Brak tlenu w pokoju","Przypadek"],"correct":0}},
-      {"id":"pill-fallback-2-1793691475742","title":"Dlaczego morze szumi w muszli?","desc":"Nie, nie słyszysz oceanu. Dźwięk ten ma bezpośredni związek z Twoim własnym ciałem!","category":"świat","date":"2026-11-03","timeToRead":"2 min","icon":"sparkles","slides":[{"title":"🐚 Mity z dzieciństwa","content":"Bujda o zachowanym szumie fal w muszli jest piękna, ale rzeczywistość jest o wiele bardziej fascynująca."},{"title":"🔊 Wzmacniacz dźwięków","content":"Muszla działa jak rezonator. Wyłapuje ciche dźwięki z otoczenia oraz szum krwi przepływającej w Twoim uchu i je odbija!"},{"title":"📌 ZAPAMIĘTAJ NA DZIŚ","content":"Gdy przykładasz muszlę do ucha, tak naprawdę słyszysz wzmocnione echo otoczenia i puls własnej krwi."}],"quiz":{"question":"Co tak naprawdę słyszymy w muszli?","options":["Szum oceanu","Dźwięki otoczenia i szum własnej krwi","Wiatr sprzed lat"],"correct":1}},
       {
-        id: 'sen-mozg',
-        title: 'Czemu Twój mózg robi nocą sprzątanie?',
-        desc: 'Myślisz, że w nocy Twój mózg śpi? Oho, wcale nie! Wtedy wjeżdża nocna ekipa sprzątająca.',
+        id: 'sen-mozg-pro',
+        title: 'Dlaczego nocą Twój mózg odpala spłuczkę?',
+        desc: 'Myślisz, że w nocy mózg idzie spać? Nic z tych rzeczy! Wtedy wjeżdża nocna ekipa sprzątająca i dosłownie wypłukuje toksyny z Twojej głowy.',
         category: 'ciało',
-        date: '2026-11-01',
-        timeToRead: '3 min',
+        date: '2026-11-03',
+        timeToRead: '4 min',
         icon: 'moon',
         slides: [
           {
             title: '🛌 Nocna Ekipa Czyszcząca',
-            content: 'Wyobraź sobie, że cały dzień pracujesz na kompie i zostawiasz na pulpicie 500 śmieciowych plików. Twój mózg robi to samo. Gdy zasypiasz, włącza się tzw. <strong>układ glimfatyczny</strong> — dosłownie spłukuje komórki mózgowe płynem, czyszcząc je z toksyn nagromadzonych za dnia.'
+            content: 'Wyobraź sobie, że pracujesz cały dzień przy biurku, generując śmieci, resztki jedzenia i sterty papieru. Mózg podczas czuwania robi dokładnie to samo – spala mnóstwo energii i produkuje metaboliczne odpady. Gdy zasypiasz, odpala się tzw. <strong>układ glimfatyczny</strong>, odkryty dopiero w 2012 roku! To biologiczna spłuczka, która pompuje płyn mózgowo-rdzeniowy pomiędzy neuronami.'
           },
           {
-            title: '🧹 Po co właściwie śpimy?',
-            content: 'Brak snu to nie tylko podkrążone oczy. Gdy nie śpisz, te toksyny zostają. Mózg zaczyna działać jak komputer z zakurzoną kartą graficzną — zwiesza się, gubi wątki i reaguje wolniej. Sen to jedyny moment, kiedy mózg potrafi skasować ten szum.'
+            title: '🧹 Komórki... kurczą się o 60%!',
+            content: 'Żeby płyn mógł skutecznie wymyć zakamarki, komórki glejowe (astrocyty) kurczą się podczas głębokiego snu aż o <strong>60%</strong>! Tworzy się w ten sposób przestrzeń, przez którą płyn przepływa jak rwący potok, zbierając szkodliwe białka, w tym <strong>beta-amyloid</strong> – szkodliwe złogi kojarzone m.in. z chorobą Alzheimera.'
           },
           {
-            title: '💡 Faza REM, czyli układanie klocków',
-            content: 'W fazie sennej (REM) Twój mózg przegląda wszystko, co dzisiaj przeżyłeś i układa to w szufladkach. To dlatego po przespanej nocy łatwiej ogarniasz trudne rzeczy z chemii czy matmy — mózg dosłownie uczy się podczas snu!'
+            title: '💡 Faza REM: Konsolidacja i porządki',
+            content: 'Gdy układ glimfatyczny czyści mechanicznie, faza senna REM (Rapid Eye Movement) robi porządki cyfrowe. Mózg analizuje wspomnienia z całego dnia: niepotrzebne bodźce kasuje, a ważne informacje przenosi z pamięci krótkotrwałej w hipokampie do kory mózgowej. To dlatego po przesypiając nockę lepiej kojarzysz fakty z biologii czy chemii.'
           },
           {
-            title: '📌 ZAPAMIĘTAJ NA DZIŚ',
-            content: 'Zamiast zarywać nockę przed ważnym sprawdzianem, prześpij chociaż 6-7 godzin. Twój mózg sam poukłada wiedzę i usunie śmieci z pamięci operacyjnej.'
-          }
-        ],
-        quiz: {
-          question: 'Co robi układ glimfatyczny podczas głębokiego snu?',
-          options: ['Pali kalorie z całego dnia', 'Spłukuje toksyny z mózgu', 'Produkuje więcej kofeiny'],
-          correct: 1
-        }
-      },
-      {
-        id: 'deser-zoladek',
-        title: 'Dlaczego na deser ZAWSZE znajdzie się miejsce?',
-        desc: 'Jesteś nażarty po korek, ale na gofra albo ciacho nagle masz osobny żołądek? To nie magia, to biologia!',
-        category: 'ciało',
-        date: '2026-11-02',
-        timeToRead: '2 min',
-        icon: 'utensils',
-        slides: [
-          {
-            title: '🍕 „Jestem pełny... o, sernik!”',
-            content: 'Znasz to uczucie? Zjadłeś całą pizzę, czujesz się jak balon, ale gdy ktoś pyta o deser, nagle dostajesz nowe życie. Zjawisko to nazywa się <strong>sytością sensorycznie specyficzną</strong>.'
-          },
-          {
-            title: '🧠 Mózg się po prostu nudzi',
-            content: 'Gdy jesz jedno danie (np. wytrawne, słone), Twój mózg z czasem wysyła sygnał: „Dobra, starczy tego smaku, jestem najedzony”. Ale gdy na stole pojawia się nowy smak (słodki), mózg dostaje strzał dopaminy i kasuje uczucie sytości!'
-          },
-          {
-            title: '🦴 Ewolucyjny podstęp',
-            content: 'Nasi przodkowie musieli zbierać różne wartości odżywcze. Gdyby jedli tylko jedno mięso, brakowałoby im witamin. Mózg nauczył nas więc robić miejsce na nowości, żebyśmy jedli różnorodnie.'
+            title: '⚠️ Zarywanie nocy to biologiczny dławik',
+            content: 'Brak snu powoduje, że toksyny zostają w głowie na kolejny dzień. Efekt? Przepustowość neuronów spada, spowalnia czas reakcji, a poziom kortyzolu (hormonu stresu) szybuje w górę. Czujesz się oszołomiony, bo Twój mózg dosłownie pracuje w nieprzemytym środowisku metabolicznym.'
           },
           {
             title: '📌 ZAPAMIĘTAJ NA DZIŚ',
-            content: 'Drugi „żołądek na deser” naprawdę istnieje w Twoim mózgu. To po prostu reakcja na nowy bodziec smakowy, a nie fizyczny brak miejsca w brzuchu!'
+            content: 'Sen to nie luksus ani bezczynność – to kluczowy proces konserwacyjny! Przed ważnym testem czy wydarzeniem prześpij minimum 7–8 godzin. Daj układowi glimfatycznemu dokończyć pracę, a obudzisz się z pełną mocą obliczeniową.'
           }
         ],
         quiz: {
-          question: 'Jak nazywa się mechanizm sprawiający, że robimy miejsce na deser?',
-          options: ['Sytość sensorycznie specyficzna', 'Efekt sernika', 'Zmniejszenie żołądka'],
+          question: 'Co dzieje się z komórkami glejowymi podczas głębokiego snu?',
+          options: ['Kurczą się o ok. 60%, ułatwiając przepływ płynu', 'Pęcznieją i blokują dopływ krwi', 'Zwiększają swoją objętość dwukrotnie'],
           correct: 0
         }
       },
       {
-        id: 'deja-vu',
-        title: 'Błąd w matriksie: Czym naprawdę jest Déjà Vu?',
-        desc: 'Wchodzisz w nowe miejsce i przysięgasz, że już tu byłeś? Twój mózg po prostu zaliczył mały lag.',
-        category: 'świat',
-        date: '2026-11-03',
-        timeToRead: '3 min',
-        icon: 'zap',
+        id: 'deser-zoladek-pro',
+        title: 'Dlaczego na deser ZAWSZE znajdzie się miejsce?',
+        desc: 'Jesteś nażarty po brzegi, ale na ciacho nagle pojawia się wolna przestrzeń? To nie żaden osobny żołądek, a sprytna sztuczka ewolucyjna.',
+        category: 'ciało',
+        date: '2026-11-02',
+        timeToRead: '4 min',
+        icon: 'utensils',
         slides: [
           {
-            title: '🌀 Przeniesienie w czasie?',
-            content: 'Stoisz w sklepie i nagle masz 100% pewności, że dokładnie ta sama sytuacja, z tym samym tekstem znajomego, wydarzyła się kiedyś w Twoim śnie lub poprzednim życiu. Spokojnie, nie jesteś w Symulacji.'
+            title: '🍕 „Jestem pełny... o, sernik!”',
+            content: 'Zjadłeś ogromny obiad, ledwo oddychasz i zarzekasz się, że nie wciśniesz już ani jednego kęsa. Minutę później ktoś stawia na stole deser, a Ty z uśmiechem sięgasz po widelczyk. Zjawisko to w neurobiologii nazywa się <strong>sytością sensorycznie specyficzną</strong>.'
           },
           {
-            title: '⚡ Lag na skrzyżowaniu pamięci',
-            content: 'Déjà vu to po prostu krótkie spięcie w płacie skroniowym mózgu. Informacja z Twoich oczu zamiast trafić najpierw do pamięci podręcznej (krótkotrwałej), pomyłkowo trafia od razu do szuflady z pamięcią długotrwałą!'
+            title: '🧠 Mózg wyłącza hamulce dla nowych smaków',
+            content: 'Podczas jedzenia jednego rodzaju potrawy (np. słonego, tłustego obiadu) receptory smakowe ulegają adaptacji. Mózg wysyła sygnał: <em>„Mamy już dość tego konkretnego profilu smakowego”</em>. Jednak pojawienie się zupełnie nowego bodźca (np. słodkiego lub kwaśnego) aktywuje ośrodek nagrody w mózgu i natychmiastowo resetuje poczucie sytości!'
           },
           {
-            title: '🎞️ Mózg myśli, że to wspomnienie',
-            content: 'Twój mózg rejestruje to, co dzieje się TERAZ, ale odczytuje to tak, jakby wydarzyło się ROK TEMU. Stąd to dziwne wrażenie znania przyszłości.'
+            title: '🦴 Ewolucja uczyła nas różnorodności',
+            content: 'Dla naszych przodków jedzenie wyłącznie jednego typu pożywienia oznaczało ryzyko drastycznych niedoborów witamin i minerałów. Mózg wyewoluował więc mechanizm zachęcający do poszukiwania nowych smaków. Odrzucenie kolejnej porcji mięsa, przy jednoczesnej ochocie na owoce czy miód, zapewniało przetrwanie w trudnych warunkach.'
+          },
+          {
+            title: '🧪 Fizyczne rozluźnienie żołądka',
+            content: 'To nie tylko psychika! Widok i zapach apetycznego deseru stymuluje nerw błędny, co prowadzi do tzw. <strong>relaksacji receptywnej żołądka</strong>. Ściany żołądka dosłownie wnikliwie rozluźniają się, tworząc fizyczne miejsce na słodką przekąskę.'
           },
           {
             title: '📌 ZAPAMIĘTAJ NA DZIŚ',
-            content: 'Déjà vu zdarza się najczęściej u młodych, zmęczonych i zestresowanych osób. To po prostu uroczy błąd w synchronizacji Twojego wewnętrznego twardego dysku.'
+            content: 'Uczucie miejsca na deser to wynik podstępu dopaminowego i wrodzonej reakcji na zmianę smaku. Jeśli chcesz unikać przejadania się – staraj się kończyć posiłek bez wprowadzania gwałtownie nowych, słodkich bodźców.'
           }
         ],
         quiz: {
-          question: 'Czym spowodowane jest déjà vu?',
-          options: ['Podróżą w czasie', 'Przeskokiem informacji bezpośrednio do pamięci długotrwałej', 'Przegrzaniem oczu'],
+          question: 'Co fizycznie dzieje się z żołądkiem na widok atrakcyjnego deseru?',
+          options: ['Skurcza się pod wpływem stresu', 'Rozluźnia swoje ściany (relaksacja receptywna)', 'Zwiększa kwasowość o 200%'],
           correct: 1
         }
       },
       {
-        id: 'czas-wiek',
-        title: 'Czemu wakacje za dzieciaka trwały wieczność?',
-        desc: 'Pamiętasz jak lato w podstawówce wydawało się trwać 5 lat, a teraz rok mija w 3 tygodnie? Oto powód.',
-        category: 'kosmos',
-        date: '2026-11-04',
-        timeToRead: '3 min',
-        icon: 'clock',
+        id: 'deja-vu-pro',
+        title: 'Błąd w synchronizacji: Czym naprawdę jest Déjà Vu?',
+        desc: 'Wchodzisz do nowego miejsca i przysięgasz, że dokładnie to samo wydarzyło się rok temu? Oto jak mózg gubi klatki.',
+        category: 'świat',
+        date: '2026-11-01',
+        timeToRead: '4 min',
+        icon: 'zap',
         slides: [
           {
-            title: '⏳ Zegar w głowie pędzi',
-            content: 'Gdy masz 5 lat, jeden rok to aż 20% całego Twojego dotychczasowego życia. Gdy masz 20 lat, rok to już tylko 5%. Czysta matematyka proporcji sprawia, że czas przyspiesza.'
+            title: '🌀 Krótkie spięcie w matriksie',
+            content: 'Rozmawiasz ze znajomym i nagle paraliżuje Cię uczucie 100% pewności: ten gest, światło i słowa już kiedyś miały miejsce. Spokojnie, to nie przeczucie, wspomnienie z poprzedniego życia ani błąd w symulacji komputera. To fascynująca pomyłka w trasowaniu danych w Twoim mózgu.'
           },
           {
-            title: '📸 Brak nowych „klatek”',
-            content: 'Dziecko codziennie doświadcza nowości: nowy plac zabaw, pierwsza jazda na rowerze, nowi ludzie. Mózg zapisuje mnóstwo klatek i szczegółów. U dorosłych włącza się rutyna (szkoła/praca -> dom), więc mózg nie traci energii na zapisywanie powtórek.'
+            title: '⚡ Lag na skrzyżowaniu pamięci',
+            content: 'Zwykle bodźce z oczu i uszu trafiają najpierw do pamięci krótkotrwałej, gdzie są przetwarzane na bieżąco. Przy déjà vu dochodzi do desynchronizacji w <strong>płacie skroniowym</strong> oraz strukturach <strong>hipokampa</strong>. Informacja trafia bezpośrednio do obszarów pamięci długotrwałej ZANIM mózg zdąży ją zinterpretować jako wydarzenie teraźniejsze!'
           },
           {
-            title: '🛠️ Jak zwolnić czas?',
-            content: 'Chcesz, żeby czas płynął wolniej? Rób nowe rzeczy! Zmień drogę do domu, spróbuj nowego sportu, pojedź w nieznane miejsce. Nowe bodźce zmuszają mózg do gęstszego zapisywania wspomnień.'
+            title: '🎞️ Czytanie teraźniejszości jako historii',
+            content: 'Efekt? Twój mózg rejestruje to, co dzieje się dokładnie W TEJ SEKUNDZIE, ale odczytuje tę informację z szuflady oznaczonej tagiem: <em>„Stare wspomnienie”</em>. Stąd powstaje to uderzające, tajemnicze wrażenie przeżywania tego samego po raz drugi.'
+          },
+          {
+            title: '☕ Zmęczenie i kofeina potęgują efekt',
+            content: 'Zjawisko to występuje najczęściej u osób między 15 a 25 rokiem życia. Zwiększa się jego częstotliwość, gdy jesteś niewyspany, zestresowany lub po spożyciu większej ilości kofeiny – wtedy neurony są bardziej podatne na drobne micro-misfiringi (błędy w przewodzeniu impulsów).'
           },
           {
             title: '📌 ZAPAMIĘTAJ NA DZIŚ',
-            content: 'Rutyna drastycznie skraca Twoje poczucie czasu. Żeby wydłużyć weekend czy wakacje – dostarczaj mózgowi jak najwięcej nowych wrażeń!'
+            content: 'Déjà vu to po prostu przejściowy lag w wewnętrznym twardym dysku Twojego mózgu. Nie ma w tym nic nadprzyrodzonego – to uroczy dowód na to, jak skomplikowane są szlaki przetwarzania pamięci!'
           }
         ],
         quiz: {
-          question: 'Co pozwala zwolnić subiektywne poczucie upływu czasu?',
-          options: ['Robienie ciągle tego samego', 'Nowe doświadczenia i przełamywanie rutyny', 'Patrzenie w zegarek'],
+          question: 'Z czego wynika zjawisko déjà vu?',
+          options: ['Z pomylenia szlaków neuronalnych – trafienia bodźca od razu do pamięci długotrwałej', 'Z chwilowej utraty wzroku', 'Z nadmiaru tlenu w płacie czołowym'],
+          correct: 0
+        }
+      },
+      {
+        id: 'czas-wiek-pro',
+        title: 'Czemu wakacje w dzieciństwie trwały całą wieczność?',
+        desc: 'Lato za łebka wydawało się nie kończyć, a teraz rok mija w mgnieniu oka? Wyjaśniamy ten psychologiczny fenomen.',
+        category: 'kosmos',
+        date: '2026-10-31',
+        timeToRead: '4 min',
+        icon: 'clock',
+        slides: [
+          {
+            title: '⏳ Rozpędzony zegar w głowie',
+            content: 'Pamiętasz te niekończące się miesiące wakacji w podstawówce? Dzisiaj pojedyncze miesiące przelatują niezauważone. Za to wrażenie odpowiada połączenie prostej matematyki oraz sposobu, w jaki mózg koduje i zapisuje nowe wspomnienia.'
+          },
+          {
+            title: '📐 Hipoteza proporcjonalna (Teoria Janeta)',
+            content: 'Gdy masz 5 lat, jeden rok stanowi aż <strong>20% całego Twojego życia</strong> – to ogromny kawał doświadczenia! Gdy skończysz 20 lat, rok to już zaledwie <strong>5%</strong> przeżytego czasu. Z czysto matematycznego punktu widzenia każda kolejna jednostka czasu stanowi mniejszy ułamek Twojej historii.'
+          },
+          {
+            title: '📸 Gęstość kodowania nowych klatek',
+            content: 'Kluczowa jest jednak praca hipokampa. Dzieci stale stykają się z nowościami: nowi ludzie, nieznane miejsca, pierwsze umiejętności. Mózg reaguje na to intensywną produkcją dopaminy i rejestruje mnóstwo „klatek” informacyjnych. Im więcej szczegółowych wspomnień z danego okresu, tym dłuższego wydaje się on w retrospekcji.'
+          },
+          {
+            title: '🤖 Rutyna – cichy zabójca czasu',
+            content: 'U dorosłych dominuje rutyna: ta sama droga do pracy, powtarzalne obowiązki, przewidywalny plan dnia. Mózg dba o oszczędzanie energii, więc nie zapisuje powtarzających się schematów. W efekcie, gdy spoglądasz wstecz na miniony miesiąc, mózg nie ma z czego odtworzyć osi czasu i odczuwasz go jako błyskawiczny błysk.'
+          },
+          {
+            title: '📌 ZAPAMIĘTAJ NA DZIŚ',
+            content: 'Chcesz subiektywnie wydłużyć czas? Przełamuj rutynę! Zmieniaj trasy spacerów, ucz się nowych rzeczy, szukaj nieznanych bodźcówSmakowych i wizualnych. Zmusisz mózg do gęstego zapisywania klatek pamięciowych!'
+          }
+        ],
+        quiz: {
+          question: 'Co sprawia, że czas płynie w naszej percepcji wolniej?',
+          options: ['Rutyna i wykonywanie tych samych czynności', 'Dostarczanie mózgowi nowych, nieznanych doświadczeń', 'Szybkie bieganie'],
           correct: 1
         }
       }
     ];
 
-    // STATE
     let pills = defaultPills;
     let savedIds = JSON.parse(localStorage.getItem('astra_saved')) || [];
     let completedIds = JSON.parse(localStorage.getItem('astra_completed')) || [];
     let currentFilter = 'all';
     
-    // READER STATE
     let currentPill = null;
     let currentSlideIndex = 0;
 
-    // INIT
     document.addEventListener('DOMContentLoaded', () => {
-      // Inicjalizacja motywu (Domyślnie DARK)
       const savedTheme = localStorage.getItem('astra_theme') || 'dark';
       if (savedTheme === 'dark') {
         document.documentElement.classList.add('dark');
@@ -409,7 +401,6 @@
       document.getElementById('currentDateText').innerText = new Date().toLocaleDateString('pl-PL', { weekday: 'long', day: 'numeric', month: 'long' });
     });
 
-    // GENERATE BIAŁA GWIAZDA CANVAS ICON FOR PWA
     function generateAppIconCanvas() {
       const canvas = document.getElementById('iconCanvas');
       const ctx = canvas.getContext('2d');
@@ -455,19 +446,13 @@
       document.getElementsByTagName('head')[0].appendChild(link);
     }
 
-    // ULEPSZONY WYBÓR PIGUŁKI DNIA
     function setupDailyPill() {
       const todayStr = new Date().toISOString().split('T')[0];
       
-      // 1. Priorytet: Pigułka wygenerowana z dzisiejszą datą
       let dailyPill = pills.find(p => p.date === todayStr);
-
-      // 2. Jeśli brak dzisiejszej: Pierwsza pigułka, której jeszcze NIE przeczytałeś
       if (!dailyPill) {
         dailyPill = pills.find(p => !completedIds.includes(p.id));
       }
-
-      // 3. Awaryjnie (gdy przeczytałeś absolutnie wszystko): Pierwsza pigułka z listy
       if (!dailyPill) {
         dailyPill = pills[0];
       }
@@ -495,7 +480,7 @@
         container.innerHTML = `
           <div class="text-center py-12 text-slate-400">
             <i data-lucide="sparkles" class="w-8 h-8 mx-auto mb-2 opacity-40"></i>
-            <p class="text-sm font-medium">Brak pigułek w tej kategorii</p>
+            <p class="text-sm font-medium">Brak pigułek spełniających kryteria</p>
           </div>
         `;
         lucide.createIcons();
@@ -533,8 +518,8 @@
           </div>
 
           <div class="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-slate-700/50 text-[11px] text-slate-400">
-            <span class="flex items-center gap-1"><i data-lucide="clock" class="w-3.5 h-3.5"></i> ${pill.timeToRead || '3 min'}</span>
-            <span class="font-bold text-indigo-600 dark:text-indigo-400 flex items-center gap-0.5">Czytaj slajdy <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i></span>
+            <span class="flex items-center gap-1"><i data-lucide="clock" class="w-3.5 h-3.5"></i> ${pill.timeToRead || '4 min'}</span>
+            <span class="font-bold text-indigo-600 dark:text-indigo-400 flex items-center gap-0.5">Czytaj wiedzę <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i></span>
           </div>
         `;
         container.appendChild(card);
@@ -582,8 +567,8 @@
       if(currentSlideIndex < currentPill.slides.length) {
         const slide = currentPill.slides[currentSlideIndex];
         container.innerHTML = `
-          <h2 class="text-xl font-extrabold text-white leading-tight mb-3">${slide.title}</h2>
-          <div class="text-sm text-slate-200 leading-relaxed space-y-2">
+          <h2 class="text-lg md:text-xl font-extrabold text-white leading-tight mb-2">${slide.title}</h2>
+          <div class="text-xs md:text-sm text-slate-200 leading-relaxed space-y-2">
             <p>${slide.content}</p>
           </div>
         `;
@@ -593,10 +578,10 @@
           <div class="inline-block px-3 py-1 rounded-full bg-indigo-500/20 border border-indigo-400/30 text-indigo-300 font-bold text-xs mb-2">
             🧠 Szybki Quiz Sprawdzający
           </div>
-          <h2 class="text-lg font-bold text-white mb-4">${q.question}</h2>
-          <div id="quizOptions" class="space-y-2.5">
+          <h2 class="text-base md:text-lg font-bold text-white mb-3">${q.question}</h2>
+          <div id="quizOptions" class="space-y-2">
             ${q.options.map((opt, idx) => `
-              <button onclick="checkQuiz(${idx}, ${q.correct})" class="w-full text-left p-3.5 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 text-sm font-medium transition text-white">
+              <button onclick="checkQuiz(${idx}, ${q.correct})" class="w-full text-left p-3 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 text-xs md:text-sm font-medium transition text-white">
                 ${opt}
               </button>
             `).join('')}
@@ -604,7 +589,7 @@
         `;
       }
 
-      document.getElementById('slideCounter').innerText = `Slajd ${currentSlideIndex + 1} z ${totalSlides}`;
+      document.getElementById('slideCounter').innerText = `Slajd ${currentSlideIndex + 1} z${totalSlides}`;
       document.getElementById('prevBtn').disabled = currentSlideIndex === 0;
 
       const nextBtn = document.getElementById('nextBtn');
@@ -630,7 +615,7 @@
         }
         closeReader();
         renderPills();
-        setupDailyPill(); // Aktualizacja po przeczytaniu
+        setupDailyPill();
       }
     }
 
@@ -646,9 +631,9 @@
       buttons.forEach((btn, idx) => {
         btn.disabled = true;
         if(idx === correctIdx) {
-          btn.className = "w-full text-left p-3.5 rounded-2xl bg-emerald-500/20 border border-emerald-500 text-sm font-bold text-emerald-300";
+          btn.className = "w-full text-left p-3 rounded-2xl bg-emerald-500/20 border border-emerald-500 text-xs md:text-sm font-bold text-emerald-300";
         } else if(idx === selectedIdx) {
-          btn.className = "w-full text-left p-3.5 rounded-2xl bg-rose-500/20 border border-rose-500 text-sm font-bold text-rose-300";
+          btn.className = "w-full text-left p-3 rounded-2xl bg-rose-500/20 border border-rose-500 text-xs md:text-sm font-bold text-rose-300";
         }
       });
 
