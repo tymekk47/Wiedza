@@ -8,7 +8,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 3
+    timeout-minutes: 5
     permissions:
       contents: write
     steps:
@@ -37,38 +37,48 @@ jobs:
 
             const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=${process.env.GEMINI_API_KEY}`;
             
-            try {
-              const res = await fetch(url, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] }),
-                signal: AbortSignal.timeout(30000)
-              });
+            let attempts = 0;
+            let success = false;
+            let data;
 
-              const data = await res.json();
+            while (attempts < 3 && !success) {
+              attempts++;
+              console.log(`Próba połączenia ${attempts} z 3...`);
+              try {
+                const res = await fetch(url, {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] }),
+                  signal: AbortSignal.timeout(30000)
+                });
 
-              if (!res.ok) {
-                console.error("BŁĄD API GEMINI:", JSON.stringify(data));
-                process.exit(1);
+                data = await res.json();
+
+                if (res.ok && data.candidates && data.candidates[0]?.content?.parts[0]?.text) {
+                  success = true;
+                } else {
+                  console.warn(`Próba ${attempts} nieudana:`, JSON.stringify(data));
+                  if (attempts < 3) await new Promise(r => setTimeout(r, 5000));
+                }
+              } catch (err) {
+                console.warn(`Błąd podczas próby ${attempts}:`, err.message);
+                if (attempts < 3) await new Promise(r => setTimeout(r, 5000));
               }
+            }
 
-              if (!data.candidates || !data.candidates[0]?.content?.parts[0]?.text) {
-                console.error("Brak treści z Gemini:", JSON.stringify(data));
-                process.exit(1);
-              }
-
-              let rawText = data.candidates[0].content.parts[0].text;
-              rawText = rawText.replace(/```json/g, "").replace(/```/g, "").trim();
-              const newPill = JSON.parse(rawText);
-
-              let html = fs.readFileSync("index.html", "utf8");
-              html = html.replace("const defaultPills = [", "const defaultPills = [\n      " + JSON.stringify(newPill) + ",");
-              fs.writeFileSync("index.html", html);
-              console.log("Pomyślnie dodano pigułkę:", newPill.title);
-            } catch (err) {
-              console.error("Błąd wykonania:", err.message);
+            if (!success) {
+              console.error("Serwer Gemini przeciążony. Nie udało się po 3 próbach.");
               process.exit(1);
             }
+
+            let rawText = data.candidates[0].content.parts[0].text;
+            rawText = rawText.replace(/```json/g, "").replace(/```/g, "").trim();
+            const newPill = JSON.parse(rawText);
+
+            let html = fs.readFileSync("index.html", "utf8");
+            html = html.replace("const defaultPills = [", "const defaultPills = [\n      " + JSON.stringify(newPill) + ",");
+            fs.writeFileSync("index.html", html);
+            console.log("Pomyślnie dodano pigułkę:", newPill.title);
           }
           generate();
           '
