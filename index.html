@@ -80,7 +80,7 @@
       to { opacity: 1; transform: translateX(0) scale(1); }
     }
 
-    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: rgba(156, 163, 175, 0.3); border-radius: 10px; }
   </style>
@@ -90,8 +90,8 @@
   <canvas id="iconCanvas" width="512" height="512" class="hidden"></canvas>
 
   <!-- HEADER -->
-  <header class="sticky top-0 z-30 glass border-b border-slate-200/80 dark:border-slate-800/80 px-4 py-3">
-    <div class="max-w-2xl mx-auto flex items-center justify-between">
+  <header class="sticky top-0 z-30 glass border-b border-slate-200/80 dark:border-slate-800/80 px-4 md:px-8 py-3.5">
+    <div class="max-w-6xl mx-auto flex items-center justify-between">
       
       <div class="flex items-center gap-3 cursor-pointer" onclick="filterCategory('all')">
         <div class="relative w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-900 via-star-900 to-black p-0.5 shadow-lg flex items-center justify-center overflow-hidden border border-white/20">
@@ -100,15 +100,15 @@
           </svg>
         </div>
         <div>
-          <h1 class="font-extrabold text-lg tracking-tight leading-none bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-700 dark:from-white dark:via-indigo-200 dark:to-slate-300 bg-clip-text text-transparent">
+          <h1 class="font-extrabold text-lg md:text-xl tracking-tight leading-none bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-700 dark:from-white dark:via-indigo-200 dark:to-slate-300 bg-clip-text text-transparent">
             ASTRA
           </h1>
-          <p class="text-[10px] font-semibold text-indigo-600 dark:text-indigo-400 tracking-wider uppercase">Pigułki Wiedzy</p>
+          <p class="text-[10px] md:text-xs font-semibold text-indigo-600 dark:text-indigo-400 tracking-wider uppercase">Pigułki Wiedzy</p>
         </div>
       </div>
 
-      <div class="flex items-center gap-2">
-        <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 font-bold text-xs border border-amber-500/20" title="Twoja seria dni z pigułkami wiedzy">
+      <div class="flex items-center gap-2.5">
+        <div class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 font-bold text-xs md:text-sm border border-amber-500/20" title="Twoja seria dni z pigułkami wiedzy">
           <i data-lucide="flame" class="w-4 h-4 fill-amber-500"></i>
           <span id="streakCount">0</span>
         </div>
@@ -126,47 +126,49 @@
   </header>
 
   <!-- BANNER PIGUŁKI DNIA / STAN PRZECZYTANIA -->
-  <section class="max-w-2xl mx-auto p-4">
-    <div id="dailyBanner" class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-600 via-indigo-700 to-star-900 text-white p-6 shadow-xl border border-indigo-400/30">
+  <section class="max-w-6xl mx-auto p-4 md:p-6">
+    <div id="dailyBanner" class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-600 via-indigo-700 to-star-900 text-white p-6 md:p-8 shadow-xl border border-indigo-400/30">
       <!-- Wstrzykiwane dynamicznie przez JS -->
     </div>
   </section>
 
   <!-- SZUKAJ I KATEGORIE -->
-  <section class="max-w-2xl mx-auto px-4 mb-4">
-    <div class="relative mb-3">
-      <i data-lucide="search" class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"></i>
-      <input type="text" id="searchInput" oninput="handleSearch()" placeholder="Szukaj tematu (np. sen, mózg, kosmos, metabolizm)..." class="w-full pl-10 pr-4 py-2.5 rounded-2xl bg-white dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/80 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition shadow-sm" />
-    </div>
+  <section class="max-w-6xl mx-auto px-4 md:px-6 mb-6">
+    <div class="flex flex-col md:flex-row gap-3 items-stretch md:items-center justify-between">
+      <div class="relative flex-1">
+        <i data-lucide="search" class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"></i>
+        <input type="text" id="searchInput" oninput="handleSearch()" placeholder="Szukaj tematu (np. sen, mózg, kosmos, metabolizm)..." class="w-full pl-10 pr-4 py-2.5 rounded-2xl bg-white dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/80 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition shadow-sm" />
+      </div>
 
-    <div class="flex gap-2 overflow-x-auto pb-2 no-scrollbar text-xs font-semibold">
-      <button onclick="filterCategory('all')" class="cat-btn active px-4 py-2 rounded-xl bg-indigo-600 text-white whitespace-nowrap shadow-sm transition">Wszystkie</button>
-      <button onclick="filterCategory('ciało')" class="cat-btn px-4 py-2 rounded-xl bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 whitespace-nowrap shadow-sm transition">🧠 Ciało i Mózg</button>
-      <button onclick="filterCategory('świat')" class="cat-btn px-4 py-2 rounded-xl bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 whitespace-nowrap shadow-sm transition">🌍 Świat i Życie</button>
-      <button onclick="filterCategory('kosmos')" class="cat-btn px-4 py-2 rounded-xl bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 whitespace-nowrap shadow-sm transition">🚀 Nauka i Kosmos</button>
-      <button onclick="filterCategory('saved')" class="cat-btn px-4 py-2 rounded-xl bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 whitespace-nowrap shadow-sm transition">⭐ Zapisane</button>
+      <div class="flex gap-2 overflow-x-auto pb-1 md:pb-0 no-scrollbar text-xs font-semibold shrink-0">
+        <button onclick="filterCategory('all')" class="cat-btn active px-4 py-2.5 rounded-xl bg-indigo-600 text-white whitespace-nowrap shadow-sm transition">Wszystkie</button>
+        <button onclick="filterCategory('ciało')" class="cat-btn px-4 py-2.5 rounded-xl bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 whitespace-nowrap shadow-sm transition">🧠 Ciało i Mózg</button>
+        <button onclick="filterCategory('świat')" class="cat-btn px-4 py-2.5 rounded-xl bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 whitespace-nowrap shadow-sm transition">🌍 Świat i Życie</button>
+        <button onclick="filterCategory('kosmos')" class="cat-btn px-4 py-2.5 rounded-xl bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 whitespace-nowrap shadow-sm transition">🚀 Nauka i Kosmos</button>
+        <button onclick="filterCategory('saved')" class="cat-btn px-4 py-2.5 rounded-xl bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 whitespace-nowrap shadow-sm transition">⭐ Zapisane</button>
+      </div>
     </div>
   </section>
 
-  <!-- LISTA PIGUŁEK -->
-  <main class="max-w-2xl mx-auto px-4">
-    <div id="pillsGrid" class="grid grid-cols-1 gap-3"></div>
+  <!-- LISTA PIGUŁEK (GRID 1 / 2 / 3 KOLUMNY) -->
+  <main class="max-w-6xl mx-auto px-4 md:px-6">
+    <div id="pillsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5"></div>
   </main>
 
   <!-- MODAL CZYTNIKA SLAJDÓW -->
-  <div id="readerModal" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-xl hidden flex-col justify-between p-4 md:p-6 transition-all duration-300 overflow-y-auto">
+  <div id="readerModal" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-xl hidden flex-col justify-between p-4 md:p-8 transition-all duration-300 overflow-y-auto">
     
     <!-- TOP BAR -->
-    <div class="w-full max-w-lg mx-auto pt-2">
-      <div id="progressContainer" class="flex gap-1.5 mb-4"></div>
+    <div class="w-full max-w-3xl mx-auto pt-2">
+      <div id="progressContainer" class="flex gap-2 mb-4"></div>
       
       <div class="flex items-center justify-between text-white">
         <span id="readerCategory" class="text-xs font-bold uppercase tracking-wider text-indigo-400">Kategoria</span>
         <div class="flex items-center gap-2">
-          <button onclick="toggleBookmarkCurrent()" class="p-2 rounded-full hover:bg-white/10 transition text-slate-300">
+          <button onclick="toggleBookmarkCurrent()" class="p-2 rounded-full hover:bg-white/10 transition text-slate-300" title="Zapisz tę pigułkę">
             <i data-lucide="bookmark" id="readerBookmarkIcon" class="w-5 h-5"></i>
           </button>
-          <button onclick="closeReader()" class="p-2 rounded-full hover:bg-white/10 transition text-slate-300">
+          <button onclick="closeReader()" class="p-2 rounded-full hover:bg-white/10 transition text-slate-300" title="Zamknij (Esc)">
             <i data-lucide="x" class="w-6 h-6"></i>
           </button>
         </div>
@@ -174,15 +176,15 @@
     </div>
 
     <!-- OBSZAR SLAJDU -->
-    <div class="w-full max-w-lg mx-auto my-auto flex-1 flex flex-col justify-center py-3">
-      <div id="slideCard" class="slide-enter bg-slate-900/90 border border-white/10 rounded-3xl p-5 md:p-6 text-white shadow-2xl relative min-h-[420px] max-h-[75vh] flex flex-col justify-between">
+    <div class="w-full max-w-3xl mx-auto my-auto flex-1 flex flex-col justify-center py-4">
+      <div id="slideCard" class="slide-enter bg-slate-900/95 border border-white/10 rounded-3xl p-6 md:p-8 text-white shadow-2xl relative min-h-[420px] max-h-[75vh] flex flex-col justify-between">
         
-        <div id="slideContent" class="space-y-3 overflow-y-auto pr-1 flex-1 mb-3"></div>
+        <div id="slideContent" class="space-y-4 overflow-y-auto pr-2 flex-1 mb-4"></div>
 
-        <div id="slideFooter" class="pt-3 border-t border-white/10 text-xs text-slate-400 flex items-center justify-between shrink-0">
+        <div id="slideFooter" class="pt-4 border-t border-white/10 text-xs text-slate-400 flex items-center justify-between shrink-0">
           <span id="slideCounter">Slajd 1 z 5</span>
           <span class="text-[11px] text-indigo-300 flex items-center gap-1">
-            <i data-lucide="sparkles" class="w-3 h-3"></i> Użyj strzałek lub przycisków
+            <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> Nawiguj strzałkami ← / →
           </span>
         </div>
 
@@ -190,7 +192,7 @@
     </div>
 
     <!-- BOTTOM CONTROLS -->
-    <div class="w-full max-w-lg mx-auto flex items-center justify-between gap-4 pb-2">
+    <div class="w-full max-w-3xl mx-auto flex items-center justify-between gap-4 pb-2">
       <button onclick="prevSlide()" id="prevBtn" class="flex-1 py-3.5 rounded-2xl bg-white/10 hover:bg-white/20 active:scale-95 text-white font-bold text-sm flex items-center justify-center gap-2 transition disabled:opacity-30">
         <i data-lucide="chevron-left" class="w-5 h-5"></i> Wstecz
       </button>
@@ -333,7 +335,7 @@
         ],
         quiz: {
           question: 'Z czego wynika zjawisko déjà vu?',
-          options: ['Z pomylenia szlaków neuronalnych – trafienia bodźca od razu do pamięci długotrwalego', 'Z chwilowej utraty wzroku', 'Z nadmiaru tlenu w płacie czołowym'],
+          options: ['Z pomylenia szlaków neuronalnych – trafienia bodźca od razu do pamięci długotrwałej', 'Z chwilowej utraty wzroku', 'Z nadmiaru tlenu w płacie czołowym'],
           correct: 0
         }
       },
@@ -463,7 +465,6 @@
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-      // Domyślnie promujemy mocny DARK MODE (#0b0f19)
       const savedTheme = localStorage.getItem('astra_theme') || 'dark';
       applyTheme(savedTheme === 'dark');
 
@@ -534,59 +535,69 @@
       const isCompleted = completedIds.includes(dailyPill.id);
 
       if (isCompleted) {
-        banner.className = "relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-900 via-indigo-950 to-star-900 text-white p-6 shadow-xl border border-indigo-500/20";
+        banner.className = "relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-900 via-indigo-950 to-star-900 text-white p-6 md:p-8 shadow-xl border border-indigo-500/20";
         banner.innerHTML = `
           <div class="absolute -right-8 -bottom-8 w-40 h-40 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none"></div>
 
-          <div class="flex items-center justify-between mb-3">
-            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/20 border border-emerald-400/30 text-emerald-300">
-              <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-400"></i> Dawka przyjęta
-            </span>
-            <span class="text-xs font-medium text-slate-400 capitalize">${dateFormatted}</span>
-          </div>
-
-          <h2 class="text-xl font-extrabold mb-1.5 leading-snug">Mózg doładowany na dziś! 🚀</h2>
-          <p class="text-xs text-slate-300 leading-relaxed mb-4">
-            Dzisiejsza wiedza została przyswojona. Daj neuronom czas na poukładanie informacji!
-          </p>
-
-          <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-3.5 flex items-center justify-between gap-3 mb-3">
-            <div class="flex items-center gap-3">
-              <div class="p-2 rounded-xl bg-indigo-500/20 border border-indigo-400/30 text-indigo-300">
-                <i data-lucide="clock" class="w-4 h-4"></i>
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div class="max-w-xl">
+              <div class="flex items-center gap-2 mb-3">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/20 border border-emerald-400/30 text-emerald-300">
+                  <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-400"></i> Dawka przyjęta
+                </span>
+                <span class="text-xs font-medium text-slate-400 capitalize">${dateFormatted}</span>
               </div>
-              <div>
-                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Nowa pigułka za</p>
-                <p id="countdownTimer" class="text-sm font-black tracking-wider text-white font-mono">00h 00m 00s</p>
-              </div>
+
+              <h2 class="text-xl md:text-2xl font-extrabold mb-2 leading-snug">Mózg doładowany na dziś! 🚀</h2>
+              <p class="text-xs md:text-sm text-slate-300 leading-relaxed mb-4">
+                Dzisiejsza wiedza została przyswojona. Daj neuronom czas na poukładanie informacji!
+              </p>
+
+              <button onclick="openReader('${dailyPill.id}')" class="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-400 hover:text-white transition">
+                <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i> Przejrzyj dzisiejszą wiedzę ponownie
+              </button>
             </div>
-            <span class="text-[10px] font-bold text-indigo-300 bg-indigo-500/20 px-2.5 py-1 rounded-lg border border-indigo-500/30">Jutro o 08:00</span>
-          </div>
 
-          <button onclick="openReader('${dailyPill.id}')" class="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-400 hover:text-white transition">
-            <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i> Przejrzyj dzisiejszą wiedzę ponownie
-          </button>
+            <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-4 flex items-center justify-between md:justify-start gap-4 shrink-0">
+              <div class="flex items-center gap-3">
+                <div class="p-2.5 rounded-xl bg-indigo-500/20 border border-indigo-400/30 text-indigo-300">
+                  <i data-lucide="clock" class="w-5 h-5"></i>
+                </div>
+                <div>
+                  <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Nowa pigułka za</p>
+                  <p id="countdownTimer" class="text-base md:text-lg font-black tracking-wider text-white font-mono">00h 00m 00s</p>
+                </div>
+              </div>
+              <span class="text-[10px] font-bold text-indigo-300 bg-indigo-500/20 px-2.5 py-1 rounded-lg border border-indigo-500/30 whitespace-nowrap">Jutro o 08:00</span>
+            </div>
+          </div>
         `;
         startCountdown();
       } else {
         if (countdownInterval) clearInterval(countdownInterval);
-        banner.className = "relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-600 via-indigo-700 to-star-900 text-white p-6 shadow-xl border border-indigo-400/30";
+        banner.className = "relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-600 via-indigo-700 to-star-900 text-white p-6 md:p-8 shadow-xl border border-indigo-400/30";
         banner.innerHTML = `
           <div class="absolute -right-8 -bottom-8 w-40 h-40 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
 
-          <div class="flex items-center justify-between mb-3">
-            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-white/20 backdrop-blur-md border border-white/30 text-white">
-              <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> Dzisiejsza Pigułka
-            </span>
-            <span class="text-xs font-medium text-indigo-200 capitalize">${dateFormatted}</span>
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div class="max-w-2xl">
+              <div class="flex items-center gap-2 mb-3">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-white/20 backdrop-blur-md border border-white/30 text-white">
+                  <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> Dzisiejsza Pigułka
+                </span>
+                <span class="text-xs font-medium text-indigo-200 capitalize">${dateFormatted}</span>
+              </div>
+
+              <h2 class="text-xl md:text-2xl font-extrabold mb-2 leading-snug">${dailyPill.title}</h2>
+              <p class="text-xs md:text-sm text-indigo-100/90 line-clamp-2 md:line-clamp-3">${dailyPill.desc}</p>
+            </div>
+
+            <div class="shrink-0">
+              <button onclick="openReader('${dailyPill.id}')" class="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-white text-indigo-950 font-bold text-sm shadow-lg hover:bg-indigo-50 active:scale-95 transition whitespace-nowrap">
+                <i data-lucide="play" class="w-4 h-4 fill-indigo-950"></i> Otwórz dzisiejszą pigułkę
+              </button>
+            </div>
           </div>
-
-          <h2 class="text-xl font-extrabold mb-2 leading-snug">${dailyPill.title}</h2>
-          <p class="text-xs text-indigo-100/90 mb-4 line-clamp-2">${dailyPill.desc}</p>
-
-          <button onclick="openReader('${dailyPill.id}')" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-white text-indigo-950 font-bold text-sm shadow-lg hover:bg-indigo-50 active:scale-95 transition">
-            <i data-lucide="play" class="w-4 h-4 fill-indigo-950"></i> Otwórz dzisiejszą pigułkę
-          </button>
         `;
       }
 
@@ -607,7 +618,7 @@
 
       if(filtered.length === 0) {
         container.innerHTML = `
-          <div class="text-center py-12 text-slate-400">
+          <div class="col-span-full text-center py-12 text-slate-400">
             <i data-lucide="sparkles" class="w-8 h-8 mx-auto mb-2 opacity-40"></i>
             <p class="text-sm font-medium">Brak pigułek spełniających kryteria</p>
           </div>
@@ -621,12 +632,12 @@
         const isCompleted = completedIds.includes(pill.id);
 
         const card = document.createElement('div');
-        card.className = `p-4 rounded-2xl bg-white dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/70 shadow-sm hover:shadow-md transition cursor-pointer flex flex-col justify-between group`;
+        card.className = `p-5 rounded-2xl bg-white dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/70 shadow-sm hover:shadow-md transition cursor-pointer flex flex-col justify-between group`;
         card.onclick = () => openReader(pill.id);
 
         card.innerHTML = `
           <div>
-            <div class="flex items-center justify-between mb-2">
+            <div class="flex items-center justify-between mb-3">
               <span class="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-lg bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 border border-indigo-200/40 dark:border-indigo-800/40">
                 ${pill.category}
               </span>
@@ -638,15 +649,15 @@
               </div>
             </div>
 
-            <h3 class="font-bold text-base text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition mb-1 leading-snug">
+            <h3 class="font-bold text-base md:text-lg text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition mb-2 leading-snug">
               ${pill.title}
             </h3>
-            <p class="text-xs text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed mb-3">
+            <p class="text-xs md:text-sm text-slate-500 dark:text-slate-400 line-clamp-3 leading-relaxed mb-4">
               ${pill.desc}
             </p>
           </div>
 
-          <div class="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-slate-700/50 text-[11px] text-slate-400">
+          <div class="flex items-center justify-between pt-3 border-t border-slate-100 dark:border-slate-700/50 text-[11px] md:text-xs text-slate-400">
             <span class="flex items-center gap-1"><i data-lucide="clock" class="w-3.5 h-3.5"></i> ${pill.timeToRead || '4 min'}</span>
             <span class="font-bold text-indigo-600 dark:text-indigo-400 flex items-center gap-0.5">Czytaj wiedzę <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i></span>
           </div>
@@ -684,7 +695,7 @@
       progressContainer.innerHTML = '';
       for(let i=0; i<totalSlides; i++) {
         const bar = document.createElement('div');
-        bar.className = `h-1 flex-1 rounded-full transition-all duration-300 ${i <= currentSlideIndex ? 'bg-white shadow-[0_0_8px_rgba(255,255,255,0.8)]' : 'bg-white/20'}`;
+        bar.className = `h-1.5 flex-1 rounded-full transition-all duration-300 ${i <= currentSlideIndex ? 'bg-white shadow-[0_0_8px_rgba(255,255,255,0.8)]' : 'bg-white/20'}`;
         progressContainer.appendChild(bar);
       }
 
@@ -696,21 +707,21 @@
       if(currentSlideIndex < currentPill.slides.length) {
         const slide = currentPill.slides[currentSlideIndex];
         container.innerHTML = `
-          <h2 class="text-lg md:text-xl font-extrabold text-white leading-tight mb-2">${slide.title}</h2>
-          <div class="text-xs md:text-sm text-slate-200 leading-relaxed space-y-2">
+          <h2 class="text-xl md:text-2xl font-extrabold text-white leading-tight mb-3">${slide.title}</h2>
+          <div class="text-sm md:text-base text-slate-200 leading-relaxed space-y-3">
             <p>${slide.content}</p>
           </div>
         `;
       } else {
         const q = currentPill.quiz;
         container.innerHTML = `
-          <div class="inline-block px-3 py-1 rounded-full bg-indigo-500/20 border border-indigo-400/30 text-indigo-300 font-bold text-xs mb-2">
+          <div class="inline-block px-3 py-1 rounded-full bg-indigo-500/20 border border-indigo-400/30 text-indigo-300 font-bold text-xs mb-3">
             🧠 Szybki Quiz Sprawdzający
           </div>
-          <h2 class="text-base md:text-lg font-bold text-white mb-3">${q.question}</h2>
-          <div id="quizOptions" class="space-y-2">
+          <h2 class="text-lg md:text-xl font-bold text-white mb-4">${q.question}</h2>
+          <div id="quizOptions" class="space-y-2.5">
             ${q.options.map((opt, idx) => `
-              <button onclick="checkQuiz(${idx}, ${q.correct})" class="w-full text-left p-3 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 text-xs md:text-sm font-medium transition text-white">
+              <button onclick="checkQuiz(${idx}, ${q.correct})" class="w-full text-left p-3.5 md:p-4 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 text-sm md:text-base font-medium transition text-white">
                 ${opt}
               </button>
             `).join('')}
@@ -778,9 +789,9 @@
       buttons.forEach((btn, idx) => {
         btn.disabled = true;
         if(idx === correctIdx) {
-          btn.className = "w-full text-left p-3 rounded-2xl bg-emerald-500/20 border border-emerald-500 text-xs md:text-sm font-bold text-emerald-300";
+          btn.className = "w-full text-left p-3.5 md:p-4 rounded-2xl bg-emerald-500/20 border border-emerald-500 text-sm md:text-base font-bold text-emerald-300";
         } else if(idx === selectedIdx) {
-          btn.className = "w-full text-left p-3 rounded-2xl bg-rose-500/20 border border-rose-500 text-xs md:text-sm font-bold text-rose-300";
+          btn.className = "w-full text-left p-3.5 md:p-4 rounded-2xl bg-rose-500/20 border border-rose-500 text-sm md:text-base font-bold text-rose-300";
         }
       });
 
