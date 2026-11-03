@@ -354,7 +354,7 @@
           },
           {
             title: '📐 Teoria Janeta: Matematyka proporcji',
-            content: 'Gdy masz 5 lat, jeden rok stanowi aż <strong>20% całego Twojego życia</strong>. Gdy skończysz 20 lat, rok to już zaledwie <strong>5%</strong> przeżytego czasu. Z czysto matematycznego punktu widzenia każda kolejna jednostka czasu stanowi mniejszy ułamek Twojej historii.'
+            content: 'Gdy masz 5 lat, jeden rok stanowi aż <strong>20% całego Twojego życia</strong>. Gdy skończysz 20 lat, rok to już zaleznie <strong>5%</strong> przeżytego czasu. Z czysto matematycznego punktu widzenia każda kolejna jednostka czasu stanowi mniejszy ułamek Twojej historii.'
           },
           {
             title: '📸 Gęstość kodowania nowych klatek',
@@ -476,6 +476,7 @@
       setupKeyboardListeners();
     });
 
+    // GENEROWANIE PEŁNEGO LOGO PWA & DESKTOP MANIFEST
     function generateAppIconCanvas() {
       const canvas = document.getElementById('iconCanvas');
       const ctx = canvas.getContext('2d');
@@ -514,11 +515,44 @@
       ctx.fill();
 
       const dataUrl = canvas.toDataURL('image/png');
-      let link = document.querySelector("link[rel*='apple-touch-icon']") || document.createElement('link');
-      link.type = 'image/png';
-      link.rel = 'apple-touch-icon';
-      link.href = dataUrl;
-      document.getElementsByTagName('head')[0].appendChild(link);
+
+      // 1. Apple Touch Icon
+      let appleLink = document.querySelector("link[rel='apple-touch-icon']") || document.createElement('link');
+      appleLink.rel = 'apple-touch-icon';
+      appleLink.href = dataUrl;
+      document.head.appendChild(appleLink);
+
+      // 2. Standard Favicon dla Chrome Desktop
+      let iconLink = document.querySelector("link[rel='icon']") || document.createElement('link');
+      iconLink.rel = 'icon';
+      iconLink.type = 'image/png';
+      iconLink.sizes = '512x512';
+      iconLink.href = dataUrl;
+      document.head.appendChild(iconLink);
+
+      // 3. Dynamiczny PWA Manifest dla Desktopu bez białych ramek
+      const manifest = {
+        name: "Astra | Pigułki Wiedzy",
+        short_name: "Astra",
+        start_url: "./",
+        display: "standalone",
+        background_color: "#0b0f19",
+        theme_color: "#0b0f19",
+        icons: [
+          {
+            src: dataUrl,
+            sizes: "512x512",
+            type: "image/png",
+            purpose: "any maskable"
+          }
+        ]
+      };
+      const manifestBlob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
+      const manifestUrl = URL.createObjectURL(manifestBlob);
+      let manifestLink = document.querySelector("link[rel='manifest']") || document.createElement('link');
+      manifestLink.rel = 'manifest';
+      manifestLink.href = manifestUrl;
+      document.head.appendChild(manifestLink);
     }
 
     function setupDailyPill() {
