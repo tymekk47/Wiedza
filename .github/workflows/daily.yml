@@ -26,60 +26,99 @@ jobs:
         run: |
           node -e '
           const fs = require("fs");
-          async function generate() {
-            if (!process.env.GEMINI_API_KEY) {
-              console.error("BŁĄD: Brak klucza GEMINI_API_KEY w Secrets!");
-              process.exit(1);
-            }
 
+          // Awaryjna baza pigułek na przypadek całkowitego przeciążenia API
+          const fallbackPills = [
+            {
+              id: "pill-fallback-" + Date.now(),
+              title: "Dlaczego ziewanie jest zaraźliwe?",
+              desc: "Ktoś obok ziewa i Ty nagle też musisz? To sprawka Twoich neuronów lustrzanych!",
+              category: "ciało",
+              date: new Date().toISOString().split("T")[0],
+              timeToRead: "3 min",
+              icon: "sparkles",
+              slides: [
+                { title: "🥱 Magia ziewania", content: "Ziewasz nie tylko z senności. Ziewanie to sposób mózgu na szybkie schłodzenie się, gdy jest zbyt nagrzany lub zmęczony." },
+                { title: "🪞 Neurony lustrzane", content: "Gdy widzisz, że ktoś ziewa, w Twoim mózgu aktywują się neurony lustrzane. Odpowiadają one za empatię i podświadome naśladowanie zachowań innych." },
+                { title: "📌 ZAPAMIĘTAJ NA DZIŚ", content: "Zaraźliwe ziewanie to dowód na to, że Twój mózg jest społecznie dostrojony i zdolny do empatii!" }
+              ],
+              quiz: { question: "Co odpowiada za zaraźliwość ziewania?", options: ["Neurony lustrzane", "Brak tlenu w pokoju", "Przypadek"], correct: 0 }
+            },
+            {
+              id: "pill-fallback-2-" + Date.now(),
+              title: "Dlaczego morze szumi w muszli?",
+              desc: "Nie, nie słyszysz oceanu. Dźwięk ten ma bezpośredni związek z Twoim własnym ciałem!",
+              category: "świat",
+              date: new Date().toISOString().split("T")[0],
+              timeToRead: "2 min",
+              icon: "sparkles",
+              slides: [
+                { title: "🐚 Mity z dzieciństwa", content: "Bujda o zachowanym szumie fal w muszli jest piękna, ale rzeczywistość jest o wiele bardziej fascynująca." },
+                { title: "🔊 Wzmacniacz dźwięków", content: "Muszla działa jak rezonator. Wyłapuje ciche dźwięki z otoczenia oraz szum krwi przepływającej w Twoim uchu i je odbija!" },
+                { title: "📌 ZAPAMIĘTAJ NA DZIŚ", content: "Gdy przykładasz muszlę do ucha, tak naprawdę słyszysz wzmocnione echo otoczenia i puls własnej krwi." }
+              ],
+              quiz: { question: "Co tak naprawdę słyszymy w muszli?", options: ["Szum oceanu", "Dźwięki otoczenia i szum własnej krwi", "Wiatr sprzed lat"], correct: 1 }
+            }
+          ];
+
+          async function generate() {
             const today = new Date().toISOString().split("T")[0];
             const prompt = `Wygeneruj 1 ciekawą pigułkę wiedzy o świecie, biologii, psychologii lub kosmosie. Odpowiedz WYŁĄCZNIE w formacie czystego JSON bez znaczników markdown. Struktura JSON: {"id": "pill-${Date.now()}", "title": "Tytuł", "desc": "Opis", "category": "ciało", "date": "${today}", "timeToRead": "3 min", "icon": "sparkles", "slides": [{"title": "Slajd 1", "content": "Treść..."}], "quiz": {"question": "Pytanie?", "options": ["A", "B", "C"], "correct": 0}}`;
 
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=${process.env.GEMINI_API_KEY}`;
-            
-            let attempts = 0;
-            let success = false;
-            let data;
+            const models = [
+              "gemini-3.8-flash",
+              "gemini-2.5-flash",
+              "gemini-1.5-flash",
+              "gemini-1.5-pro"
+            ];
 
-            while (attempts < 3 && !success) {
-              attempts++;
-              console.log(`Próba połączenia ${attempts} z 3...`);
-              try {
-                const res = await fetch(url, {
-                  method: "POST",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] }),
-                  signal: AbortSignal.timeout(30000)
-                });
+            let newPill = null;
 
-                data = await res.json();
+            if (process.env.GEMINI_API_KEY) {
+              for (const model of models) {
+                if (newPill) break;
+                console.log(`Próba połączenia z modelem: ${model}...`);
+                const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${process.env.GEMINI_API_KEY}`;
+                
+                for (let attempt = 1; attempt <= 2; attempt++) {
+                  try {
+                    const res = await fetch(url, {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] }),
+                      signal: AbortSignal.timeout(15000)
+                    });
 
-                if (res.ok && data.candidates && data.candidates[0]?.content?.parts[0]?.text) {
-                  success = true;
-                } else {
-                  console.warn(`Próba ${attempts} nieudana:`, JSON.stringify(data));
-                  if (attempts < 3) await new Promise(r => setTimeout(r, 5000));
+                    const data = await res.json();
+                    if (res.ok && data.candidates && data.candidates[0]?.content?.parts[0]?.text) {
+                      let rawText = data.candidates[0].content.parts[0].text;
+                      rawText = rawText.replace(/```json/g, "").replace(/```/g, "").trim();
+                      newPill = JSON.parse(rawText);
+                      console.log(`Sukces przy użyciu modelu ${model}!`);
+                      break;
+                    } else {
+                      console.warn(`Próba ${attempt} dla ${model} zwróciła błąd...`);
+                    }
+                  } catch (err) {
+                    console.warn(`Błąd dla ${model} (próba ${attempt}):`, err.message);
+                  }
+                  await new Promise(r => setTimeout(r, 6000));
                 }
-              } catch (err) {
-                console.warn(`Błąd podczas próby ${attempts}:`, err.message);
-                if (attempts < 3) await new Promise(r => setTimeout(r, 5000));
               }
             }
 
-            if (!success) {
-              console.error("Serwer Gemini przeciążony. Nie udało się po 3 próbach.");
-              process.exit(1);
+            if (!newPill) {
+              console.warn("API Google jest przeciążone. Używam pigułki z bazy rezerwowej.");
+              const randomIndex = Math.floor(Math.random() * fallbackPills.length);
+              newPill = fallbackPills[randomIndex];
             }
-
-            let rawText = data.candidates[0].content.parts[0].text;
-            rawText = rawText.replace(/```json/g, "").replace(/```/g, "").trim();
-            const newPill = JSON.parse(rawText);
 
             let html = fs.readFileSync("index.html", "utf8");
             html = html.replace("const defaultPills = [", "const defaultPills = [\n      " + JSON.stringify(newPill) + ",");
             fs.writeFileSync("index.html", html);
             console.log("Pomyślnie dodano pigułkę:", newPill.title);
           }
+
           generate();
           '
 
