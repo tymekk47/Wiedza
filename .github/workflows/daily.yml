@@ -2,8 +2,8 @@ name: Autogenerowanie Pigułki
 
 on:
   schedule:
-    - cron: '0 4 * * *' # Odpala się automatycznie codziennie o 04:00 rano
-  workflow_dispatch: # Pozwala ręcznie odpalić test w zakładce Actions
+    - cron: '0 4 * * *'
+  workflow_dispatch:
 
 jobs:
   build:
@@ -17,7 +17,7 @@ jobs:
       - name: Konfiguracja Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
 
       - name: Generowanie nowej pigułki wiedzy
         env:
@@ -34,41 +34,39 @@ jobs:
             const today = new Date().toISOString().split("T")[0];
             const prompt = `Wygeneruj 1 ciekawą pigułkę wiedzy o świecie, biologii, psychologii lub kosmosie. Odpowiedz WYŁĄCZNIE w formacie czystego JSON bez znaczników markdown. Struktura JSON: {"id": "pill-${Date.now()}", "title": "Tytuł", "desc": "Opis", "category": "ciało", "date": "${today}", "timeToRead": "3 min", "icon": "sparkles", "slides": [{"title": "Slajd 1", "content": "Treść..."}], "quiz": {"question": "Pytanie?", "options": ["A", "B", "C"], "correct": 0}}`;
 
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`;
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`;
             
-            const res = await fetch(url, {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
-            });
-
-            const data = await res.json();
-
-            if (!res.ok) {
-              console.error("BŁĄD API GEMINI:", JSON.stringify(data));
-              process.exit(1);
-            }
-
-            if (!data.candidates || !data.candidates[0]?.content?.parts[0]?.text) {
-              console.error("Nieprawidłowa odpowiedź z Gemini:", JSON.stringify(data));
-              process.exit(1);
-            }
-
-            let rawText = data.candidates[0].content.parts[0].text;
-            rawText = rawText.replace(/```json/g, "").replace(/```/g, "").trim();
-
-            let newPill;
             try {
-              newPill = JSON.parse(rawText);
+              const res = await fetch(url, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+              });
+
+              const data = await res.json();
+
+              if (!res.ok) {
+                console.error("BŁĄD API GEMINI:", JSON.stringify(data));
+                process.exit(1);
+              }
+
+              if (!data.candidates || !data.candidates[0]?.content?.parts[0]?.text) {
+                console.error("Brak treści z Gemini:", JSON.stringify(data));
+                process.exit(1);
+              }
+
+              let rawText = data.candidates[0].content.parts[0].text;
+              rawText = rawText.replace(/```json/g, "").replace(/```/g, "").trim();
+              const newPill = JSON.parse(rawText);
+
+              let html = fs.readFileSync("index.html", "utf8");
+              html = html.replace("const defaultPills = [", "const defaultPills = [\n      " + JSON.stringify(newPill) + ",");
+              fs.writeFileSync("index.html", html);
+              console.log("Pomyślnie dodano pigułkę:", newPill.title);
             } catch (err) {
-              console.error("Błąd parsowania JSON:", rawText);
+              console.error("Błąd wykonania:", err.message);
               process.exit(1);
             }
-
-            let html = fs.readFileSync("index.html", "utf8");
-            html = html.replace("const defaultPills = [", "const defaultPills = [\n      " + JSON.stringify(newPill) + ",");
-            fs.writeFileSync("index.html", html);
-            console.log("Pomyślnie dodano pigułkę:", newPill.title);
           }
           generate();
           '
