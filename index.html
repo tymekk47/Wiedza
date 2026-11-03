@@ -11,127 +11,30 @@
   <meta name="apple-mobile-web-app-title" content="Astra" />
   <meta name="theme-color" content="#0b0f19" />
   
-  <!-- Tailwind CSS & Lucide Icons -->
+  <!-- Tailwind CSS, Lucide Icons & Confetti -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
   <script>
-        let countdownInterval = null;
-
-    function getNext8AM() {
-      const now = new Date();
-      const target = new Date(now);
-      target.setHours(8, 0, 0, 0);
-      if (now >= target) {
-        target.setDate(target.getDate() + 1);
-      }
-      return target;
-    }
-
-    function startCountdown() {
-      if (countdownInterval) clearInterval(countdownInterval);
-
-      function updateTimer() {
-        const now = new Date();
-        const target = getNext8AM();
-        const diff = target - now;
-
-        if (diff <= 0) {
-          setupDailyPill();
-          return;
-        }
-
-        const hours = Math.floor(diff / (1000 * 60 * 60)).toString().padStart(2, '0');
-        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2, '0');
-        const seconds = Math.floor((diff % (1000 * 60)) / 1000).toString().padStart(2, '0');
-
-        const timerEl = document.getElementById('countdownTimer');
-        if (timerEl) {
-          timerEl.innerText = `${hours}h ${minutes}m ${seconds}s`;
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            star: {
+              50: '#f0f4ff',
+              100: '#e0e9ff',
+              400: '#818cf8',
+              500: '#6366f1',
+              600: '#4f46e5',
+              900: '#0b0f19',
+              950: '#05070c',
+            }
+          }
         }
       }
-
-      updateTimer();
-      countdownInterval = setInterval(updateTimer, 1000);
     }
-
-    function setupDailyPill() {
-      const todayStr = new Date().toISOString().split('T')[0];
-      const banner = document.getElementById('dailyBanner');
-      const dateFormatted = new Date().toLocaleDateString('pl-PL', { weekday: 'long', day: 'numeric', month: 'long' });
-
-      // Szukamy pigułki z dzisiejszą datą lub pierwszej nieprzeczytanej
-      let dailyPill = pills.find(p => p.date === todayStr);
-      if (!dailyPill) dailyPill = pills.find(p => !completedIds.includes(p.id));
-      if (!dailyPill) dailyPill = pills[0];
-
-      if (!dailyPill) return;
-
-      const isCompleted = completedIds.includes(dailyPill.id);
-
-      if (isCompleted) {
-        // --- STAN: PRZECZYTANE (Wyciszony baner + Odliczanie do 8:00) ---
-        banner.className = "relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-900 via-indigo-950 to-star-900 text-white p-6 shadow-xl border border-indigo-500/20";
-        banner.innerHTML = `
-          <div class="absolute -right-8 -bottom-8 w-40 h-40 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none"></div>
-
-          <div class="flex items-center justify-between mb-3">
-            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/20 border border-emerald-400/30 text-emerald-300">
-              <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-400"></i> Dawka przyjęta
-            </span>
-            <span class="text-xs font-medium text-slate-400 capitalize">${dateFormatted}</span>
-          </div>
-
-          <h2 class="text-xl font-extrabold mb-1.5 leading-snug">Mózg doładowany na dziś! 🚀</h2>
-          <p class="text-xs text-slate-300 leading-relaxed mb-4">
-            Dzisiejsza wiedza została przyswojona. Daj neuronom czas na poukładanie informacji!
-          </p>
-
-          <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-3.5 flex items-center justify-between gap-3 mb-3">
-            <div class="flex items-center gap-3">
-              <div class="p-2 rounded-xl bg-indigo-500/20 border border-indigo-400/30 text-indigo-300">
-                <i data-lucide="clock" class="w-4 h-4"></i>
-              </div>
-              <div>
-                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Nowa pigułka za</p>
-                <p id="countdownTimer" class="text-sm font-black tracking-wider text-white font-mono">00h 00m 00s</p>
-              </div>
-            </div>
-            <span class="text-[10px] font-bold text-indigo-300 bg-indigo-500/20 px-2.5 py-1 rounded-lg border border-indigo-500/30">Jutro o 08:00</span>
-          </div>
-
-          <button onclick="openReader('${dailyPill.id}')" class="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-400 hover:text-white transition">
-            <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i> Przejrzyj dzisiejszą wiedzę ponownie
-          </button>
-        `;
-        startCountdown();
-      } else {
-        // --- STAN: DO PRZECZYTANIA (Aktywny baner) ---
-        if (countdownInterval) clearInterval(countdownInterval);
-        banner.className = "relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-600 via-indigo-700 to-star-900 text-white p-6 shadow-xl border border-indigo-400/30";
-        banner.innerHTML = `
-          <div class="absolute -right-8 -bottom-8 w-40 h-40 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
-
-          <div class="flex items-center justify-between mb-3">
-            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-white/20 backdrop-blur-md border border-white/30 text-white">
-              <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> Dzisiejsza Pigułka
-            </span>
-            <span class="text-xs font-medium text-indigo-200 capitalize">${dateFormatted}</span>
-          </div>
-
-          <h2 class="text-xl font-extrabold mb-2 leading-snug">${dailyPill.title}</h2>
-          <p class="text-xs text-indigo-100/90 mb-4 line-clamp-2">${dailyPill.desc}</p>
-
-          <button onclick="openReader('${dailyPill.id}')" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-white text-indigo-950 font-bold text-sm shadow-lg hover:bg-indigo-50 active:scale-95 transition">
-            <i data-lucide="play" class="w-4 h-4 fill-indigo-950"></i> Otwórz dzisiejszą pigułkę
-          </button>
-        `;
-      }
-
-      lucide.createIcons();
-    }
-
   </script>
 
   <style>
@@ -190,9 +93,9 @@
       </div>
 
       <div class="flex items-center gap-2">
-        <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 font-bold text-xs border border-amber-500/20">
+        <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 font-bold text-xs border border-amber-500/20" title="Twoja seria dni z pigułkami wiedzy">
           <i data-lucide="flame" class="w-4 h-4 fill-amber-500"></i>
-          <span id="streakCount">1</span>
+          <span id="streakCount">0</span>
         </div>
 
         <button onclick="openSettingsModal()" class="p-2 rounded-xl hover:bg-slate-200/60 dark:hover:bg-slate-800 transition text-slate-600 dark:text-slate-300" title="Ustawienia AI">
@@ -207,24 +110,10 @@
     </div>
   </header>
 
-  <!-- BANNER PIGUŁKI DNIA -->
+  <!-- BANNER PIGUŁKI DNIA / STAN PRZECZYTANIA -->
   <section class="max-w-2xl mx-auto p-4">
     <div id="dailyBanner" class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-600 via-indigo-700 to-star-900 text-white p-6 shadow-xl border border-indigo-400/30">
-      <div class="absolute -right-8 -bottom-8 w-40 h-40 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
-      
-      <div class="flex items-center justify-between mb-3">
-        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-white/20 backdrop-blur-md border border-white/30 text-white">
-          <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> Dzisiejsza Pigułka
-        </span>
-        <span id="currentDateText" class="text-xs font-medium text-indigo-200"></span>
-      </div>
-
-      <h2 id="dailyTitle" class="text-xl font-extrabold mb-2 leading-snug">Ładowanie dzisiejszej wiedzy...</h2>
-      <p id="dailyDesc" class="text-xs text-indigo-100/90 mb-4 line-clamp-2">Szykujemy obszerną porcję solidnej wiedzy na dzisiaj...</p>
-
-      <button id="dailyBtn" onclick="" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-white text-indigo-950 font-bold text-sm shadow-lg hover:bg-indigo-50 active:scale-95 transition">
-        <i data-lucide="play" class="w-4 h-4 fill-indigo-950"></i> Otwórz dzisiejszą pigułkę
-      </button>
+      <!-- Wstrzykiwane dynamicznie przez JS -->
     </div>
   </section>
 
@@ -310,7 +199,7 @@
       </div>
 
       <p class="text-xs text-slate-500 dark:text-slate-400 mb-4 leading-relaxed">
-        Aplikacja automatycznie dostarcza obszerną wiedzę. Zapisując tutaj swój klucz <strong>Google Gemini API Key</strong>, umożliwiasz wygenerowanie unikalnych pigułek bezpośrednio w aplikacji!
+        Aplikacja codziennie sama odblokowuje nową wiedzę. Jeśli wkleisz swój darmowy klucz <strong>Google Gemini API Key</strong>, będziesz mógł generować dodatkowe wiedzy na zawołanie!
       </p>
 
       <label class="block text-xs font-bold uppercase tracking-wider mb-2 text-slate-600 dark:text-slate-300">Klucz Gemini API</label>
@@ -326,42 +215,6 @@
   <script>
     const defaultPills = [
       {
-  "id": "pill-fallback-rich-1-1793706918310",
-  "title": "Dlaczego po kawie chce Ci się do toalety?",
-  "desc": "To nie tylko kwestia ciepłego płynu. Kofeina wchodzi w reakcję z Twoim układem pokarmowym na poziomie hormonalnym!",
-  "category": "ciało",
-  "date": "2026-11-03",
-  "timeToRead": "4 min",
-  "icon": "sparkles",
-  "slides": [
-    {
-      "title": "☕ Poranna kofeina a układ trawienny",
-      "content": "Zauważyłeś, że poranna kawa często wymaga szybkiej wizyty w łazience? Nie chodzi tylko o fakt wypicia ciepłego napoju. Kofeina to potężny stymulant, który błyskawicznie pobudza <strong>fale peristaltyczne</strong> (skurcze mięśni) w Twoim jelicie grubym."
-    },
-    {
-      "title": "🧬 Hormonalny impuls: Gastryna i Cholecystokinina",
-      "content": "Kawa stymuluje wydzielanie <strong>gastryny</strong> – hormonu wyzwalanego przez żołądek, który przyspiesza aktywność jelita grubego. Dodatkowo zwiększa poziom <strong>cholecystokininy (CCK)</strong>, co daje sygnał układowi pokarmowemu do intensywnej pracy."
-    },
-    {
-      "title": "🧪 Dekofeina też działa!",
-      "content": "Co ciekawe, nawet kawa bezkofeinowa wywołuje ten efekt! Oznacza to, że za reakcję odpowiada nie tylko kofeina, ale również kwasy chlorogenowe zawarte w ziarnach."
-    },
-    {
-      "title": "📌 ZAPAMIĘTAJ NA DZIŚ",
-      "content": "Efekt przeczyszczający po kawie to normalna reakcja hormonalna i nerwowa organizmu. Jeśli chcesz zredukować ten wpływ, zjedz najpierw coś przed wypiciem kawy."
-    }
-  ],
-  "quiz": {
-    "question": "Jaki hormon jest stymulowany po wypiciu kawy?",
-    "options": [
-      "Gastryna",
-      "Melatonina",
-      "Insulina"
-    ],
-    "correct": 0
-  }
-},
-      {
         id: 'sen-mozg-pro',
         title: 'Dlaczego nocą Twój mózg odpala spłuczkę?',
         desc: 'Myślisz, że w nocy mózg idzie spać? Nic z tych rzeczy! Wtedy wjeżdża nocna ekipa sprzątająca i dosłownie wypłukuje toksyny z Twojej głowy.',
@@ -372,23 +225,23 @@
         slides: [
           {
             title: '🛌 Nocna Ekipa Czyszcząca',
-            content: 'Wyobraź sobie, że pracujesz cały dzień przy biurku, generując śmieci, resztki jedzenia i sterty papieru. Mózg podczas czuwania robi dokładnie to samo – spala mnóstwo energii i produkuje metaboliczne odpady. Gdy zasypiasz, odpala się tzw. <strong>układ glimfatyczny</strong>, odkryty dopiero w 2012 roku! To biologiczna spłuczka, która pompuje płyn mózgowo-rdzeniowy pomiędzy neuronami.'
+            content: 'Wyobraź sobie, że pracujesz cały dzień przy biurku, generując śmieci i sterty papieru. Mózg podczas czuwania spala mnóstwo energii i produkuje metaboliczne odpady. Gdy zasypiasz, odpala się tzw. <strong>układ glimfatyczny</strong> – biologiczna spłuczka, która pompuje płyn mózgowo-rdzeniowy pomiędzy neuronami.'
           },
           {
             title: '🧹 Komórki... kurczą się o 60%!',
-            content: 'Żeby płyn mógł skutecznie wymyć zakamarki, komórki glejowe (astrocyty) kurczą się podczas głębokiego snu aż o <strong>60%</strong>! Tworzy się w ten sposób przestrzeń, przez którą płyn przepływa jak rwący potok, zbierając szkodliwe białka, w tym <strong>beta-amyloid</strong> – szkodliwe złogi kojarzone m.in. z chorobą Alzheimera.'
+            content: 'Żeby płyn mógł skutecznie wymyć zakamarki, komórki glejowe (astrocyty) kurczą się podczas głębokiego snu aż o <strong>60%</strong>! Tworzy się w ten sposób przestrzeń, przez którą płyn przepływa jak rwący potok, zbierając szkodliwe białka, w tym <strong>beta-amyloid</strong>.'
           },
           {
             title: '💡 Faza REM: Konsolidacja i porządki',
-            content: 'Gdy układ glimfatyczny czyści mechanicznie, faza senna REM (Rapid Eye Movement) robi porządki cyfrowe. Mózg analizuje wspomnienia z całego dnia: niepotrzebne bodźce kasuje, a ważne informacje przenosi z pamięci krótkotrwałej w hipokampie do kory mózgowej. To dlatego po przesypiając nockę lepiej kojarzysz fakty z biologii czy chemii.'
+            content: 'Gdy układ glimfatyczny czyści mechanicznie, faza senna REM robi porządki cyfrowe. Mózg analizuje wspomnienia z całego dnia: niepotrzebne bodźce kasuje, a ważne informacje przenosi z pamięci krótkotrwałej w hipokampie do kory mózgowej.'
           },
           {
             title: '⚠️ Zarywanie nocy to biologiczny dławik',
-            content: 'Brak snu powoduje, że toksyny zostają w głowie na kolejny dzień. Efekt? Przepustowość neuronów spada, spowalnia czas reakcji, a poziom kortyzolu (hormonu stresu) szybuje w górę. Czujesz się oszołomiony, bo Twój mózg dosłownie pracuje w nieprzemytym środowisku metabolicznym.'
+            content: 'Brak snu powoduje, że toksyny zostają w głowie na kolejny dzień. Efekt? Przepustowość neuronów spada, spowalnia czas reakcji, a poziom kortyzolu szybuje w górę. Czujesz się oszołomiony, bo mózg pracuje w nieprzemytym środowisku metabolicznym.'
           },
           {
             title: '📌 ZAPAMIĘTAJ NA DZIŚ',
-            content: 'Sen to nie luksus ani bezczynność – to kluczowy proces konserwacyjny! Przed ważnym testem czy wydarzeniem prześpij minimum 7–8 godzin. Daj układowi glimfatycznemu dokończyć pracę, a obudzisz się z pełną mocą obliczeniową.'
+            content: 'Sen to nie luksus ani bezczynność – to kluczowy proces konserwacyjny! Przed ważnym wydarzeniem prześpij minimum 7–8 godzin. Daj układowi glimfatycznemu dokończyć pracę, a obudzisz się z pełną mocą obliczeniową.'
           }
         ],
         quiz: {
@@ -412,15 +265,15 @@
           },
           {
             title: '🧠 Mózg wyłącza hamulce dla nowych smaków',
-            content: 'Podczas jedzenia jednego rodzaju potrawy (np. słonego, tłustego obiadu) receptory smakowe ulegają adaptacji. Mózg wysyła sygnał: <em>„Mamy już dość tego konkretnego profilu smakowego”</em>. Jednak pojawienie się zupełnie nowego bodźca (np. słodkiego lub kwaśnego) aktywuje ośrodek nagrody w mózgu i natychmiastowo resetuje poczucie sytości!'
+            content: 'Podczas jedzenia jednego rodzaju potrawy receptory smakowe ulegają adaptacji. Mózg wysyła sygnał: <em>„Mamy już dość tego profilu smakowego”</em>. Jednak pojawienie się nowego bodźca (np. słodkiego) aktywuje ośrodek nagrody w mózgu i natychmiastowo resetuje poczucie sytości!'
           },
           {
             title: '🦴 Ewolucja uczyła nas różnorodności',
-            content: 'Dla naszych przodków jedzenie wyłącznie jednego typu pożywienia oznaczało ryzyko drastycznych niedoborów witamin i minerałów. Mózg wyewoluował więc mechanizm zachęcający do poszukiwania nowych smaków. Odrzucenie kolejnej porcji mięsa, przy jednoczesnej ochocie na owoce czy miód, zapewniało przetrwanie w trudnych warunkach.'
+            content: 'Dla naszych przodków jedzenie wyłącznie jednego typu pożywienia oznaczało ryzyko drastycznych niedoborów witamin. Mózg wyewoluował więc mechanizm zachęcający do poszukiwania nowych smaków, aby zapewnić różnorodną dietę.'
           },
           {
             title: '🧪 Fizyczne rozluźnienie żołądka',
-            content: 'To nie tylko psychika! Widok i zapach apetycznego deseru stymuluje nerw błędny, co prowadzi do tzw. <strong>relaksacji receptywnej żołądka</strong>. Ściany żołądka dosłownie wnikliwie rozluźniają się, tworząc fizyczne miejsce na słodką przekąskę.'
+            content: 'Widok i zapach apetycznego deseru stymuluje nerw błędny, co prowadzi do tzw. <strong>relaksacji receptywnej żołądka</strong>. Ściany żołądka dosłownie rozluźniają się, tworząc fizyczne miejsce na słodką przekąskę.'
           },
           {
             title: '📌 ZAPAMIĘTAJ NA DZIŚ',
@@ -444,19 +297,19 @@
         slides: [
           {
             title: '🌀 Krótkie spięcie w matriksie',
-            content: 'Rozmawiasz ze znajomym i nagle paraliżuje Cię uczucie 100% pewności: ten gest, światło i słowa już kiedyś miały miejsce. Spokojnie, to nie przeczucie, wspomnienie z poprzedniego życia ani błąd w symulacji komputera. To fascynująca pomyłka w trasowaniu danych w Twoim mózgu.'
+            content: 'Rozmawiasz ze znajomym i nagle paraliżuje Cię uczucie 100% pewności: ten gest, światło i słowa już kiedyś miały miejsce. Spokojnie, to nie przeczucie ani wspomnienie z poprzedniego życia. To pomyłka w trasowaniu danych w Twoim mózgu.'
           },
           {
             title: '⚡ Lag na skrzyżowaniu pamięci',
-            content: 'Zwykle bodźce z oczu i uszu trafiają najpierw do pamięci krótkotrwałej, gdzie są przetwarzane na bieżąco. Przy déjà vu dochodzi do desynchronizacji w <strong>płacie skroniowym</strong> oraz strukturach <strong>hipokampa</strong>. Informacja trafia bezpośrednio do obszarów pamięci długotrwałej ZANIM mózg zdąży ją zinterpretować jako wydarzenie teraźniejsze!'
+            content: 'Zwykle bodźce z oczu i uszu trafiają najpierw do pamięci krótkotrwałej. Przy déjà vu dochodzi do desynchronizacji w <strong>płacie skroniowym</strong> oraz strukturach <strong>hipokampa</strong>. Informacja trafia bezpośrednio do obszarów pamięci długotrwałej ZANIM mózg zinterpretuje ją jako teraźniejszość!'
           },
           {
             title: '🎞️ Czytanie teraźniejszości jako historii',
-            content: 'Efekt? Twój mózg rejestruje to, co dzieje się dokładnie W TEJ SEKUNDZIE, ale odczytuje tę informację z szuflady oznaczonej tagiem: <em>„Stare wspomnienie”</em>. Stąd powstaje to uderzające, tajemnicze wrażenie przeżywania tego samego po raz drugi.'
+            content: 'Twój mózg rejestruje to, co dzieje się W TEJ SEKUNDZIE, ale odczytuje tę informację z szuflady oznaczonej tagiem: <em>„Stare wspomnienie”</em>. Stąd powstaje wrażenie przeżywania tego samego po raz drugi.'
           },
           {
             title: '☕ Zmęczenie i kofeina potęgują efekt',
-            content: 'Zjawisko to występuje najczęściej u osób między 15 a 25 rokiem życia. Zwiększa się jego częstotliwość, gdy jesteś niewyspany, zestresowany lub po spożyciu większej ilości kofeiny – wtedy neurony są bardziej podatne na drobne micro-misfiringi (błędy w przewodzeniu impulsów).'
+            content: 'Zjawisko to występuje najczęściej u osób młodych. Zwiększa się jego częstotliwość, gdy jesteś niewyspany, zestresowany lub po spożyciu kofeiny – neurony są wtedy bardziej podatne na drobne błędy w przewodzeniu impulsów.'
           },
           {
             title: '📌 ZAPAMIĘTAJ NA DZIŚ',
@@ -480,23 +333,23 @@
         slides: [
           {
             title: '⏳ Rozpędzony zegar w głowie',
-            content: 'Pamiętasz te niekończące się miesiące wakacji w podstawówce? Dzisiaj pojedyncze miesiące przelatują niezauważone. Za to wrażenie odpowiada połączenie prostej matematyki oraz sposobu, w jaki mózg koduje i zapisuje nowe wspomnienia.'
+            content: 'Pamiętasz te niekończące się miesiące wakacji w podstawówce? Dzisiaj pojedyncze miesiące przelatują niezauważone. Za to wrażenie odpowiada połączenie prostej matematyki oraz sposobu, w jaki mózg koduje nowe wspomnienia.'
           },
           {
-            title: '📐 Hipoteza proporcjonalna (Teoria Janeta)',
-            content: 'Gdy masz 5 lat, jeden rok stanowi aż <strong>20% całego Twojego życia</strong> – to ogromny kawał doświadczenia! Gdy skończysz 20 lat, rok to już zaledwie <strong>5%</strong> przeżytego czasu. Z czysto matematycznego punktu widzenia każda kolejna jednostka czasu stanowi mniejszy ułamek Twojej historii.'
+            title: '📐 Teoria Janeta: Matematyka proporcji',
+            content: 'Gdy masz 5 lat, jeden rok stanowi aż <strong>20% całego Twojego życia</strong>. Gdy skończysz 20 lat, rok to już zaledwie <strong>5%</strong> przeżytego czasu. Z czysto matematycznego punktu widzenia każda kolejna jednostka czasu stanowi mniejszy ułamek Twojej historii.'
           },
           {
             title: '📸 Gęstość kodowania nowych klatek',
-            content: 'Kluczowa jest jednak praca hipokampa. Dzieci stale stykają się z nowościami: nowi ludzie, nieznane miejsca, pierwsze umiejętności. Mózg reaguje na to intensywną produkcją dopaminy i rejestruje mnóstwo „klatek” informacyjnych. Im więcej szczegółowych wspomnień z danego okresu, tym dłuższego wydaje się on w retrospekcji.'
+            content: 'Dzieci stale stykają się z nowościami: nowi ludzie, nieznane miejsca. Mózg reaguje na to intensywną produkcją dopaminy i rejestruje mnóstwo „klatek” informacyjnych. Im więcej szczegółowych wspomnień, tym dłuższy wydaje się dany okres w retrospekcji.'
           },
           {
             title: '🤖 Rutyna – cichy zabójca czasu',
-            content: 'U dorosłych dominuje rutyna: ta sama droga do pracy, powtarzalne obowiązki, przewidywalny plan dnia. Mózg dba o oszczędzanie energii, więc nie zapisuje powtarzających się schematów. W efekcie, gdy spoglądasz wstecz na miniony miesiąc, mózg nie ma z czego odtworzyć osi czasu i odczuwasz go jako błyskawiczny błysk.'
+            content: 'U dorosłych dominuje rutyna. Mózg dba o oszczędzanie energii, więc nie zapisuje powtarzających się schematów. W efekcie, gdy spoglądasz wstecz na miniony miesiąc, mózg nie ma z czego odtworzyć osi czasu i odczuwasz go jako błyskawiczny błysk.'
           },
           {
             title: '📌 ZAPAMIĘTAJ NA DZIŚ',
-            content: 'Chcesz subiektywnie wydłużyć czas? Przełamuj rutynę! Zmieniaj trasy spacerów, ucz się nowych rzeczy, szukaj nieznanych bodźcówSmakowych i wizualnych. Zmusisz mózg do gęstego zapisywania klatek pamięciowych!'
+            content: 'Chcesz subiektywnie wydłużyć czas? Przełamuj rutynę! Zmieniaj trasy spacerów, ucz się nowych rzeczy, szukaj nieznanych bodźców. Zmusisz mózg do gęstego zapisywania klatek pamięciowych!'
           }
         ],
         quiz: {
@@ -507,13 +360,80 @@
       }
     ];
 
+    // STATE & LOCAL STORAGE DATA
     let pills = defaultPills;
     let savedIds = JSON.parse(localStorage.getItem('astra_saved')) || [];
     let completedIds = JSON.parse(localStorage.getItem('astra_completed')) || [];
+    let streakCount = parseInt(localStorage.getItem('astra_streak')) || 0;
+    let lastCompletedDate = localStorage.getItem('astra_last_date') || null;
+
     let currentFilter = 'all';
-    
     let currentPill = null;
     let currentSlideIndex = 0;
+    let countdownInterval = null;
+
+    // POMOCNICZE DATY KALENDARZOWE (00:00 - 23:59)
+    function getTodayStr() {
+      const d = new Date();
+      return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    }
+
+    function getYesterdayStr() {
+      const d = new Date();
+      d.setDate(d.getDate() - 1);
+      return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    }
+
+    function updateStreakSystem() {
+      const today = getTodayStr();
+      const yesterday = getYesterdayStr();
+
+      // Zerowanie serii jeśli pominięto dzień
+      if (lastCompletedDate && lastCompletedDate !== today && lastCompletedDate !== yesterday) {
+        streakCount = 0;
+        localStorage.setItem('astra_streak', streakCount);
+      }
+
+      const streakEl = document.getElementById('streakCount');
+      if (streakEl) streakEl.innerText = streakCount;
+    }
+
+    function getNext8AM() {
+      const now = new Date();
+      const target = new Date(now);
+      target.setHours(8, 0, 0, 0);
+      if (now >= target) {
+        target.setDate(target.getDate() + 1);
+      }
+      return target;
+    }
+
+    function startCountdown() {
+      if (countdownInterval) clearInterval(countdownInterval);
+
+      function updateTimer() {
+        const now = new Date();
+        const target = getNext8AM();
+        const diff = target - now;
+
+        if (diff <= 0) {
+          setupDailyPill();
+          return;
+        }
+
+        const hours = Math.floor(diff / (1000 * 60 * 60)).toString().padStart(2, '0');
+        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2, '0');
+        const seconds = Math.floor((diff % (1000 * 60)) / 1000).toString().padStart(2, '0');
+
+        const timerEl = document.getElementById('countdownTimer');
+        if (timerEl) {
+          timerEl.innerText = `${hours}h ${minutes}m ${seconds}s`;
+        }
+      }
+
+      updateTimer();
+      countdownInterval = setInterval(updateTimer, 1000);
+    }
 
     document.addEventListener('DOMContentLoaded', () => {
       const savedTheme = localStorage.getItem('astra_theme') || 'dark';
@@ -525,13 +445,12 @@
         document.getElementById('themeIcon').setAttribute('data-lucide', 'moon');
       }
 
+      updateStreakSystem();
       lucide.createIcons();
       generateAppIconCanvas();
       setupDailyPill();
       renderPills();
       setupKeyboardListeners();
-
-      document.getElementById('currentDateText').innerText = new Date().toLocaleDateString('pl-PL', { weekday: 'long', day: 'numeric', month: 'long' });
     });
 
     function generateAppIconCanvas() {
@@ -580,21 +499,76 @@
     }
 
     function setupDailyPill() {
-      const todayStr = new Date().toISOString().split('T')[0];
-      
+      const todayStr = getTodayStr();
+      const banner = document.getElementById('dailyBanner');
+      const dateFormatted = new Date().toLocaleDateString('pl-PL', { weekday: 'long', day: 'numeric', month: 'long' });
+
       let dailyPill = pills.find(p => p.date === todayStr);
-      if (!dailyPill) {
-        dailyPill = pills.find(p => !completedIds.includes(p.id));
-      }
-      if (!dailyPill) {
-        dailyPill = pills[0];
+      if (!dailyPill) dailyPill = pills.find(p => !completedIds.includes(p.id));
+      if (!dailyPill) dailyPill = pills[0];
+
+      if (!dailyPill) return;
+
+      const isCompleted = completedIds.includes(dailyPill.id);
+
+      if (isCompleted) {
+        banner.className = "relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-900 via-indigo-950 to-star-900 text-white p-6 shadow-xl border border-indigo-500/20";
+        banner.innerHTML = `
+          <div class="absolute -right-8 -bottom-8 w-40 h-40 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none"></div>
+
+          <div class="flex items-center justify-between mb-3">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/20 border border-emerald-400/30 text-emerald-300">
+              <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-400"></i> Dawka przyjęta
+            </span>
+            <span class="text-xs font-medium text-slate-400 capitalize">${dateFormatted}</span>
+          </div>
+
+          <h2 class="text-xl font-extrabold mb-1.5 leading-snug">Mózg doładowany na dziś! 🚀</h2>
+          <p class="text-xs text-slate-300 leading-relaxed mb-4">
+            Dzisiejsza wiedza została przyswojona. Daj neuronom czas na poukładanie informacji!
+          </p>
+
+          <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-3.5 flex items-center justify-between gap-3 mb-3">
+            <div class="flex items-center gap-3">
+              <div class="p-2 rounded-xl bg-indigo-500/20 border border-indigo-400/30 text-indigo-300">
+                <i data-lucide="clock" class="w-4 h-4"></i>
+              </div>
+              <div>
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Nowa pigułka za</p>
+                <p id="countdownTimer" class="text-sm font-black tracking-wider text-white font-mono">00h 00m 00s</p>
+              </div>
+            </div>
+            <span class="text-[10px] font-bold text-indigo-300 bg-indigo-500/20 px-2.5 py-1 rounded-lg border border-indigo-500/30">Jutro o 08:00</span>
+          </div>
+
+          <button onclick="openReader('${dailyPill.id}')" class="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-400 hover:text-white transition">
+            <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i> Przejrzyj dzisiejszą wiedzę ponownie
+          </button>
+        `;
+        startCountdown();
+      } else {
+        if (countdownInterval) clearInterval(countdownInterval);
+        banner.className = "relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-600 via-indigo-700 to-star-900 text-white p-6 shadow-xl border border-indigo-400/30";
+        banner.innerHTML = `
+          <div class="absolute -right-8 -bottom-8 w-40 h-40 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
+
+          <div class="flex items-center justify-between mb-3">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-white/20 backdrop-blur-md border border-white/30 text-white">
+              <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> Dzisiejsza Pigułka
+            </span>
+            <span class="text-xs font-medium text-indigo-200 capitalize">${dateFormatted}</span>
+          </div>
+
+          <h2 class="text-xl font-extrabold mb-2 leading-snug">${dailyPill.title}</h2>
+          <p class="text-xs text-indigo-100/90 mb-4 line-clamp-2">${dailyPill.desc}</p>
+
+          <button onclick="openReader('${dailyPill.id}')" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-white text-indigo-950 font-bold text-sm shadow-lg hover:bg-indigo-50 active:scale-95 transition">
+            <i data-lucide="play" class="w-4 h-4 fill-indigo-950"></i> Otwórz dzisiejszą pigułkę
+          </button>
+        `;
       }
 
-      if (dailyPill) {
-        document.getElementById('dailyTitle').innerText = dailyPill.title;
-        document.getElementById('dailyDesc').innerText = dailyPill.desc;
-        document.getElementById('dailyBtn').onclick = () => openReader(dailyPill.id);
-      }
+      lucide.createIcons();
     }
 
     function renderPills() {
@@ -722,7 +696,7 @@
         `;
       }
 
-      document.getElementById('slideCounter').innerText = `Slajd ${currentSlideIndex + 1} z${totalSlides}`;
+      document.getElementById('slideCounter').innerText = `Slajd ${currentSlideIndex + 1} z ${totalSlides}`;
       document.getElementById('prevBtn').disabled = currentSlideIndex === 0;
 
       const nextBtn = document.getElementById('nextBtn');
@@ -741,11 +715,29 @@
         currentSlideIndex++;
         renderSlide();
       } else {
+        const today = getTodayStr();
+        const yesterday = getYesterdayStr();
+
         if(!completedIds.includes(currentPill.id)) {
           completedIds.push(currentPill.id);
           localStorage.setItem('astra_completed', JSON.stringify(completedIds));
           confetti({ particleCount: 70, spread: 60, origin: { y: 0.7 } });
         }
+
+        // AKTUWALIZACJA SERII (STREAK)
+        if (lastCompletedDate !== today) {
+          if (lastCompletedDate === yesterday) {
+            streakCount++;
+          } else {
+            streakCount = 1;
+          }
+
+          lastCompletedDate = today;
+          localStorage.setItem('astra_streak', streakCount);
+          localStorage.setItem('astra_last_date', lastCompletedDate);
+          updateStreakSystem();
+        }
+
         closeReader();
         renderPills();
         setupDailyPill();
